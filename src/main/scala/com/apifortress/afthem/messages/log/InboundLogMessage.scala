@@ -1,7 +1,3 @@
-package com.apifortress.afthem.messages.log
-
-import java.util.Date
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,4 +14,8 @@ import java.util.Date
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.messages.log
+
+import java.util.Date
+
 case class InboundLogMessage(remoteIP: String, url: String, date: Date = new Date())

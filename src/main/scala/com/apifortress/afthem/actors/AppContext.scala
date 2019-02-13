@@ -1,12 +1,3 @@
-package com.apifortress.afthem.actors
-
-import java.io.File
-
-import akka.actor.{ActorSelection, ActorSystem, Props}
-import akka.routing.FromConfig
-import com.apifortress.afthem.config.{Phase, Phases}
-import com.typesafe.config.ConfigFactory
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +14,15 @@ import com.typesafe.config.ConfigFactory
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors
+
+import java.io.File
+
+import akka.actor.{ActorSelection, ActorSystem, Props}
+import akka.routing.FromConfig
+import com.apifortress.afthem.config.{Phase, Phases}
+import com.typesafe.config.ConfigFactory
+
 object AppContext {
 
   val phases = Phases.load()

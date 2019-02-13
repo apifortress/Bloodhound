@@ -1,18 +1,3 @@
-package com.apifortress.afthem.controllers
-
-
-import com.apifortress.afthem.actors.AppContext
-import com.apifortress.afthem.messages.WebRawRequestMessage
-import javax.servlet.Filter
-import javax.servlet.http.HttpServletRequest
-import org.springframework.boot.web.servlet.FilterRegistrationBean
-import org.springframework.context.annotation.Bean
-import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation._
-import org.springframework.web.context.request.async.DeferredResult
-import org.springframework.web.filter.HiddenHttpMethodFilter
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +14,21 @@ import org.springframework.web.filter.HiddenHttpMethodFilter
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.controllers
+
+
+import com.apifortress.afthem.actors.AppContext
+import com.apifortress.afthem.messages.WebRawRequestMessage
+import javax.servlet.Filter
+import javax.servlet.http.HttpServletRequest
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
+import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation._
+import org.springframework.web.context.request.async.DeferredResult
+import org.springframework.web.filter.HiddenHttpMethodFilter
+
 @Controller
 class AfthemController {
 

@@ -1,12 +1,3 @@
-package com.apifortress.afthem.messages
-
-import java.util.Date
-
-import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.async.DeferredResult
-
-import scala.collection.mutable
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +13,17 @@ import scala.collection.mutable
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem.messages
+
+import java.util.Date
+
+import org.springframework.http.ResponseEntity
+import org.springframework.web.context.request.async.DeferredResult
+
+import scala.collection.mutable
+
+/**
   * Message containing a parsed response
   * @param response the actual response data
   * @param request the request data

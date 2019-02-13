@@ -1,9 +1,3 @@
-package com.apifortress.afthem.actors.essentials
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.WebParsedResponseMessage
-import org.springframework.http.ResponseEntity
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +14,12 @@ import org.springframework.http.ResponseEntity
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.essentials
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.messages.WebParsedResponseMessage
+import org.springframework.http.ResponseEntity
+
 class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
 

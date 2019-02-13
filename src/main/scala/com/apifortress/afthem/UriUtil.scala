@@ -1,7 +1,3 @@
-package com.apifortress.afthem
-
-import com.apifortress.afthem.config.Backend
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +13,13 @@ import com.apifortress.afthem.config.Backend
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem
+
+import com.apifortress.afthem.config.Backend
+
+
+/**
   *
   * Utils to handle URIs and URLs
   */

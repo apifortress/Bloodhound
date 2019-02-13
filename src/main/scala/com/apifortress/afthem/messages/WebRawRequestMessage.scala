@@ -1,9 +1,3 @@
-package com.apifortress.afthem.messages
-
-import javax.servlet.http.HttpServletRequest
-import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.async.DeferredResult
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +13,14 @@ import org.springframework.web.context.request.async.DeferredResult
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem.messages
+
+import javax.servlet.http.HttpServletRequest
+import org.springframework.http.ResponseEntity
+import org.springframework.web.context.request.async.DeferredResult
+
+/**
   * A message containing a raw request
   * @param request a raw request
   * @param deferredResult the deferred result awaiting content to conclude the communication

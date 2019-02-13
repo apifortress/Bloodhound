@@ -1,9 +1,3 @@
-package com.apifortress.afthem.actors.sidecars
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +14,12 @@ import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedRespon
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.sidecars
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
+
+
 class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {

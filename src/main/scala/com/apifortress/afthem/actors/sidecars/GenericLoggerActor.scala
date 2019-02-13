@@ -1,11 +1,3 @@
-package com.apifortress.afthem.actors.sidecars
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.BaseMessage
-import org.springframework.expression.spel.standard.SpelExpressionParser
-import org.springframework.expression.Expression
-import org.springframework.expression.spel.support.StandardEvaluationContext
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +14,14 @@ import org.springframework.expression.spel.support.StandardEvaluationContext
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.sidecars
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.messages.BaseMessage
+import org.springframework.expression.spel.standard.SpelExpressionParser
+import org.springframework.expression.Expression
+import org.springframework.expression.spel.support.StandardEvaluationContext
+
 object GenericLoggerActor {
 
   val parser = new SpelExpressionParser

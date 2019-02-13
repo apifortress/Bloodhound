@@ -1,11 +1,3 @@
-package com.apifortress.afthem.actors
-
-import com.apifortress.afthem.config.Phases
-import com.apifortress.afthem.config.Phase
-import akka.actor.{Actor, ActorSelection}
-import com.apifortress.afthem.messages.BaseMessage
-import org.slf4j.LoggerFactory
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +14,14 @@ import org.slf4j.LoggerFactory
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors
+
+import com.apifortress.afthem.config.Phases
+import com.apifortress.afthem.config.Phase
+import akka.actor.{Actor, ActorSelection}
+import com.apifortress.afthem.messages.BaseMessage
+import org.slf4j.LoggerFactory
+
 abstract class AbstractAfthemActor(phaseId: String) extends Actor {
 
   val log = LoggerFactory.getLogger(this.getClass)

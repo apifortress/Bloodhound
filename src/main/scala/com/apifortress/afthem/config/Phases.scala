@@ -1,14 +1,3 @@
-package com.apifortress.afthem.config
-
-import java.io.{File, InputStreamReader}
-
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import scala.io.Source
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +14,17 @@ import scala.io.Source
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.config
+
+import java.io.{File, InputStreamReader}
+
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+import scala.io.Source
+
 object Phases {
 
   val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
@@ -57,3 +57,5 @@ class Phases {
     return getPhase(getPhase(id).next)
   }
 }
+
+case class Phase(var id: String, @JsonProperty("class") className: String, next: String, sidecars: List[String], config: Map[String,Any], instances : Int = 1, dispatcher : String = null)

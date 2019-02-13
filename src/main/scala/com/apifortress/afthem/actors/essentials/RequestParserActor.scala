@@ -1,10 +1,3 @@
-package com.apifortress.afthem.actors.essentials
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{HttpWrapper, WebParsedRequestMessage, WebRawRequestMessage}
-import com.apifortress.afthem.{ReqResUtil, UriUtil}
-import org.slf4j.LoggerFactory
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +14,13 @@ import org.slf4j.LoggerFactory
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.essentials
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.messages.{HttpWrapper, WebParsedRequestMessage, WebRawRequestMessage}
+import com.apifortress.afthem.{ReqResUtil, UriUtil}
+import org.slf4j.LoggerFactory
+
 object RequestParserActor {
 
   val log = LoggerFactory.getLogger("RequestParserActor")

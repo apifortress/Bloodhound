@@ -1,14 +1,3 @@
-package com.apifortress.afthem.config
-
-import java.io.{File, InputStreamReader}
-
-import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import scala.io.Source
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +14,17 @@ import scala.io.Source
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.config
+
+import java.io.{File, InputStreamReader}
+
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+import scala.io.Source
+
 object Backends {
 
   val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
@@ -51,5 +51,6 @@ class Backends {
   @JsonProperty("backends")
   var backends : List[Backend] = null
 
-
 }
+
+case class Backend(prefix: String, upstream: String)

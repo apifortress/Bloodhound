@@ -1,7 +1,3 @@
-package com.apifortress.afthem.actors.sidecars
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +14,11 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.sidecars
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+
+
 class FileSerializerActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {

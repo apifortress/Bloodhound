@@ -1,12 +1,3 @@
-package com.apifortress.afthem.actors.transformers
-
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import org.apache.commons.codec.binary.StringUtils
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +14,16 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.transformers
+
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
+import org.apache.commons.codec.binary.StringUtils
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+
 object BeautifyPayloadActor {
 
   val objectMapper: ObjectMapper = new ObjectMapper

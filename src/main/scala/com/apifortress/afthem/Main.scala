@@ -1,11 +1,3 @@
-package com.apifortress.afthem
-
-import com.apifortress.afthem.actors.AppContext
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.{Bean, ComponentScan}
-
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +14,13 @@ import org.springframework.context.annotation.{Bean, ComponentScan}
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem
+
+import com.apifortress.afthem.actors.AppContext
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.context.annotation.{Bean, ComponentScan}
+
 @SpringBootApplication
 @ComponentScan
 class Main

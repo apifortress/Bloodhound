@@ -1,11 +1,3 @@
-package com.apifortress.afthem
-
-import javax.servlet.http.HttpServletRequest
-import org.apache.commons.io.IOUtils
-import org.apache.commons.io.input.BoundedInputStream
-import org.apache.http.HttpResponse
-import scala.collection.mutable
-import java.io.InputStream
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +13,17 @@ import java.io.InputStream
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem
+
+import javax.servlet.http.HttpServletRequest
+import org.apache.commons.io.IOUtils
+import org.apache.commons.io.input.BoundedInputStream
+import org.apache.http.HttpResponse
+import scala.collection.mutable
+import java.io.InputStream
+
+/**
   * Utils to handle requests and responses
   */
 object ReqResUtil {

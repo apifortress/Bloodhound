@@ -1,9 +1,3 @@
-package com.apifortress.afthem.messages
-
-import java.util.Date
-
-import scala.collection.mutable
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +13,14 @@ import scala.collection.mutable
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem.messages
+
+import java.util.Date
+
+import scala.collection.mutable
+
+/**
   * The base of all messages
   * @param dateParam the date the message has been created. A new date will be created if null
   * @param metaParam metadata. A new collection will be created if null

@@ -1,5 +1,3 @@
-package com.apifortress.afthem.messages
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,4 +14,6 @@ package com.apifortress.afthem.messages
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.messages
+
 case class ExceptionMessage(exception: Exception) extends BaseMessage

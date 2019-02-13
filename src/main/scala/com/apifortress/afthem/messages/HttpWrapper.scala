@@ -1,5 +1,3 @@
-package com.apifortress.afthem.messages
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +13,10 @@ package com.apifortress.afthem.messages
   * limitations under the License.
   *
   * @author Simone Pezzano
-  *
+  */
+package com.apifortress.afthem.messages
+
+/**
   * An object wrapping information about either a request or a response
   */
 class HttpWrapper() {

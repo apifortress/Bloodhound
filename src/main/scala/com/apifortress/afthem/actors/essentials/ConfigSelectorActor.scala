@@ -1,10 +1,3 @@
-package com.apifortress.afthem.actors.essentials
-
-import com.apifortress.afthem.UriUtil
-import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.config.{Backend, Backends}
-import com.apifortress.afthem.messages.WebParsedRequestMessage
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +14,13 @@ import com.apifortress.afthem.messages.WebParsedRequestMessage
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.actors.essentials
+
+import com.apifortress.afthem.UriUtil
+import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.config.{Backend, Backends}
+import com.apifortress.afthem.messages.WebParsedRequestMessage
+
 class ConfigSelectorActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {

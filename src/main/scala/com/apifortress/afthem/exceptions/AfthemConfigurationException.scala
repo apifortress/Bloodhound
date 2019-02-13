@@ -1,5 +1,3 @@
-package com.apifortress.afthem.exceptions
-
 /**
   * Copyright 2019 API Fortress
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,4 +14,6 @@ package com.apifortress.afthem.exceptions
   *
   * @author Simone Pezzano
   */
+package com.apifortress.afthem.exceptions
+
 case class AfthemConfigurationException(message : String) extends Exception(message: String)
