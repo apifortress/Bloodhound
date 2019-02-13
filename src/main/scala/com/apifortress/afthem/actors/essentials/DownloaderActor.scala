@@ -90,8 +90,9 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
     if(wrapper.payload != null && request.isInstanceOf[HttpEntityEnclosingRequestBase])
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
+    val discardHeaders = phase.config.get("discard_headers").getOrElse(List.empty[String]).asInstanceOf[List[String]]
     wrapper.headers.foreach(header =>
-      if(header._1 != "content-length")
+      if(!discardHeaders.contains(header._1.toLowerCase))
         request.setHeader(header._1,header._2)
     )
 

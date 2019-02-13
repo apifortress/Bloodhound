@@ -16,32 +16,27 @@
   */
 package com.apifortress.afthem.config
 
-import java.io.{File, InputStreamReader}
-
+import com.apifortress.afthem.ConfigUtil
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
-import scala.io.Source
-
+/**
+  * Companion object to load phases from file as a singleton
+  */
 object Phases {
 
-  val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
+  private val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
   objectMapper.registerModule(DefaultScalaModule)
 
-  var phasesInstance : Phases = null
+  private var phasesInstance : Phases = null
 
   def load(): Phases = {
     if(phasesInstance != null)
       return phasesInstance
-
-    phasesInstance = parse(Source.fromFile("etc"+File.separator+"phases.yml").reader())
+    phasesInstance = ConfigUtil.parse[Phases]("phases.yml", classOf[Phases])
     return phasesInstance
-  }
-
-  def parse(data : InputStreamReader): Phases = {
-    return objectMapper.readValue(data, classOf[Phases])
   }
 }
 class Phases {
@@ -58,4 +53,4 @@ class Phases {
   }
 }
 
-case class Phase(var id: String, @JsonProperty("class") className: String, next: String, sidecars: List[String], config: Map[String,Any], instances : Int = 1, dispatcher : String = null)
+case class Phase(var id: String, @JsonProperty("class") className: String, next: String, sidecars: List[String], config: Map[String,Any])

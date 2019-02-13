@@ -2,6 +2,10 @@ phases:
   request_parser:
     class: com.apifortress.afthem.actors.essentials.RequestParserActor
     next: config_selector
+    config:
+      discard_headers:
+        - host
+        - content-length
     sidecars:
       - access_logger
 
@@ -21,13 +25,14 @@ phases:
 
   downloader:
     class: com.apifortress.afthem.actors.essentials.DownloaderActor
-    dispatcher: io-dispatcher
     next: output_beautifier
+    config:
+      discard_headers:
+        - "content-length"
     sidecars:
       - access_logger
 
   send_back:
-    dispatcher: io-dispatcher
     class: com.apifortress.afthem.actors.essentials.SendBackActor
 
 

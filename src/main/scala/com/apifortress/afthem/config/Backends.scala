@@ -16,35 +16,30 @@
   */
 package com.apifortress.afthem.config
 
-import java.io.{File, InputStreamReader}
-
+import com.apifortress.afthem.ConfigUtil
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
-import scala.io.Source
-
+/**
+  * Companion object to load backends from file as a singleton
+  */
 object Backends {
 
-  val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
-  objectMapper.registerModule(DefaultScalaModule)
 
-  var backendsInstance: Backends = null
+  private var backendsInstance: Backends = null
 
   def load(): Backends = {
     if(backendsInstance != null)
       return backendsInstance
 
-    backendsInstance = parse(Source.fromFile("etc"+File.separator+"backends.yml").reader())
+    backendsInstance = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
     return backendsInstance
   }
 
-  def parse(data : InputStreamReader): Backends = {
-    return objectMapper.readValue(data, classOf[Backends])
-  }
 }
 
+/**
+  * Data structure representing the configuration of backends
+  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Backends {
 
@@ -53,4 +48,9 @@ class Backends {
 
 }
 
+/**
+  * The single backend configuration
+  * @param prefix the inbound URI prefix
+  * @param upstream the upstream URI
+  */
 case class Backend(prefix: String, upstream: String)

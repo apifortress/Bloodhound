@@ -38,12 +38,14 @@ object ReqResUtil {
     */
   val HEADER_CONTENT_TYPE : String = "content-type"
 
+  val HEADER_HOST : String = "host"
+
   /**
     * Parses servlet headers into a list of tuples and collects a map of interesting headers
     * @param request an HttpServletRequest to parse the headers from
     * @return a tuple made up of (list of headers, interesting headers)
     */
-  def parseHeaders(request: HttpServletRequest) : (List[(String Tuple2 String)],Map[String,Any]) = {
+  def parseHeaders(request: HttpServletRequest, discardHeaders : List[String] = List.empty[String]) : (List[(String Tuple2 String)],Map[String,Any]) = {
     val headers = new mutable.MutableList[String Tuple2 String]
     val interestingHeaders = new mutable.HashMap[String,Any]
 
@@ -57,7 +59,8 @@ object ReqResUtil {
           interestingHeaders.put(HEADER_CONTENT_TYPE,request.getHeader(HEADER_CONTENT_TYPE))
         case _ => {}
       }
-      headers+=new Tuple2(headerName,request.getHeader(headerName))
+      if (!discardHeaders.contains(headerName.toLowerCase))
+        headers+=new Tuple2(headerName,request.getHeader(headerName))
     }
     return (headers.toList,interestingHeaders.toMap)
   }

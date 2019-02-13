@@ -34,7 +34,8 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
       wrapper.url = UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString)
 
-      val parsedHeaders = ReqResUtil.parseHeaders(msg.request)
+      val parsedHeaders = ReqResUtil.parseHeaders(msg.request,phase.config.get("discard_headers")
+                                    .getOrElse(List.empty[String]).asInstanceOf[List[String]])
 
       wrapper.headers = parsedHeaders._1
 

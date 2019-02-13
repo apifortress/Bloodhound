@@ -23,6 +23,9 @@ import akka.routing.FromConfig
 import com.apifortress.afthem.config.{Phase, Phases}
 import com.typesafe.config.ConfigFactory
 
+/**
+  * Application context. Initializes actors on load and provides useful methods to play with them
+  */
 object AppContext {
 
   val phases = Phases.load()
