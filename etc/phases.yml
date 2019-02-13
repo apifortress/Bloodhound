@@ -1,0 +1,46 @@
+phases:
+  request_parser:
+    class: com.apifortress.afthem.actors.essentials.RequestParserActor
+    next: config_selector
+    sidecars:
+      - access_logger
+
+  payload_deserializer:
+    class: com.apifortress.afthem.actors.transformers.DeserializerActor
+    next: config_selector
+    config:
+      expression: "#msg.request().payload()"
+      meta: "pp"
+      contentType: "json"
+    sidecars:
+      - generic_logger_1
+
+  config_selector:
+    class: com.apifortress.afthem.actors.essentials.ConfigSelectorActor
+    next: downloader
+
+  downloader:
+    class: com.apifortress.afthem.actors.essentials.DownloaderActor
+    dispatcher: io-dispatcher
+    next: output_beautifier
+    sidecars:
+      - access_logger
+
+  send_back:
+    dispatcher: io-dispatcher
+    class: com.apifortress.afthem.actors.essentials.SendBackActor
+
+
+  output_beautifier:
+    class: com.apifortress.afthem.actors.transformers.BeautifyPayloadActor
+    next: send_back
+    config:
+      mode: json
+
+  access_logger:
+    class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor
+
+  generic_logger_1:
+    class: com.apifortress.afthem.actors.sidecars.GenericLoggerActor
+    config:
+      expression: "#msg.meta().get('pp').getOrElse(null)"

@@ -1,0 +1,3 @@
+backends:
+- prefix: 'localhost:8080/'
+  upstream: 'https://postman-echo.com/'
