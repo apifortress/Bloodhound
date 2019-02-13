@@ -22,6 +22,13 @@ import scala.collection.mutable
   * limitations under the License.
   *
   * @author Simone Pezzano
+  *
+  * Message containing a parsed request
+  * @param request the actual request data
+  * @param deferredResult the deferred result awaiting content to conclude the communication
+  * @param date the date the message has been created. A new date will be created if null
+  * @param meta metadata. A new collection will be created if null
+  * @param backendConfig the backend configuration
   */
 case class WebParsedRequestMessage(request: HttpWrapper,
                                    deferredResult: DeferredResult[ResponseEntity[Array[Byte]]],

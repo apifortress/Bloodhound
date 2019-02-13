@@ -19,6 +19,10 @@ import org.springframework.web.context.request.async.DeferredResult
   * limitations under the License.
   *
   * @author Simone Pezzano
+  *
+  * A message containing a raw request
+  * @param request a raw request
+  * @param deferredResult the deferred result awaiting content to conclude the communication
   */
 case class WebRawRequestMessage(request: HttpServletRequest,
                                 deferredResult: DeferredResult[ResponseEntity[Array[Byte]]]) extends BaseMessage

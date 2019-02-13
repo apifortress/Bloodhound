@@ -19,6 +19,10 @@ import scala.collection.mutable
   * limitations under the License.
   *
   * @author Simone Pezzano
+  *
+  * The base of all messages
+  * @param dateParam the date the message has been created. A new date will be created if null
+  * @param metaParam metadata. A new collection will be created if null
   */
 class BaseMessage(dateParam : Date = new Date(),
                   metaParam : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]()) {

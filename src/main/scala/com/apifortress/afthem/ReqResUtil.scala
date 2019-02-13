@@ -21,10 +21,19 @@ import java.io.InputStream
   * limitations under the License.
   *
   * @author Simone Pezzano
+  *
+  * Utils to handle requests and responses
   */
 object ReqResUtil {
 
+  /**
+    * The name of the content-length header
+    */
   val HEADER_CONTENT_LENGTH : String = "content-length"
+
+  /**
+    * The name of the content-type header
+    */
   val HEADER_CONTENT_TYPE : String = "content-type"
 
   /**

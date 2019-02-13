@@ -15,6 +15,8 @@ package com.apifortress.afthem.messages
   * limitations under the License.
   *
   * @author Simone Pezzano
+  *
+  * An object wrapping information about either a request or a response
   */
 class HttpWrapper() {
 
