@@ -1,0 +1,35 @@
+Configuration:
+  status: warn
+  name: YAMLConfigTest
+  properties:
+    property:
+      name: filename
+      value: log/test-yaml.log
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: "%m%n"
+    File:
+      name: File
+      fileName: ${filename}
+      PatternLayout:
+        Pattern: "%d %p %C{1.} [%t] %m%n"
+      Filters:
+        ThresholdFilter:
+          level: error
+
+  Loggers:
+    logger:
+      -
+        name: org.apache.logging.log4j.com.apifortress.afthem
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: STDOUT
+    Root:
+      level: error
+      AppenderRef:
+        ref: STDOUT

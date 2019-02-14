@@ -15,10 +15,15 @@
   * @author Simone Pezzano
   */
 package com.apifortress.afthem.messages
+import java.util.Date
 
+import com.apifortress.afthem.config.{Backend, Flow, Phase}
 import javax.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult
+
+import scala.collection.mutable
+
 
 /**
   * A message containing a raw request
@@ -26,4 +31,9 @@ import org.springframework.web.context.request.async.DeferredResult
   * @param deferredResult the deferred result awaiting content to conclude the communication
   */
 case class WebRawRequestMessage(request: HttpServletRequest,
-                                deferredResult: DeferredResult[ResponseEntity[Array[Byte]]]) extends BaseMessage
+                                override val backend: Backend,
+                                override val  flow: Flow,
+                                deferredResult: DeferredResult[ResponseEntity[Array[Byte]]],
+                                override val date: Date = new Date(),
+                                override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
+      extends BaseMessage(backend, flow, date, meta)

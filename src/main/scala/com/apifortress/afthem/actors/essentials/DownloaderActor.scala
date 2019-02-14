@@ -45,10 +45,14 @@ object DownloaderActor {
   */
 class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
+
   override def receive: Receive = {
     case msg : WebParsedRequestMessage => {
-      val upstreamUrl = UriUtil.determineUpstreamUrl(msg.request.url, msg.backendConfig)
-      val httpReq: HttpUriRequest = createRequest(upstreamUrl, msg.request, msg.backendConfig)
+
+      val discardHeaders = getPhase(msg).getConfigList("discard_headers")
+
+      val upstreamUrl = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
+      val httpReq: HttpUriRequest = createRequest(upstreamUrl, msg.request, discardHeaders)
 
       DownloaderActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
         override def completed(response: HttpResponse): Unit = {
@@ -61,13 +65,13 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
           EntityUtils.consumeQuietly(entity)
           inputStream.close()
 
-          val message = new WebParsedResponseMessage(wrapper, msg.request, msg.deferredResult,msg.date,msg.meta)
+          val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
 
           forward(message)
         }
 
         override def failed(e: Exception): Unit = {
-          selectNextActor() ! new ExceptionMessage(e)
+
         }
 
         override def cancelled(): Unit = {}
@@ -78,7 +82,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
   }
 
-  private def createRequest(url: String, wrapper: HttpWrapper, backendConfig: Backend): HttpUriRequest = {
+  private def createRequest(url: String, wrapper: HttpWrapper, discardHeaders : List[String]): HttpUriRequest = {
     val request = wrapper.method match {
       case "GET" =>  new HttpGet(url)
       case "POST" => new HttpPost(url)
@@ -90,7 +94,6 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
     if(wrapper.payload != null && request.isInstanceOf[HttpEntityEnclosingRequestBase])
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
-    val discardHeaders = phase.config.get("discard_headers").getOrElse(List.empty[String]).asInstanceOf[List[String]]
     wrapper.headers.foreach(header =>
       if(!discardHeaders.contains(header._1.toLowerCase))
         request.setHeader(header._1,header._2)

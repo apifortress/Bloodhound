@@ -38,26 +38,29 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage => {
-      msg.request.payload = beautify(msg.request.payload)
+      msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.get("mode").getOrElse("json").asInstanceOf[String])
       msg.request.headers = msg.request.headers.filter( header => header._1.toLowerCase!="content-length")
       forward(msg)
     }
     case msg : WebParsedResponseMessage => {
-      msg.response.payload = beautify(msg.response.payload)
+      msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.get("mode").getOrElse("json").asInstanceOf[String])
       msg.response.headers = msg.response.headers.filter( header => header._1.toLowerCase!="content-length")
       forward(msg)
     }
   }
 
-  def beautify(data : Array[Byte]) : Array[Byte] = {
-    val mode = phase.config.get("mode").getOrElse("json").asInstanceOf[String]
-    if (mode.contains("json")) {
-      val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
-      return StringUtils.getBytesUtf8(BeautifyPayloadActor.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
-    }
-    if (mode.contains("xml")) {
-      val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
-      return StringUtils.getBytesUtf8(BeautifyPayloadActor.xmlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
+  def beautify(data : Array[Byte], mode : String) : Array[Byte] = {
+    try {
+      if (mode.contains("json")) {
+        val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
+        return StringUtils.getBytesUtf8(BeautifyPayloadActor.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
+      }
+      if (mode.contains("xml")) {
+        val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
+        return StringUtils.getBytesUtf8(BeautifyPayloadActor.xmlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
+      }
+    }catch {
+      case e : Exception => log.warn("Invalid format")
     }
     return data
   }

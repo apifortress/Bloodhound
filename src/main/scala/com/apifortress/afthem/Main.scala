@@ -17,6 +17,8 @@
 package com.apifortress.afthem
 
 import com.apifortress.afthem.actors.AppContext
+import com.apifortress.afthem.messages.BaseMessage
+import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, ComponentScan}
@@ -27,10 +29,14 @@ class Main
 
 object Main {
 
+  val log = LoggerFactory.getLogger(classOf[Main])
 
   def main(args: Array[String]): Unit = {
+    log.info("Afthem starting...")
     AppContext.init()
     SpringApplication.run(classOf[Main])
+
+    //new BaseMessage().
   }
 
 

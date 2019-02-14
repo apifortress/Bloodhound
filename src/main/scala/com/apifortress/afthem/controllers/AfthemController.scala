@@ -18,6 +18,7 @@ package com.apifortress.afthem.controllers
 
 
 import com.apifortress.afthem.actors.AppContext
+import com.apifortress.afthem.config.{Backends, Flows}
 import com.apifortress.afthem.messages.WebRawRequestMessage
 import javax.servlet.Filter
 import javax.servlet.http.HttpServletRequest
@@ -36,8 +37,14 @@ class AfthemController {
   @RequestMapping(value = Array("**"),method = Array(RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.PATCH,RequestMethod.DELETE))
   def proxy(request: HttpServletRequest): DeferredResult[ResponseEntity[Array[Byte]]] = {
     val deferredResult = new DeferredResult[ResponseEntity[Array[Byte]]]
+    val backendOption = Backends.instance.findByUrl(request.getRequestURL.toString)
+    if (backendOption.isDefined){
+      val backend = backendOption.get
+      val flow = Flows.instance.getFlow(backend.id)
+      val message = new WebRawRequestMessage(request, backend, flow, deferredResult)
+      AppContext.actorSystem.actorSelection("/user/request_parser") ! message
+    }
 
-    AppContext.getActorByPhaseId("request_parser") ! new WebRawRequestMessage(request,deferredResult)
 
     return deferredResult
   }

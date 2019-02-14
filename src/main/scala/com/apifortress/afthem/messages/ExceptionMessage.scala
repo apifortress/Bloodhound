@@ -16,4 +16,4 @@
   */
 package com.apifortress.afthem.messages
 
-case class ExceptionMessage(exception: Exception) extends BaseMessage
+case class ExceptionMessage(exception: Exception)  extends BaseMessage(null,null)

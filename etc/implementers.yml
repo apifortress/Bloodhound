@@ -1,0 +1,20 @@
+implementers:
+# ESSENTIALS
+  - id: request_parser
+    class: com.apifortress.afthem.actors.essentials.RequestParserActor
+  - id: downloader
+    class: com.apifortress.afthem.actors.essentials.DownloaderActor
+  - id: send_back
+    class: com.apifortress.afthem.actors.essentials.SendBackActor
+
+# TRANSFORMERS
+  - id: out_beautifier
+    class: com.apifortress.afthem.actors.transformers.BeautifyPayloadActor
+  - id: add_meta
+    class: com.apifortress.afthem.actors.transformers.AddMetaActor
+
+# SIDECARS
+  - id: access_logger
+    class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor
+  - id: generic_logger
+    class: com.apifortress.afthem.actors.sidecars.GenericLoggerActor

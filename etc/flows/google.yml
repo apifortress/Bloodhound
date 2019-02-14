@@ -1,0 +1,12 @@
+request_parser:
+  next: downloader
+  config:
+    discard_headers:
+      - host
+      - content-length
+
+downloader:
+  next: send_back
+
+send_back:
+  config: {}

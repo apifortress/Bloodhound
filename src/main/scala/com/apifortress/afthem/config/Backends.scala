@@ -16,36 +16,26 @@
   */
 package com.apifortress.afthem.config
 
-import com.apifortress.afthem.ConfigUtil
-import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
+import com.apifortress.afthem.{ConfigUtil, UriUtil}
 
 /**
   * Companion object to load backends from file as a singleton
   */
 object Backends {
 
-
-  private var backendsInstance: Backends = null
-
-  def load(): Backends = {
-    if(backendsInstance != null)
-      return backendsInstance
-
-    backendsInstance = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
-    return backendsInstance
-  }
+    val instance = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
 
 }
 
 /**
   * Data structure representing the configuration of backends
   */
-@JsonIgnoreProperties(ignoreUnknown = true)
-class Backends {
+class Backends(backends: List[Backend]) {
 
-  @JsonProperty("backends")
-  var backends : List[Backend] = null
-
+    def findByUrl(url : String) : Option[Backend] = {
+        val signature = UriUtil.getSignature(url)
+        return backends.find(bec => signature.startsWith(bec.prefix))
+    }
 }
 
 /**
@@ -53,4 +43,4 @@ class Backends {
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
   */
-case class Backend(prefix: String, upstream: String)
+case class Backend(id: String, prefix: String, upstream: String)

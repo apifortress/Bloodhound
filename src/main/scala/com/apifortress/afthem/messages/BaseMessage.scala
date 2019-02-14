@@ -18,6 +18,9 @@ package com.apifortress.afthem.messages
 
 import java.util.Date
 
+import com.apifortress.afthem.config.{Backend, Phase}
+import com.apifortress.afthem.config.Flow
+
 import scala.collection.mutable
 
 /**
@@ -25,10 +28,7 @@ import scala.collection.mutable
   * @param dateParam the date the message has been created. A new date will be created if null
   * @param metaParam metadata. A new collection will be created if null
   */
-class BaseMessage(dateParam : Date = new Date(),
-                  metaParam : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]()) {
-
-  val date = dateParam
-  val meta = metaParam
-
-}
+class BaseMessage(val backend : Backend,
+                  val flow: Flow,
+                  val date : Date = new Date(),
+                  val meta : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]())

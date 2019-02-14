@@ -17,24 +17,16 @@
 
 package com.apifortress.afthem
 
-import java.io.{File, InputStreamReader}
+import com.apifortress.afthem.messages.HttpWrapper
+import org.springframework.http.ResponseEntity
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+object ResultUtil {
 
-import scala.io.Source
-
-object ConfigUtil {
-
-  private val objectMapper: ObjectMapper = new ObjectMapper(new YAMLFactory())
-  objectMapper.registerModule(DefaultScalaModule)
-
-  def parse[T](data : InputStreamReader, theClass : Class[T]): T = {
-    return objectMapper.readValue(data, theClass)
+  def createEntity(response: HttpWrapper) : ResponseEntity[Array[Byte]] = {
+    var envelopeBuilder = ResponseEntity.status(response.status)
+    response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header._1,header._2))
+    val bodyBuilder = envelopeBuilder.body(response.payload)
+    return bodyBuilder
   }
 
-  def parse[T](filename : String, theClass : Class[T]): T = {
-    return parse[T](Source.fromFile("etc"+File.separator+filename).reader(), theClass)
-  }
 }

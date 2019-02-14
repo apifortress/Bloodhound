@@ -1,3 +1,12 @@
 backends:
+- prefix: 'localhost:8080/demo/'
+  upstream: 'http://demoapi.apifortress.com/api/retail/'
+  id: default
+
+- prefix: 'localhost:8080/google'
+  upstream: 'https://google.com/'
+  id: google
+
 - prefix: 'localhost:8080/'
   upstream: 'https://postman-echo.com/'
+  id: default

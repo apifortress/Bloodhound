@@ -37,16 +37,16 @@ object DeserializerActor {
 }
 class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
-  val parsedExpression : Expression = DeserializerActor.parser.parseExpression(phase.config.get("expression").get.asInstanceOf[String])
-  val meta : String = phase.config.get("meta").getOrElse(None).asInstanceOf[String]
-  val contentType : String = phase.config.get("contentType").getOrElse(None).asInstanceOf[String]
-
   override def receive: Receive = {
     case msg : BaseMessage => {
+      val phase = getPhase(msg)
+      val parsedExpression = DeserializerActor.parser.parseExpression(phase.config.get("expression").get.asInstanceOf[String])
+      val meta = phase.config.get("meta").getOrElse(None).asInstanceOf[String]
+      val contentType  = phase.config.get("contentType").getOrElse(None).asInstanceOf[String]
 
       val ctx = new StandardEvaluationContext()
       ctx.setVariable("msg",msg)
-      val output = deserialize(parsedExpression.getValue(ctx))
+      val output = deserialize(parsedExpression.getValue(ctx),contentType)
 
       msg.meta.put(meta,output)
 
@@ -54,7 +54,7 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     }
   }
 
-  def deserialize(data : Any ): Any = {
+  def deserialize(data : Any, contentType : String): Any = {
     var output : Any = null
     if(data.isInstanceOf[String]) {
       if(contentType.contains("json"))

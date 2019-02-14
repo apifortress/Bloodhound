@@ -20,7 +20,7 @@ import java.io.File
 
 import akka.actor.{ActorSelection, ActorSystem, Props}
 import akka.routing.FromConfig
-import com.apifortress.afthem.config.{Phase, Phases}
+import com.apifortress.afthem.config.{Implementers, Phase, Flows}
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -28,31 +28,21 @@ import com.typesafe.config.ConfigFactory
   */
 object AppContext {
 
-  val phases = Phases.load()
 
 
   val config = ConfigFactory.parseFile(new File("etc"+File.separator+"application.conf"))
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
 
-  phases.phases.foreach{ item =>
-    val theClass = Class.forName(item._2.className)
-    val prop = Props.create(theClass,item._1)
-    if(config.hasPath("akka.actor.deployment./"+item._1)){
-      actorSystem.actorOf(FromConfig.props(prop), item._1)
+  Implementers.instance.implementers.foreach{ item =>
+    val theClass = Class.forName(item.className)
+    val prop = Props.create(theClass,item.id)
+    if(config.hasPath("akka.actor.deployment./"+item.id)){
+      actorSystem.actorOf(FromConfig.props(prop), item.id)
     } else
-      actorSystem.actorOf(prop, item._1)
+      actorSystem.actorOf(prop, item.id)
   }
-
-  def getActorByPath(path : String) : ActorSelection = actorSystem.actorSelection(path)
-
-  def getActorById(id : String) : ActorSelection = getActorByPath(getPathById(id))
-
-  def getActorByPhase(phase: Phase) : ActorSelection = getActorById(phase.id)
-
-  def getActorByPhaseId(phaseId : String) : ActorSelection = getActorByPhase(Phases.load().getPhase(phaseId))
 
   def init() : Unit = {}
 
-  def getPathById(id : String ) : String = "/user/"+id
 
 }

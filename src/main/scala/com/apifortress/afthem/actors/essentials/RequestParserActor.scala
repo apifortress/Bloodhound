@@ -30,12 +30,14 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
   override def receive: Receive = {
     case msg : WebRawRequestMessage => {
+
+      val phase = getPhase(msg)
+
       val wrapper = new HttpWrapper
 
       wrapper.url = UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString)
 
-      val parsedHeaders = ReqResUtil.parseHeaders(msg.request,phase.config.get("discard_headers")
-                                    .getOrElse(List.empty[String]).asInstanceOf[List[String]])
+      val parsedHeaders = ReqResUtil.parseHeaders(msg.request,phase.getConfigList("discard_headers"))
 
       wrapper.headers = parsedHeaders._1
 
@@ -45,7 +47,9 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
       wrapper.remoteIP = msg.request.getRemoteAddr
 
-      val message = new WebParsedRequestMessage(wrapper,msg.deferredResult,msg.date,msg.meta)
+      val message = new WebParsedRequestMessage(wrapper, msg.backend,
+                                                msg.flow, msg.deferredResult,
+                                                msg.date, msg.meta)
 
       forward(message)
     }

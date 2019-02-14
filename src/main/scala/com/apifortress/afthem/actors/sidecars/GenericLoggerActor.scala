@@ -30,10 +30,9 @@ object GenericLoggerActor {
 
 class GenericLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
-  val parsedExpression : Expression = GenericLoggerActor.parser.parseExpression(phase.config.get("expression").get.asInstanceOf[String])
-
   override def receive: Receive = {
     case msg : BaseMessage =>
+      val parsedExpression = GenericLoggerActor.parser.parseExpression(getPhase(msg).config.get("expression").get.asInstanceOf[String])
       val ctx = new StandardEvaluationContext()
       ctx.setVariable("msg",msg)
       println(parsedExpression.getValue(ctx))

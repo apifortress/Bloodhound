@@ -15,10 +15,8 @@
   * @author Simone Pezzano
   */
 package com.apifortress.afthem.actors
-
-import com.apifortress.afthem.config.Phases
-import com.apifortress.afthem.config.Phase
 import akka.actor.{Actor, ActorSelection}
+import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.BaseMessage
 import org.slf4j.LoggerFactory
 
@@ -28,32 +26,29 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
 
   log.info("Initializing "+self.path.toStringWithoutAddress)
 
-  val phases = Phases.load()
-
-  val phase = getPhase()
-
   def getPhaseId() : String = return phaseId
 
-  def getPhase() : Phase = phases.getPhase(getPhaseId())
+  def getPhase(message : BaseMessage) : Phase = message.flow.getPhase(getPhaseId())
 
-  def getNextPhase() : Phase = phases.getPhase(getPhase().next)
-
-  def selectActor(phase: Phase) = AppContext.getActorByPhase(phase)
-
-  def selectNextActor() = selectActor(getNextPhase())
-
-  def selectSidecarActors() : List[ActorSelection] = {
-    val sidecars = getPhase().sidecars
-    if(sidecars == null)
-      return List.empty[ActorSelection]
-    sidecars.map(phaseId => AppContext.getActorByPhaseId(phaseId))
+  def selectNextActor(message : BaseMessage): ActorSelection = {
+    return AppContext.actorSystem.actorSelection("/user/"+message.flow.getNextPhase(getPhaseId()).id)
   }
 
-  def tellSidecars(message: BaseMessage) : Unit = selectSidecarActors().foreach(actor => actor ! message)
+  private def selectSidecarsActors(message : BaseMessage): List[ActorSelection] = {
+    val sidecarIds = message.flow.getPhase(getPhaseId()).sidecars
+    if (sidecarIds == null)
+      return List.empty[ActorSelection]
+    return sidecarIds.map(id => AppContext.actorSystem.actorSelection("/user/"+id))
+  }
+
+  def tellSidecars(message : BaseMessage) = {
+    selectSidecarsActors(message).foreach( actor => actor ! message)
+  }
 
   def forward(message: BaseMessage) : Unit = {
     tellSidecars(message)
-    selectNextActor() ! message
+    val selector = selectNextActor(message)
+    selector ! message
 
   }
 

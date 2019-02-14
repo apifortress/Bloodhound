@@ -16,4 +16,4 @@
   */
 package com.apifortress.afthem.exceptions
 
-case class AfthemConfigurationException(message : String) extends Exception(message: String)
+case class AfthemConfigurationException(message : String) extends AfthemException(message: String)

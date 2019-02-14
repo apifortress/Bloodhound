@@ -1,0 +1,34 @@
+request_parser:
+  next: add_meta
+  sidecars:
+    - access_logger
+  config:
+    discard_headers:
+      - host
+      - content-length
+add_meta:
+  next: downloader
+  config:
+    foo: bar
+
+downloader:
+  next: out_beautifier
+  config:
+    discard_headers:
+      - "content-length"
+
+out_beautifier:
+  next: send_back
+  config:
+    mode: json
+
+send_back:
+  sidecars:
+    - generic_logger
+
+generic_logger:
+  config:
+    expression: "#msg.meta().get('foo').get()"
+
+access_logger:
+  config: {}
