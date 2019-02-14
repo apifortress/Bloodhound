@@ -16,27 +16,29 @@
   */
 package com.apifortress.afthem.actors.sidecars
 
+import com.apifortress.afthem.SpelEvaluator
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
-import org.springframework.expression.spel.standard.SpelExpressionParser
-import org.springframework.expression.Expression
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
-object GenericLoggerActor {
-
-  val parser = new SpelExpressionParser
-
-}
 
 class GenericLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg : BaseMessage =>
-      val parsedExpression = GenericLoggerActor.parser.parseExpression(getPhase(msg).config.get("expression").get.asInstanceOf[String])
-      val ctx = new StandardEvaluationContext()
-      ctx.setVariable("msg",msg)
-      println(parsedExpression.getValue(ctx))
+      val evaluated = getPhase(msg).getConfigBoolean("evaluated").getOrElse(false)
+      val data = getPhase(msg).getConfigString("data")
+      if(evaluated) {
+        val parsedExpression = SpelEvaluator.parse(data)
+        val ctx = new StandardEvaluationContext()
+        ctx.setVariable("msg",msg)
+        val item = parsedExpression.getValue(ctx)
+        print(item)
+      } else print(data)
+  }
 
+  private def print(data : Any): Unit = {
+    println(data)
   }
 
 }

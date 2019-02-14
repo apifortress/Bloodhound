@@ -46,7 +46,12 @@ object UriUtil {
     * @return the upstream URL
     */
   def determineUpstreamUrl(url: String, backend: Backend): String = {
-    val subPath = url.substring(url.indexOf(backend.prefix)+backend.prefix.length)
+    var subPath = url.substring(url.indexOf(backend.prefix)+backend.prefix.length)
+    var upstreamUrl = backend.upstream
+    if(!upstreamUrl.endsWith("/"))
+      upstreamUrl+='/'
+    if(subPath.startsWith("/"))
+      subPath = subPath.substring(1)
     return backend.upstream+subPath
   }
 

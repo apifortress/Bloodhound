@@ -16,33 +16,21 @@
   */
 package com.apifortress.afthem.actors.transformers
 
+import com.apifortress.afthem.{Parsers, SpelEvaluator}
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import org.springframework.expression.Expression
-import org.springframework.expression.spel.standard.SpelExpressionParser
+import com.apifortress.afthem.messages.BaseMessage
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
-object DeserializerActor {
-
-  val objectMapper = new ObjectMapper()
-  objectMapper.registerModule(DefaultScalaModule)
-
-  val xmlMapper = new XmlMapper()
-  xmlMapper.registerModule(DefaultScalaModule)
-
-  val parser = new SpelExpressionParser
-}
 class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg : BaseMessage => {
       val phase = getPhase(msg)
-      val parsedExpression = DeserializerActor.parser.parseExpression(phase.config.get("expression").get.asInstanceOf[String])
-      val meta = phase.config.get("meta").getOrElse(None).asInstanceOf[String]
-      val contentType  = phase.config.get("contentType").getOrElse(None).asInstanceOf[String]
+
+      val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
+
+      val meta = phase.getConfigString("meta")
+      val contentType  = phase.getConfigString("contentType")
 
       val ctx = new StandardEvaluationContext()
       ctx.setVariable("msg",msg)
@@ -58,15 +46,15 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     var output : Any = null
     if(data.isInstanceOf[String]) {
       if(contentType.contains("json"))
-        output = DeserializerActor.objectMapper.readValue(data.asInstanceOf[String], classOf[Any])
+        output = Parsers.parseJSON[Any](data.asInstanceOf[String], classOf[Any])
       if(contentType.contains("xml"))
-        output = DeserializerActor.xmlMapper.readValue(data.asInstanceOf[String], classOf[Any])
+        output = Parsers.parseXML[Any](data.asInstanceOf[String], classOf[Any])
     }
     if(data.isInstanceOf[Array[Byte]]) {
       if(contentType.contains("json"))
-        output = DeserializerActor.objectMapper.readValue(data.asInstanceOf[Array[Byte]], classOf[Any])
+        output = Parsers.parseJSON[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
       if(contentType.contains("xml"))
-        output = DeserializerActor.xmlMapper.readValue(data.asInstanceOf[Array[Byte]], classOf[Any])
+        output = Parsers.parseXML[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
     }
     return output
   }

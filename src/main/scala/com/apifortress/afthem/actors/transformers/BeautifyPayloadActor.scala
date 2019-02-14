@@ -16,6 +16,7 @@
   */
 package com.apifortress.afthem.actors.transformers
 
+import com.apifortress.afthem.Parsers
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import org.apache.commons.codec.binary.StringUtils
@@ -51,14 +52,10 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   def beautify(data : Array[Byte], mode : String) : Array[Byte] = {
     try {
-      if (mode.contains("json")) {
-        val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
-        return StringUtils.getBytesUtf8(BeautifyPayloadActor.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
-      }
-      if (mode.contains("xml")) {
-        val obj = BeautifyPayloadActor.objectMapper.readValue(data, classOf[Object])
-        return StringUtils.getBytesUtf8(BeautifyPayloadActor.xmlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj))
-      }
+      if (mode.contains("json"))
+        return Parsers.beautifyJSON(data)
+      if (mode.contains("xml"))
+        return Parsers.beautifyXML(data)
     }catch {
       case e : Exception => log.warn("Invalid format")
     }

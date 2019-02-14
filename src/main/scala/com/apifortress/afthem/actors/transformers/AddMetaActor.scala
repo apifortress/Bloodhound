@@ -17,14 +17,24 @@
 
 package com.apifortress.afthem.actors.transformers
 
+import com.apifortress.afthem.SpelEvaluator
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
+import org.springframework.expression.spel.support.StandardEvaluationContext
 
 class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
 
   override def receive: Receive = {
     case msg : BaseMessage =>
-      getPhase(msg).config.foreach( item => msg.meta.put(item._1,item._2))
+      val evaluated = getPhase(msg).getConfigBoolean("evaluated").getOrElse(false)
+      val data = getPhase(msg).getConfigString("data")
+      val name = getPhase(msg).getConfigString("name")
+      if(evaluated) {
+        val parsedExpression = SpelEvaluator.parse(data)
+        val ctx = new StandardEvaluationContext()
+        ctx.setVariable("msg",msg)
+        msg.meta.put(name,parsedExpression.getValue(ctx))
+      } else msg.meta.put(name,data)
       forward(msg)
   }
 }

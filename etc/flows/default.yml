@@ -6,10 +6,13 @@ request_parser:
     discard_headers:
       - host
       - content-length
+
 add_meta:
   next: downloader
   config:
-    foo: bar
+    name: foo
+    data: "#msg.request().headers()"
+    evaluated: true
 
 downloader:
   next: out_beautifier
@@ -28,7 +31,8 @@ send_back:
 
 generic_logger:
   config:
-    expression: "#msg.meta().get('foo').get()"
+    data: "#msg.meta()"
+    evaluated: true
 
 access_logger:
   config: {}
