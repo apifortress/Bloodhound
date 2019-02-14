@@ -16,7 +16,7 @@
   */
 package com.apifortress.afthem.actors.transformers
 
-import com.apifortress.afthem.{Parsers, SpelEvaluator}
+import com.apifortress.afthem.{Metric, Parsers, SpelEvaluator}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
 import org.springframework.expression.spel.support.StandardEvaluationContext
@@ -25,6 +25,7 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
   override def receive: Receive = {
     case msg : BaseMessage => {
+      val m = new Metric
       val phase = getPhase(msg)
 
       val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
@@ -39,6 +40,7 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       msg.meta.put(meta,output)
 
       forward(msg)
+      log.debug(m.toString())
     }
   }
 

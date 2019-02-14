@@ -17,23 +17,12 @@
 
 package com.apifortress.afthem
 
-import java.io.File
+class Metric {
 
-import scala.io.Source
+  val start : Long = System.nanoTime()
 
-/**
-  * Utils for the configuration files
-  */
-object ConfigUtil {
-
-  /**
-    * Parses a configuration file in the etc/ directory
-    * @param filename the filename we want to load
-    * @param theClass the class of the configuration file
-    * @tparam T the class of the configuration file
-    * @return the parsed configuration file
-    */
-  def parse[T](filename : String, theClass : Class[T]): T = {
-    return Parsers.parseYaml[T](Source.fromFile("etc"+File.separator+filename).reader(), theClass)
+  override def toString() : String = {
+    val c = (System.nanoTime()-start)/1000000.0f
+    return f"$c%1.3f"+"ms"
   }
 }

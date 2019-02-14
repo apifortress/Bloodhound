@@ -20,6 +20,7 @@ package com.apifortress.afthem.actors.sidecars.serializers
 import java.io.File
 import java.nio.charset.StandardCharsets
 
+import com.apifortress.afthem.Metric
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 import org.apache.commons.io.FileUtils
 
@@ -27,8 +28,10 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerAc
 
   override def receive: Receive = {
     case msg : WebParsedResponseMessage =>
+      val m = new Metric
       val filename = getPhase(msg).getConfigString("filename")
       val file = new File(filename)
       FileUtils.write(file,serialize(msg)+"\n",StandardCharsets.UTF_8,true)
+      log.debug(m.toString())
   }
 }

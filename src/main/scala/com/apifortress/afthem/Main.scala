@@ -32,11 +32,9 @@ object Main {
   val log = LoggerFactory.getLogger(classOf[Main])
 
   def main(args: Array[String]): Unit = {
-    log.info("Afthem starting...")
+    log.debug("Afthem starting...")
     AppContext.init()
-    SpringApplication.run(classOf[Main])
-
-    //new BaseMessage().
+    SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args)
   }
 
 

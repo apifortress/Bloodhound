@@ -24,60 +24,169 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
+/**
+  * All parsing functions
+  */
 object Parsers {
 
+  /**
+    * The yaml mapper
+    */
   private val yamlMapper : ObjectMapper = new ObjectMapper(new YAMLFactory())
   yamlMapper.registerModule(DefaultScalaModule)
 
+  /**
+    * The json mapper
+    */
   private val jsonMapper : ObjectMapper = new ObjectMapper()
   jsonMapper.registerModule(DefaultScalaModule)
+
+  /**
+    * The json mapper with pretty printer
+    */
   private val prettyJsonMapper = jsonMapper.writerWithDefaultPrettyPrinter()
 
+  /**
+    * The xml mapper
+    */
   private val xmlMapper : XmlMapper = new XmlMapper()
   xmlMapper.registerModule(DefaultScalaModule)
+
+  /**
+    * The xml mapper with pretty printer
+    */
   private val prettyXmlMapper = xmlMapper.writerWithDefaultPrettyPrinter()
 
+  /**
+    * Parses a YAML from string to a specific Class
+    * @param data the YAML in string format
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the YAML parsed into the given class
+    */
   def parseYaml[T](data : String,theClass : Class[T]) : T = yamlMapper.readValue(data,theClass)
 
+  /**
+    * Parses a YAML from a reader to a specific Class
+    * @param data a reader to YAML data
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the YAML parsed into the given class
+    */
   def parseYaml[T](data : Reader, theClass : Class[T]) : T = yamlMapper.readValue(data,theClass)
 
+  /**
+    * Parses a JSON from string to a specific Class
+    * @param data the JSON in string format
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the JSON parsed into the given class
+    */
   def parseJSON[T](data : String,theClass : Class[T]) : T = jsonMapper.readValue(data,theClass)
 
+  /**
+    * Parses a JSON from a byte array to a specific Class
+    * @param data the JSON in byte array format
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the JSON parsed into the given class
+    */
   def parseJSON[T](data : Array[Byte],theClass : Class[T]) : T = jsonMapper.readValue(data,theClass)
 
+  /**
+    * Parses a JSON from a reader to a specific Class
+    * @param data a reader to JSON data
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the JSON parsed into the given class
+    */
   def parseJSON[T](data : Reader, theClass : Class[T]) : T = jsonMapper.readValue(data,theClass)
 
+  /**
+    * Parses an XML from a string to a specific Class
+    * @param data the XML in string format
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the XML parsed into the given class
+    */
   def parseXML[T](data : String,theClass : Class[T]) : T = xmlMapper.readValue(data,theClass)
 
+  /**
+    * Parses an XML from a byte array to a specific Class
+    * @param data the XML in byte array format
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the XML parsed into the given class
+    */
   def parseXML[T](data : Array[Byte],theClass : Class[T]) : T = xmlMapper.readValue(data,theClass)
 
+  /**
+    * Parses an XML from a reader to a specific Class
+    * @param data a reader to XML data
+    * @param theClass the class we want to parse to
+    * @tparam T the class we want to parse to
+    * @return the XML parsed into the given class
+    */
   def parseXML[T](data : Reader, theClass : Class[T]) : T = xmlMapper.readValue(data,theClass)
 
-
-  def deserializeAsJsonString(data : Any, pretty : Boolean = true) : String = {
+  /**
+    * Serializes an object to a JSON string
+    * @param data an object to be serialized
+    * @param pretty true if pretty print is desired
+    * @return the JSON-serialized object as a string
+    */
+  def serializeAsJsonString(data : Any, pretty : Boolean = true) : String = {
     if (pretty) prettyJsonMapper.writeValueAsString(data)
     else jsonMapper.writeValueAsString(data)
   }
 
-  def deserializeAsJsonByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
+  /**
+    * Serializes an object to a JSON byte array
+    * @param data an object to be serialized
+    * @param pretty true if pretty print is desired
+    * @return the JSON-serialized object as byte array
+    */
+  def serializeAsJsonByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
     if (pretty) prettyJsonMapper.writeValueAsBytes(data)
     else jsonMapper.writeValueAsBytes(data)
   }
 
-  def deserializeAsXmlString(data : Any, pretty : Boolean = true) : String = {
+  /**
+    * Serializes an object to a XML string
+    * @param data an object to be serialized
+    * @param pretty rue if pretty print is desired
+    * @return the XML-serialized object as a string
+    */
+  def serializeAsXmlString(data : Any, pretty : Boolean = true) : String = {
     if (pretty) prettyXmlMapper.writeValueAsString(data)
     else xmlMapper.writeValueAsString(data)
   }
 
+  /**
+    * Serializes an object to a XML byte array
+    * @param data an object to be serialized
+    * @param pretty true if pretty print is desired
+    * @return the XML-serialized object as a byte array
+    */
   def deserializeAsXmlByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
     if(pretty) prettyXmlMapper.writeValueAsBytes(data)
     else xmlMapper.writeValueAsBytes(data)
   }
 
+  /**
+    * Beautifies a JSON stored into a byte array and returns a byte array
+    * @param data a JSON stored into a byte array
+    * @return a byte array containing the beautified JSON
+    */
   def beautifyJSON(data : Array[Byte]) : Array[Byte] = {
-    return deserializeAsJsonByteArray(parseJSON[Object](data, classOf[Object]))
+    return serializeAsJsonByteArray(parseJSON[Object](data, classOf[Object]))
   }
 
+  /**
+    * Beautifies an XML stored into a byte array and returns a byte array
+    * @param data a XML stored into a byte array
+    * @return a byte array containing the beautified XML
+    */
   def beautifyXML(data : Array[Byte]) : Array[Byte] = {
     return deserializeAsXmlByteArray(parseXML[Object](data, classOf[Object]))
   }

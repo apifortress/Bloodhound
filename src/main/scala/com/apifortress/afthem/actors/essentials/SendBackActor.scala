@@ -16,16 +16,22 @@
   */
 package com.apifortress.afthem.actors.essentials
 
-import com.apifortress.afthem.ResultUtil
+import com.apifortress.afthem.{Metric, ResponseEntityUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 
+/**
+  * The actor taking care of sending the response back to the requesting controller
+  * @param phaseId the phase ID
+  */
 class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg: WebParsedResponseMessage => {
+      val m = new Metric
       tellSidecars(msg)
-      msg.deferredResult.setResult(ResultUtil.createEntity(msg.response))
+      msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
+      log.debug(m.toString())
     }
   }
 

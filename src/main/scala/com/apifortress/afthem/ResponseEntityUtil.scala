@@ -20,8 +20,16 @@ package com.apifortress.afthem
 import com.apifortress.afthem.messages.HttpWrapper
 import org.springframework.http.ResponseEntity
 
-object ResultUtil {
+/**
+  * Util to manipulate Spring response entities
+  */
+object ResponseEntityUtil {
 
+  /**
+    * Given a response in the form of an HttpWrapper, it produces a ResponseEntity off it
+    * @param response a response in the form of an HttpWrapper
+    * @return a response entity
+    */
   def createEntity(response: HttpWrapper) : ResponseEntity[Array[Byte]] = {
     var envelopeBuilder = ResponseEntity.status(response.status)
     response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header._1,header._2))

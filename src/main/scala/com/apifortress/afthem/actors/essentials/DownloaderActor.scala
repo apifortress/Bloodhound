@@ -21,7 +21,7 @@ import java.io.InputStream
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.Backend
 import com.apifortress.afthem.messages.{ExceptionMessage, HttpWrapper, WebParsedRequestMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{ReqResUtil, UriUtil}
+import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
@@ -48,7 +48,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage => {
-
+      val m = new Metric
       val discardHeaders = getPhase(msg).getConfigList("discard_headers")
 
       val upstreamUrl = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
@@ -76,6 +76,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
         override def cancelled(): Unit = {}
       })
+      log.debug(m.toString())
 
     }
 

@@ -24,7 +24,7 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
 
   val log = LoggerFactory.getLogger(this.getClass)
 
-  log.info("Initializing "+self.path.toStringWithoutAddress)
+  log.info("Initializing "+self.path.toStringWithoutAddress+" - "+context.dispatcher)
 
   def getPhaseId() : String = return phaseId
 

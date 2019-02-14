@@ -16,7 +16,7 @@
   */
 package com.apifortress.afthem.actors.transformers
 
-import com.apifortress.afthem.Parsers
+import com.apifortress.afthem.{Metric, Parsers}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import org.apache.commons.codec.binary.StringUtils
@@ -39,14 +39,18 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage => {
+      val m = new Metric
       msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.get("mode").getOrElse("json").asInstanceOf[String])
       msg.request.headers = msg.request.headers.filter( header => header._1.toLowerCase!="content-length")
       forward(msg)
+      log.debug(m.toString())
     }
     case msg : WebParsedResponseMessage => {
+      val m = new Metric
       msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.get("mode").getOrElse("json").asInstanceOf[String])
       msg.response.headers = msg.response.headers.filter( header => header._1.toLowerCase!="content-length")
       forward(msg)
+      log.debug(m.toString())
     }
   }
 

@@ -70,6 +70,11 @@ object UriUtil {
     return uri
   }
 
+  /**
+    * Transforms the URI that is compatible with the expectations of the API Fortress serializer
+    * @param uri the URI to be transformed
+    * @return the transformed URI
+    */
   def toSerializerUri(uri : String): String = {
     val url = new URL(uri)
     return url.getPath+(if (url.getQuery!=null) "?"+url.getQuery)

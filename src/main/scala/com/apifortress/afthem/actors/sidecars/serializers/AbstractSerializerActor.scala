@@ -53,7 +53,7 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     request.put("headers",responseHeaders)
     obj.put("response",response)
 
-    return Parsers.deserializeAsJsonString(obj,false)
+    return Parsers.serializeAsJsonString(obj,false)
 
   }
 

@@ -18,18 +18,19 @@ package com.apifortress.afthem.actors.essentials
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{HttpWrapper, WebParsedRequestMessage, WebRawRequestMessage}
-import com.apifortress.afthem.{ReqResUtil, UriUtil}
+import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.slf4j.LoggerFactory
 
-object RequestParserActor {
-
-  val log = LoggerFactory.getLogger("RequestParserActor")
-
-}
+/**
+  * The actor in charge of parsing the inbound request data
+  * @param phaseId the phase ID
+  */
 class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg : WebRawRequestMessage => {
+
+      val m = new Metric
 
       val phase = getPhase(msg)
 
@@ -52,6 +53,7 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
                                                 msg.date, msg.meta)
 
       forward(message)
+      log.debug("Metrics : "+m.toString())
     }
   }
 
