@@ -18,3 +18,5 @@ implementers:
     class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor
   - id: generic_logger
     class: com.apifortress.afthem.actors.sidecars.GenericLoggerActor
+  - id: file_appender_serializer
+    class: com.apifortress.afthem.actors.sidecars.serializers.FileAppenderSerializerActor

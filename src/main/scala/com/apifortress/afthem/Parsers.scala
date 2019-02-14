@@ -19,12 +19,10 @@ package com.apifortress.afthem
 
 import java.io.Reader
 
-import com.apifortress.afthem.actors.transformers.BeautifyPayloadActor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import org.apache.commons.codec.binary.StringUtils
 
 object Parsers {
 
@@ -33,9 +31,11 @@ object Parsers {
 
   private val jsonMapper : ObjectMapper = new ObjectMapper()
   jsonMapper.registerModule(DefaultScalaModule)
+  private val prettyJsonMapper = jsonMapper.writerWithDefaultPrettyPrinter()
 
   private val xmlMapper : XmlMapper = new XmlMapper()
   xmlMapper.registerModule(DefaultScalaModule)
+  private val prettyXmlMapper = xmlMapper.writerWithDefaultPrettyPrinter()
 
   def parseYaml[T](data : String,theClass : Class[T]) : T = yamlMapper.readValue(data,theClass)
 
@@ -53,20 +53,33 @@ object Parsers {
 
   def parseXML[T](data : Reader, theClass : Class[T]) : T = xmlMapper.readValue(data,theClass)
 
-  def deserializeAsPrettyJsonByteArray(data : Any) : Array[Byte] = {
-    return StringUtils.getBytesUtf8(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(data))
+
+  def deserializeAsJsonString(data : Any, pretty : Boolean = true) : String = {
+    if (pretty) prettyJsonMapper.writeValueAsString(data)
+    else jsonMapper.writeValueAsString(data)
   }
 
-  def deserializeAsPrettyXmlByteArray(data : Any) : Array[Byte] = {
-    return StringUtils.getBytesUtf8(xmlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(data))
+  def deserializeAsJsonByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
+    if (pretty) prettyJsonMapper.writeValueAsBytes(data)
+    else jsonMapper.writeValueAsBytes(data)
+  }
+
+  def deserializeAsXmlString(data : Any, pretty : Boolean = true) : String = {
+    if (pretty) prettyXmlMapper.writeValueAsString(data)
+    else xmlMapper.writeValueAsString(data)
+  }
+
+  def deserializeAsXmlByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
+    if(pretty) prettyXmlMapper.writeValueAsBytes(data)
+    else xmlMapper.writeValueAsBytes(data)
   }
 
   def beautifyJSON(data : Array[Byte]) : Array[Byte] = {
-    return deserializeAsPrettyJsonByteArray(parseJSON[Object](data, classOf[Object]))
+    return deserializeAsJsonByteArray(parseJSON[Object](data, classOf[Object]))
   }
 
   def beautifyXML(data : Array[Byte]) : Array[Byte] = {
-    return deserializeAsPrettyXmlByteArray(parseXML[Object](data, classOf[Object]))
+    return deserializeAsXmlByteArray(parseXML[Object](data, classOf[Object]))
   }
 
 

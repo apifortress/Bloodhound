@@ -28,6 +28,11 @@ out_beautifier:
 send_back:
   sidecars:
     - generic_logger
+    - file_appender_serializer
+
+file_appender_serializer:
+  config:
+    filename: foobar.txt
 
 generic_logger:
   config:

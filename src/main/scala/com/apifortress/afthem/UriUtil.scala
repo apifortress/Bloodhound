@@ -16,7 +16,10 @@
   */
 package com.apifortress.afthem
 
+import java.net.URL
+
 import com.apifortress.afthem.config.Backend
+
 
 
 /**
@@ -65,5 +68,10 @@ object UriUtil {
     if(queryString != null && !queryString.isEmpty)
       return uri+"?"+queryString
     return uri
+  }
+
+  def toSerializerUri(uri : String): String = {
+    val url = new URL(uri)
+    return url.getPath+(if (url.getQuery!=null) "?"+url.getQuery)
   }
 }
