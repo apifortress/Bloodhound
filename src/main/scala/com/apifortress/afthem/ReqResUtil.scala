@@ -45,7 +45,7 @@ object ReqResUtil {
     * @param request an HttpServletRequest to parse the headers from
     * @return a tuple made up of (list of headers, interesting headers)
     */
-  def parseHeaders(request: HttpServletRequest, discardHeaders : List[String] = List.empty[String]) : (List[(String Tuple2 String)],Map[String,Any]) = {
+  def parseHeaders(request: HttpServletRequest, discardHeaders : mutable.MutableList[String] = mutable.MutableList.empty[String]) : (List[(String Tuple2 String)],Map[String,Any]) = {
     val headers = new mutable.MutableList[String Tuple2 String]
     val interestingHeaders = new mutable.HashMap[String,Any]
 

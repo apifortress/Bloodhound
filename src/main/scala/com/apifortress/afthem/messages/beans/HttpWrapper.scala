@@ -14,13 +14,24 @@
  *   @author Simone Pezzano
  *
  */
+package com.apifortress.afthem.messages.beans
 
-package com.apifortress.afthem
+/**
+  * An object wrapping information about either a request or a response
+  */
+class HttpWrapper() {
 
-class Metric(val start: Long = System.nanoTime()) {
+  var url : String = null
+  var payload : Array[Byte] = null
+  var status : Int = 200
+  var method : String = null
+  var headers : List[(String Tuple2 String)] = null
+  var remoteIP: String = null
 
-  override def toString() : String = {
-    val c = (System.nanoTime()-start)/1000000.0f
-    return f"$c%1.3f"+"ms"
+  def getHeader(name : String) : String = {
+    val header = headers.find(item => item._1.toLowerCase == name.toLowerCase)
+    if(header.isDefined) return header.get._2
+    return ""
   }
+
 }

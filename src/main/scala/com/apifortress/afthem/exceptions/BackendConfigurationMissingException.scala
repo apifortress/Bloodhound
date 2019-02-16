@@ -15,12 +15,6 @@
  *
  */
 
-package com.apifortress.afthem
+package com.apifortress.afthem.exceptions
 
-class Metric(val start: Long = System.nanoTime()) {
-
-  override def toString() : String = {
-    val c = (System.nanoTime()-start)/1000000.0f
-    return f"$c%1.3f"+"ms"
-  }
-}
+class BackendConfigurationMissingException extends Exception("No backend configuration found")

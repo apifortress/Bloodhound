@@ -23,10 +23,34 @@
         </encoder>
     </appender>
 
+    <appender name="ACCESS_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/access.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="UPSTREAM_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/upstream.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
     <logger name="com.apifortress" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="Access-Inbound" level="INFO" additivity="false">
+        <appender-ref ref="ACCESS_LOGGER" />
+    </logger>
+    <logger name="Upstream" level="INFO" additivity="false">
+        <appender-ref ref="UPSTREAM_LOGGER" />
     </logger>
 </configuration>

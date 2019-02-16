@@ -20,7 +20,8 @@ import java.io.InputStream
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.Backend
-import com.apifortress.afthem.messages.{ExceptionMessage, HttpWrapper, WebParsedRequestMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods._
@@ -51,16 +52,17 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
       val m = new Metric
       val discardHeaders = getPhase(msg).getConfigList("discard_headers")
 
-      val upstreamUrl = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
-      val httpReq: HttpUriRequest = createRequest(upstreamUrl, msg.request, discardHeaders)
-
+      msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
+      val httpReq: HttpUriRequest = createRequest(msg.request.url, msg.request, discardHeaders)
+      log.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
       DownloaderActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
         override def completed(response: HttpResponse): Unit = {
           val entity = response.getEntity
           val inputStream = entity.getContent
 
           val wrapper = createResponseWrapper(response, inputStream)
-          wrapper.url = upstreamUrl
+          wrapper.url = msg.request.url
+          wrapper.method = msg.request.method
 
           EntityUtils.consumeQuietly(entity)
           inputStream.close()
@@ -71,7 +73,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
         }
 
         override def failed(e: Exception): Unit = {
-
+          new ExceptionMessage(e,502,msg).respond()
         }
 
         override def cancelled(): Unit = {}

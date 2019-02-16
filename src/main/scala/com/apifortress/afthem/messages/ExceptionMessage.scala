@@ -16,4 +16,13 @@
   */
 package com.apifortress.afthem.messages
 
-case class ExceptionMessage(exception: Exception)  extends BaseMessage(null,null)
+class ExceptionMessage(val exception: Exception,
+                       val status: Int,
+                       val message: BaseMessage)
+    extends BaseMessage(message.backend, message.flow, message.deferredResult, message.date, message.meta) {
+
+  def respond(): Unit = {
+    deferredResult.setData(exception,status)
+  }
+}
+

@@ -18,9 +18,8 @@ package com.apifortress.afthem.messages
 
 import java.util.Date
 
-import com.apifortress.afthem.config.{Backend, Phase, Flow}
-import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.async.DeferredResult
+import com.apifortress.afthem.config.{Backend, Flow}
+import com.apifortress.afthem.messages.beans.{AfthemResult, HttpWrapper}
 
 import scala.collection.mutable
 
@@ -35,7 +34,7 @@ import scala.collection.mutable
 case class WebParsedResponseMessage(response: HttpWrapper, request: HttpWrapper,
                                     override val backend: Backend,
                                     override val flow: Flow,
-                                    deferredResult: DeferredResult[ResponseEntity[Array[Byte]]],
+                                    override val deferredResult: AfthemResult,
                                     override val date: Date = new Date(),
                                     override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
-      extends BaseMessage(backend, flow, date, meta)
+      extends BaseMessage(backend, flow, deferredResult, date, meta)

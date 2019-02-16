@@ -17,9 +17,9 @@
 package com.apifortress.afthem.actors.essentials
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{HttpWrapper, WebParsedRequestMessage, WebRawRequestMessage}
+import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebRawRequestMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
-import org.slf4j.LoggerFactory
 
 /**
   * The actor in charge of parsing the inbound request data
@@ -38,9 +38,11 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
       wrapper.url = UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString)
 
-      val parsedHeaders = ReqResUtil.parseHeaders(msg.request,phase.getConfigList("discard_headers"))
+      val discardHeaders = phase.getConfigList("discard_headers")
 
-      wrapper.headers = parsedHeaders._1
+      val parsedHeaders = ReqResUtil.parseHeaders(msg.request)
+
+      wrapper.headers = filterDiscardHeaders(parsedHeaders._1,discardHeaders)
 
       wrapper.payload = ReqResUtil.readPayload(msg.request.getInputStream,parsedHeaders._2.get("content-length"))
 
@@ -55,6 +57,10 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
       forward(message)
       log.debug("Metrics : "+m.toString())
     }
+  }
+
+  def filterDiscardHeaders(headers: List[(String Tuple2 String)],discardHeaders: List[String]): List[(String Tuple2 String)] = {
+    return headers.filter(item => !discardHeaders.contains(item._1))
   }
 
 }

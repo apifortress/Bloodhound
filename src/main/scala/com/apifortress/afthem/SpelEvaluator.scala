@@ -19,7 +19,8 @@ package com.apifortress.afthem
 
 import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.expression.Expression
-
+import org.springframework.expression.spel.support.StandardEvaluationContext
+import collection.JavaConverters._
 import scala.collection.mutable
 
 /**
@@ -51,5 +52,12 @@ object SpelEvaluator {
     val parsedExpression = parser.parseExpression(expression)
     parsedExpressions.put(expression,parsedExpression)
     return parsedExpression
+  }
+
+  def evaluate(expression : String, variables : Map[String,Any]) : Any = {
+    val parsedException = parse(expression)
+    val ctx = new StandardEvaluationContext()
+    variables.foreach(item => ctx.setVariable(item._1,item._2))
+    return parsedException.getValue(ctx)
   }
 }

@@ -16,9 +16,9 @@
   */
 package com.apifortress.afthem.actors.essentials
 
-import com.apifortress.afthem.{Metric, ResponseEntityUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.WebParsedResponseMessage
+import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.{Metric, ResponseEntityUtil}
 
 /**
   * The actor taking care of sending the response back to the requesting controller
@@ -30,9 +30,15 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
     case msg: WebParsedResponseMessage => {
       val m = new Metric
       tellSidecars(msg)
+
       msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
       log.debug(m.toString())
+      logProcessingTime(msg)
     }
+  }
+
+  private def logProcessingTime(msg: WebParsedResponseMessage) = {
+    log.debug("Roundtrip time : "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
   }
 
 }

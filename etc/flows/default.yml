@@ -1,5 +1,5 @@
 request_parser:
-  next: add_meta
+  next: transform_headers
   sidecars:
     - access_logger
   config:
@@ -7,12 +7,15 @@ request_parser:
       - host
       - content-length
 
-add_meta:
+transform_headers:
   next: downloader
   config:
-    name: foo
-    data: "#msg.request().headers()"
-    evaluated: true
+    add_headers:
+      - name: x-foo
+        value: bar
+      - name: user-agent
+        value: "#msg.request().getHeader('user-agent')+' - Foo Agent'"
+        evaluated: true
 
 downloader:
   next: out_beautifier
@@ -27,17 +30,12 @@ out_beautifier:
 
 send_back:
   sidecars:
-    - generic_logger
+    - access_logger
     - file_appender_serializer
 
 file_appender_serializer:
   config:
-    filename: foobar.txt
-
-generic_logger:
-  config:
-    data: "#msg.meta()"
-    evaluated: true
+    filename: log/foobar.txt
 
 access_logger:
   config: {}

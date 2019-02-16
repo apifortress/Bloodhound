@@ -17,6 +17,7 @@
 package com.apifortress.afthem.config
 
 import com.apifortress.afthem.{ConfigUtil, UriUtil}
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
   * Companion object to load backends from file as a singleton
@@ -43,4 +44,4 @@ class Backends(backends: List[Backend]) {
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
   */
-case class Backend(id: String, prefix: String, upstream: String)
+case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, upstream: String)

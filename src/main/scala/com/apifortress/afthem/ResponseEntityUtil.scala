@@ -17,7 +17,11 @@
 
 package com.apifortress.afthem
 
-import com.apifortress.afthem.messages.HttpWrapper
+import java.nio.charset.StandardCharsets
+
+import com.apifortress.afthem.messages.beans.HttpWrapper
+import org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.http.ResponseEntity
 
 /**
@@ -33,8 +37,19 @@ object ResponseEntityUtil {
   def createEntity(response: HttpWrapper) : ResponseEntity[Array[Byte]] = {
     var envelopeBuilder = ResponseEntity.status(response.status)
     response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header._1,header._2))
-    val bodyBuilder = envelopeBuilder.body(response.payload)
-    return bodyBuilder
+    return envelopeBuilder.body(response.payload)
+  }
+
+  def createEntity(data : String, status : Int) : ResponseEntity[Array[Byte]] = {
+    return ResponseEntity.status(status).body(data.getBytes(StandardCharsets.UTF_8))
+  }
+
+  def createEntity(exception : Exception, status : Int) : ResponseEntity[Array[Byte]] = {
+    return createEntity(exceptionToJSON(exception),status)
+  }
+
+  def exceptionToJSON(e : Exception): String = {
+    return "{ \"status\": \"error\", \"message\": \""+StringEscapeUtils.escapeJavaScript(ExceptionUtils.getMessage(e))+"\"}\n"
   }
 
 }

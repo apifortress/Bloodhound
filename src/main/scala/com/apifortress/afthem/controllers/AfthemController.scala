@@ -19,7 +19,9 @@ package com.apifortress.afthem.controllers
 
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{Backends, Flows}
+import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
 import com.apifortress.afthem.messages.WebRawRequestMessage
+import com.apifortress.afthem.messages.beans.AfthemResult
 import javax.servlet.Filter
 import javax.servlet.http.HttpServletRequest
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -35,14 +37,21 @@ class AfthemController {
 
 
   @RequestMapping(value = Array("**"),method = Array(RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.PATCH,RequestMethod.DELETE))
-  def proxy(request: HttpServletRequest): DeferredResult[ResponseEntity[Array[Byte]]] = {
-    val deferredResult = new DeferredResult[ResponseEntity[Array[Byte]]]
-    val backendOption = Backends.instance.findByUrl(request.getRequestURL.toString)
-    if (backendOption.isDefined){
-      val backend = backendOption.get
-      val flow = Flows.instance.getFlow(backend.id)
-      val message = new WebRawRequestMessage(request, backend, flow, deferredResult)
-      AppContext.actorSystem.actorSelection("/user/request_parser") ! message
+  def proxy(request: HttpServletRequest): AfthemResult = {
+    val deferredResult = new AfthemResult
+    try {
+      val backendOption = Backends.instance.findByUrl(request.getRequestURL.toString)
+      if (backendOption.isDefined) {
+        val backend = backendOption.get
+        val flow = Flows.instance.getFlow(backend.flowId)
+        val message = new WebRawRequestMessage(request, backend, flow, deferredResult)
+        message.meta.put("__start",System.nanoTime())
+        AppContext.actorSystem.actorSelection("/user/request_parser") ! message
+      } else {
+        deferredResult.setData(new BackendConfigurationMissingException, 404)
+      }
+    }catch {
+      case e => deferredResult.setData(new GenericException("controller"),500)
     }
 
 

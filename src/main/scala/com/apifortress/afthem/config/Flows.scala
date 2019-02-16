@@ -19,7 +19,6 @@ package com.apifortress.afthem.config
 import java.io.File
 
 import com.apifortress.afthem.ConfigUtil
-import com.fasterxml.jackson.annotation.JsonProperty
 
 import scala.collection.mutable
 
@@ -126,6 +125,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
   def getConfigList(key : String) : List[String] = {
     val data = getConfig.get(key)
     return if (data.isDefined) data.get.asInstanceOf[List[String]] else List.empty[String]
+  }
+
+  def getConfigListMap(key : String) : List[Map[String,Any]] = {
+    val data = getConfig.get(key)
+    return if (data.isDefined) data.get.asInstanceOf[List[Map[String,Any]]] else List.empty[Map[String,Any]]
   }
 
   /**

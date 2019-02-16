@@ -17,8 +17,4 @@
 
 package com.apifortress.afthem.exceptions
 
-class AfthemException(message : String) extends Exception(message : String) {
-
-  def toJsonByteArray() : Array[Byte] = ("{ \"exception\" : \""+message+"\"}").getBytes
-
-}
+class GenericException(context : String) extends Exception("Generic exception during : "+context)

@@ -1,12 +1,16 @@
 backends:
 - prefix: 'localhost:8080/demo/'
   upstream: 'http://demoapi.apifortress.com/api/retail/'
-  id: default
+  flow_id: default
 
 - prefix: 'localhost:8080/google'
   upstream: 'https://google.com/'
-  id: google
+  flow_id: google
+
+- prefix: 'localhost:8080/broken'
+  upstream: 'http://foofoobar.bar'
+  flow_id: default
 
 - prefix: 'localhost:8080/'
   upstream: 'https://postman-echo.com/'
-  id: default
+  flow_id: default

@@ -12,6 +12,8 @@ implementers:
     class: com.apifortress.afthem.actors.transformers.BeautifyPayloadActor
   - id: add_meta
     class: com.apifortress.afthem.actors.transformers.AddMetaActor
+  - id: transform_headers
+    class: com.apifortress.afthem.actors.transformers.TransformHeadersActor
 
 # SIDECARS
   - id: access_logger

@@ -18,8 +18,12 @@ package com.apifortress.afthem.messages
 
 import java.util.Date
 
+import com.apifortress.afthem.ResponseEntityUtil
 import com.apifortress.afthem.config.{Backend, Phase}
 import com.apifortress.afthem.config.Flow
+import com.apifortress.afthem.messages.beans.{AfthemResult, HttpWrapper}
+import org.springframework.http.ResponseEntity
+import org.springframework.web.context.request.async.DeferredResult
 
 import scala.collection.mutable
 
@@ -30,5 +34,6 @@ import scala.collection.mutable
   */
 class BaseMessage(val backend : Backend,
                   val flow: Flow,
+                  val deferredResult: AfthemResult,
                   val date : Date = new Date(),
                   val meta : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]())

@@ -27,9 +27,10 @@ class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
   override def receive: Receive = {
     case msg : BaseMessage =>
       val m = new Metric
-      val evaluated = getPhase(msg).getConfigBoolean("evaluated").getOrElse(false)
-      val data = getPhase(msg).getConfigString("data")
-      val name = getPhase(msg).getConfigString("name")
+      val phase = getPhase(msg)
+      val evaluated = phase.getConfigBoolean("evaluated").getOrElse(false)
+      val data = phase.getConfigString("data")
+      val name = phase.getConfigString("name")
       if(evaluated) {
         val parsedExpression = SpelEvaluator.parse(data)
         val ctx = new StandardEvaluationContext()
