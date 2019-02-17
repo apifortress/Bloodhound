@@ -51,7 +51,7 @@ class AfthemController {
         deferredResult.setData(new BackendConfigurationMissingException, 404)
       }
     }catch {
-      case e => deferredResult.setData(new GenericException("controller"),500)
+      case e: Exception => deferredResult.setData(new GenericException("controller"),500)
     }
 
 

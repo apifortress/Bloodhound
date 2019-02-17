@@ -24,7 +24,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext
 class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
-    case msg : BaseMessage => {
+    case msg : BaseMessage =>
       val m = new Metric
       val phase = getPhase(msg)
 
@@ -41,7 +41,6 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
       forward(msg)
       metricsLog.debug(m.toString())
-    }
   }
 
   def deserialize(data : Any, contentType : String): Any = {

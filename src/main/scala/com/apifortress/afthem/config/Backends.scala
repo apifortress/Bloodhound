@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
   */
 object Backends {
 
-    val instance = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
+    val instance : Backends = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
 
 }
 

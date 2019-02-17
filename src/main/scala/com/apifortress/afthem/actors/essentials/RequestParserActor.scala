@@ -28,7 +28,7 @@ import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
-    case msg : WebRawRequestMessage => {
+    case msg : WebRawRequestMessage =>
 
       val m = new Metric
 
@@ -56,7 +56,6 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
       forward(message)
       metricsLog.debug(m.toString())
-    }
   }
 
   def filterDiscardHeaders(headers: List[(String Tuple2 String)],discardHeaders: List[String]): List[(String Tuple2 String)] = {

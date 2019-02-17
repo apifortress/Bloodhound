@@ -57,7 +57,7 @@ object ReqResUtil {
           interestingHeaders.put(HEADER_CONTENT_LENGTH,request.getHeader(HEADER_CONTENT_LENGTH).toInt)
         case HEADER_CONTENT_TYPE =>
           interestingHeaders.put(HEADER_CONTENT_TYPE,request.getHeader(HEADER_CONTENT_TYPE))
-        case _ => {}
+        case _ =>
       }
       if (!discardHeaders.contains(headerName.toLowerCase))
         headers+=new Tuple2(headerName,request.getHeader(headerName))
@@ -80,7 +80,7 @@ object ReqResUtil {
           interestingHeaders.put(HEADER_CONTENT_LENGTH, header.getValue.toInt)
         case HEADER_CONTENT_TYPE =>
           interestingHeaders.put(HEADER_CONTENT_TYPE, header.getValue)
-        case _ => {}
+        case _ =>
       }
     }
     return (headers.toList,interestingHeaders.toMap)

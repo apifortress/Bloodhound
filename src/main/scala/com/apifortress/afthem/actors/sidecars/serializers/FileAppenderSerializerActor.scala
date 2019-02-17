@@ -27,7 +27,7 @@ import scala.collection.mutable
 
 class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerActor(phaseId : String)  {
 
-  val outputStreams = mutable.HashMap.empty[String,FileOutputStream]
+  private val outputStreams = mutable.HashMap.empty[String,FileOutputStream]
 
   override def receive: Receive = {
     case msg : WebParsedResponseMessage =>

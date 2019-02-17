@@ -18,20 +18,18 @@ package com.apifortress.afthem.actors.sidecars
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import org.slf4j.LoggerFactory
+import org.slf4j.{LoggerFactory}
 
 
 class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
-  val accessInboundLog = LoggerFactory.getLogger("Access-Inbound")
-  val upstreamLog = LoggerFactory.getLogger("Upstream")
+  private val accessInboundLog = LoggerFactory.getLogger("Access-Inbound")
+  private val upstreamLog = LoggerFactory.getLogger("Upstream")
   override def receive: Receive = {
-    case msg: WebParsedRequestMessage => {
+    case msg: WebParsedRequestMessage =>
       accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.url)
-    }
-    case msg: WebParsedResponseMessage => {
+    case msg: WebParsedResponseMessage =>
       upstreamLog.info("["+msg.response.status+"] - "+msg.response.method+" "+msg.response.url)
-    }
   }
 
 }

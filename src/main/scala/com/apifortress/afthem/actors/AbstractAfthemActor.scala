@@ -19,14 +19,15 @@ import akka.actor.{Actor, ActorSelection}
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.BaseMessage
 import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 abstract class AbstractAfthemActor(phaseId: String) extends Actor {
 
-  val log = LoggerFactory.getLogger(this.getClass)
+  protected val log : Logger = LoggerFactory.getLogger(this.getClass)
 
   log.info("Initializing "+self.path.toStringWithoutAddress+" - "+context.dispatcher)
 
-  val metricsLog = LoggerFactory.getLogger("_metrics."+getClass.getSimpleName)
+  protected val metricsLog : Logger = LoggerFactory.getLogger("_metrics."+getClass.getSimpleName)
 
   def getPhaseId() : String = return phaseId
 
@@ -43,11 +44,11 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     return sidecarIds.map(id => AppContext.actorSystem.actorSelection("/user/"+id))
   }
 
-  def tellSidecars(message : BaseMessage) = {
+  protected def tellSidecars(message : BaseMessage) : Unit = {
     selectSidecarsActors(message).foreach( actor => actor ! message)
   }
 
-  def forward(message: BaseMessage) : Unit = {
+  protected def forward(message: BaseMessage) : Unit = {
     tellSidecars(message)
     val selector = selectNextActor(message)
     selector ! message

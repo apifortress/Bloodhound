@@ -28,13 +28,13 @@ class Main
 
 object Main {
 
-  val log = LoggerFactory.getLogger(classOf[Main])
+  private val log = LoggerFactory.getLogger(classOf[Main])
 
   def main(args: Array[String]): Unit = {
     log.info("Afthem starting...")
     Runtime.getRuntime().addShutdownHook(new Thread()
     {
-      override def run() =  {
+      override def run() : Unit =  {
         log.info("Afthem shutting down...")
         AppContext.actorSystem.terminate()
       }

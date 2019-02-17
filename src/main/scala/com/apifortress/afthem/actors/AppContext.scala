@@ -18,7 +18,7 @@ package com.apifortress.afthem.actors
 
 import java.io.File
 
-import akka.actor.{ActorSelection, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
 import akka.routing.FromConfig
 import com.apifortress.afthem.config.{Implementers, Phase, Flows}
 import com.typesafe.config.ConfigFactory
@@ -30,7 +30,7 @@ object AppContext {
 
 
 
-  val config = ConfigFactory.parseFile(new File("etc"+File.separator+"application.conf"))
+  private val config = ConfigFactory.parseFile(new File("etc"+File.separator+"application.conf"))
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
 
   Implementers.instance.implementers.foreach{ item =>

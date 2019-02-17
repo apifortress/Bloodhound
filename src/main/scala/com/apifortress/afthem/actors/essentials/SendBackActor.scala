@@ -27,17 +27,16 @@ import com.apifortress.afthem.{Metric, ResponseEntityUtil}
 class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
-    case msg: WebParsedResponseMessage => {
+    case msg: WebParsedResponseMessage =>
       val m = new Metric
       tellSidecars(msg)
 
       msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
       metricsLog.debug(m.toString())
       logProcessingTime(msg)
-    }
   }
 
-  private def logProcessingTime(msg: WebParsedResponseMessage) = {
+  private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {
     metricsLog.info("Roundtrip -> "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
   }
 

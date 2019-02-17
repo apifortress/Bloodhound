@@ -43,14 +43,15 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
     removeHeaders(wrapper,headersToRemove)
     val headersToAdd = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("add"))
     addHeaders(wrapper,headersToAdd)
-    val setHeaders = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("set"))
+    val headersToSet = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("set"))
+    setHeaders(wrapper,headersToSet)
   }
 
   def parseConfigHeaders(msg: BaseMessage, headers : List[Map[String,Any]]) : List[(String Tuple2 String)] = {
     return headers.map { item =>
       val headerName : String = item.get("name").get.asInstanceOf[String]
-      val evaluated : Boolean = item.get("evaluated").getOrElse(false).asInstanceOf[Boolean]
-      val data : String = item.get("value").getOrElse(null).asInstanceOf[String]
+      val evaluated : Boolean = item.getOrElse("evaluated",false).asInstanceOf[Boolean]
+      val data : String = item.getOrElse("value",null).asInstanceOf[String]
       val result = if (evaluated)
                     SpelEvaluator.evaluate(data,Map[String,Any]("msg" -> msg)).asInstanceOf[String]
                    else data
@@ -58,16 +59,16 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
     }
   }
 
-  def addHeaders(wrapper : HttpWrapper, headers : List[(String Tuple2 String)])= {
+  def addHeaders(wrapper : HttpWrapper, headers : List[(String Tuple2 String)]) : Unit= {
     wrapper.headers = wrapper.headers++headers
   }
 
-  def removeHeaders(wrapper: HttpWrapper, headers: List[(String Tuple2 String)]) = {
+  def removeHeaders(wrapper: HttpWrapper, headers: List[(String Tuple2 String)]): Unit= {
     val names= headers.map(h => h._1)
     wrapper.headers = wrapper.headers.filter( item => !names.contains(item._1))
   }
 
-  def setHeaders(wrapper: HttpWrapper, headers: List[String Tuple2 String]) = {
+  def setHeaders(wrapper: HttpWrapper, headers: List[String Tuple2 String]): Unit = {
     removeHeaders(wrapper,headers)
     addHeaders(wrapper,headers)
   }

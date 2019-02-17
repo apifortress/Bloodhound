@@ -48,7 +48,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
 
   override def receive: Receive = {
-    case msg : WebParsedRequestMessage => {
+    case msg : WebParsedRequestMessage =>
       val m = new Metric
       val discardHeaders = getPhase(msg).getConfigList("discard_headers")
 
@@ -79,9 +79,6 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
         override def cancelled(): Unit = {}
       })
       metricsLog.debug(m.toString())
-
-    }
-
 
   }
 
