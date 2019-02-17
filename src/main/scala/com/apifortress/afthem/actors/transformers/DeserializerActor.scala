@@ -40,7 +40,7 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       msg.meta.put(meta,output)
 
       forward(msg)
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
     }
   }
 

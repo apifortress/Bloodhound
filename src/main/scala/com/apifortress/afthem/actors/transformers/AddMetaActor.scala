@@ -38,6 +38,6 @@ class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
         msg.meta.put(name,parsedExpression.getValue(ctx))
       } else msg.meta.put(name,data)
       forward(msg)
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
   }
 }

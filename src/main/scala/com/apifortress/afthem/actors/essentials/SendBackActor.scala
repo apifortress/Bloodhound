@@ -32,13 +32,13 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
       tellSidecars(msg)
 
       msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
       logProcessingTime(msg)
     }
   }
 
   private def logProcessingTime(msg: WebParsedResponseMessage) = {
-    log.debug("Roundtrip time : "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
+    metricsLog.info("Roundtrip -> "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
   }
 
 }

@@ -29,20 +29,21 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
       val m = new Metric
       perform(msg,msg.request)
       forward(msg)
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
 
     case msg : WebParsedResponseMessage =>
       val m = new Metric
       perform(msg,msg.response)
       forward(msg)
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
   }
 
   def perform(msg : BaseMessage, wrapper : HttpWrapper): Unit ={
-    val headersToRemove = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("remove_headers"))
+    val headersToRemove = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("remove"))
     removeHeaders(wrapper,headersToRemove)
-    val headersToAdd = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("add_headers"))
+    val headersToAdd = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("add"))
     addHeaders(wrapper,headersToAdd)
+    val setHeaders = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("set"))
   }
 
   def parseConfigHeaders(msg: BaseMessage, headers : List[Map[String,Any]]) : List[(String Tuple2 String)] = {
@@ -64,6 +65,11 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
   def removeHeaders(wrapper: HttpWrapper, headers: List[(String Tuple2 String)]) = {
     val names= headers.map(h => h._1)
     wrapper.headers = wrapper.headers.filter( item => !names.contains(item._1))
+  }
+
+  def setHeaders(wrapper: HttpWrapper, headers: List[String Tuple2 String]) = {
+    removeHeaders(wrapper,headers)
+    addHeaders(wrapper,headers)
   }
 
 }

@@ -55,7 +55,7 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
                                                 msg.date, msg.meta)
 
       forward(message)
-      log.debug("Metrics : "+m.toString())
+      metricsLog.debug(m.toString())
     }
   }
 

@@ -23,6 +23,15 @@
         </encoder>
     </appender>
 
+    <appender name="METRICS_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/metrics.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="ACCESS_LOGGER" class="ch.qos.logback.core.FileAppender">
         <file>log/access.log</file>
         <append>true</append>
@@ -52,5 +61,8 @@
     </logger>
     <logger name="Upstream" level="INFO" additivity="false">
         <appender-ref ref="UPSTREAM_LOGGER" />
+    </logger>
+    <logger name="_metrics" level="DEBUG" additivity="false">
+        <appender-ref ref="METRICS_LOGGER" />
     </logger>
 </configuration>

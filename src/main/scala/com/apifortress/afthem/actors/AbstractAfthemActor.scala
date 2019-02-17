@@ -26,6 +26,8 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
 
   log.info("Initializing "+self.path.toStringWithoutAddress+" - "+context.dispatcher)
 
+  val metricsLog = LoggerFactory.getLogger("_metrics."+getClass.getSimpleName)
+
   def getPhaseId() : String = return phaseId
 
   def getPhase(message : BaseMessage) : Phase = message.flow.getPhase(getPhaseId())
@@ -49,7 +51,11 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     tellSidecars(message)
     val selector = selectNextActor(message)
     selector ! message
+  }
 
+  override def postStop(): Unit = {
+    super.postStop()
+    log.info(self.path+" stopped")
   }
 
 

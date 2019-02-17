@@ -54,7 +54,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
       msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
       val httpReq: HttpUriRequest = createRequest(msg.request.url, msg.request, discardHeaders)
-      log.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+      metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
       DownloaderActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
         override def completed(response: HttpResponse): Unit = {
           val entity = response.getEntity
@@ -78,7 +78,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
         override def cancelled(): Unit = {}
       })
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
 
     }
 

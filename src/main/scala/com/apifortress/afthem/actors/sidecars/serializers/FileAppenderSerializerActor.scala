@@ -22,8 +22,6 @@ import java.nio.charset.StandardCharsets
 
 import com.apifortress.afthem.Metric
 import com.apifortress.afthem.messages.WebParsedResponseMessage
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
-import org.apache.commons.io.FileUtils
 
 import scala.collection.mutable
 
@@ -36,7 +34,7 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerAc
       val m = new Metric
       val filename = getPhase(msg).getConfigString("filename")
       getOutputStream(filename).write((serialize(msg)+"\n").getBytes(StandardCharsets.UTF_8))
-      log.debug(m.toString())
+      metricsLog.debug(m.toString())
   }
 
   private def getOutputStream(filename : String): FileOutputStream ={
@@ -46,5 +44,10 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerAc
     val outputStream = new FileOutputStream(new File(filename))
     outputStreams.put(filename,outputStream)
     return outputStream
+  }
+
+  override def postStop(): Unit = {
+    super.postStop()
+    outputStreams.foreach( os => os._2.close())
   }
 }

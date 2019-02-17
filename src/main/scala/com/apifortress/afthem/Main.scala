@@ -17,11 +17,10 @@
 package com.apifortress.afthem
 
 import com.apifortress.afthem.actors.AppContext
-import com.apifortress.afthem.messages.BaseMessage
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.{Bean, ComponentScan}
+import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
 @ComponentScan
@@ -32,8 +31,15 @@ object Main {
   val log = LoggerFactory.getLogger(classOf[Main])
 
   def main(args: Array[String]): Unit = {
-    log.debug("Afthem starting...")
-    AppContext.init()
+    log.info("Afthem starting...")
+    Runtime.getRuntime().addShutdownHook(new Thread()
+    {
+      override def run() =  {
+        log.info("Afthem shutting down...")
+        AppContext.actorSystem.terminate()
+      }
+    })
+  AppContext.init()
     SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args)
   }
 

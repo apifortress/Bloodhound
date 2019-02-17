@@ -10,7 +10,7 @@ request_parser:
 transform_headers:
   next: downloader
   config:
-    add_headers:
+    add:
       - name: x-foo
         value: bar
       - name: user-agent
