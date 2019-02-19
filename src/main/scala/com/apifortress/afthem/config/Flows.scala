@@ -29,11 +29,11 @@ object Flows {
 
   def instance() : Flows = {
     return this.synchronized {
-      var i2 = Cache.configCache.get("flows")
+      var i2 = AfthemCache.configCache.get("flows")
       if (i2 != null) i2.asInstanceOf[Flows]
       else {
         i2 = new Flows
-        Cache.configCache.put("flows", i2)
+        AfthemCache.configCache.put("flows", i2)
         i2.asInstanceOf[Flows]
       }
     }

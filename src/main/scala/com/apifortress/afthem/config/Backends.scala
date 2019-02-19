@@ -26,11 +26,11 @@ object Backends  {
 
     def instance() : Backends = {
         return this.synchronized {
-            var i2 = Cache.configCache.get("backends")
+            var i2 = AfthemCache.configCache.get("backends")
             if (i2 != null) i2.asInstanceOf[Backends]
             else {
                 i2 = ConfigUtil.parse[Backends]("backends.yml", classOf[Backends])
-                Cache.configCache.put("backends", i2)
+                AfthemCache.configCache.put("backends", i2)
                 i2.asInstanceOf[Backends]
             }
         }

@@ -19,15 +19,18 @@ package com.apifortress.afthem.config
 
 import java.io.File
 
-import org.ehcache.{CacheManager,Cache}
+import org.ehcache.{Cache, CacheManager}
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.xml.XmlConfiguration
+import org.springframework.expression.Expression
 
-object Cache {
+object AfthemCache {
 
   val cacheManager : CacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(new File("etc/ehcache.xml").getAbsoluteFile.toURI.toURL))
   cacheManager.init()
 
   val configCache : Cache[String,ICachableConfig] = cacheManager.getCache("configs",classOf[String],classOf[ICachableConfig])
+
+  val expressionsCache : Cache[String,Expression] = cacheManager.getCache("expressions",classOf[String],classOf[Expression])
 
 }
