@@ -22,16 +22,23 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
   * Companion object to load backends from file as a singleton
   */
-object Backends {
+object Backends  {
 
-    val instance : Backends = ConfigUtil.parse[Backends]("backends.yml",classOf[Backends])
+    def instance() : Backends = {
+        val instance = Cache.configCache.get("backends")
+        if (instance != null)
+            return instance.asInstanceOf[Backends]
+        val i2 = ConfigUtil.parse[Backends]("backends.yml", classOf[Backends])
+        Cache.configCache.put("backends",i2)
+        return i2
+    }
 
 }
 
 /**
   * Data structure representing the configuration of backends
   */
-class Backends(backends: List[Backend]) {
+class Backends(backends: List[Backend]) extends ICachableConfig {
 
     def findByUrl(url : String) : Option[Backend] = {
         val signature = UriUtil.getSignature(url)

@@ -14,7 +14,7 @@ transform_headers:
       - name: x-foo
         value: bar
       - name: user-agent
-        value: "#msg.request().getHeader('user-agent')+' - Foo Agent'"
+        value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
 
 downloader:
@@ -35,7 +35,7 @@ send_back:
 
 file_appender_serializer:
   config:
-    filename: log/foobar.txt
+    filename: log/serialized.log
 
 access_logger:
   config: {}

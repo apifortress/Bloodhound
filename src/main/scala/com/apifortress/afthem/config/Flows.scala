@@ -27,14 +27,21 @@ import scala.collection.mutable
   */
 object Flows {
 
-  val instance : Flows = new Flows()
+  def instance() : Flows = {
+    val instance = Cache.configCache.get("flows")
+    if (instance != null)
+      return instance.asInstanceOf[Flows]
+    val i2 = new Flows
+    Cache.configCache.put("flows",i2)
+    return i2
+  }
 
 }
 
 /**
   * Flows will load from disk, parse and retain in memory all flows that get requested
   */
-class Flows extends mutable.LinkedHashMap[String,Flow] {
+class Flows extends mutable.LinkedHashMap[String,Flow] with ICachableConfig {
 
   /**
     * If the flow has already been loaded and parsed, that gets returned.
