@@ -34,21 +34,15 @@ class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: S
 
       val phase = getPhase(msg)
 
-      val wrapper = new HttpWrapper
-
-      wrapper.url = UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString)
-
+      val parsedHeaders = ReqResUtil.parseHeaders(msg.request)
       val discardHeaders = phase.getConfigList("discard_headers")
 
-      val parsedHeaders = ReqResUtil.parseHeaders(msg.request)
-
-      wrapper.headers = filterDiscardHeaders(parsedHeaders._1,discardHeaders)
-
-      wrapper.payload = ReqResUtil.readPayload(msg.request.getInputStream,parsedHeaders._2.get("content-length"))
-
-      wrapper.method = msg.request.getMethod.toUpperCase
-
-      wrapper.remoteIP = msg.request.getRemoteAddr
+      val wrapper = new HttpWrapper(UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString),
+                                    -1,
+                                    msg.request.getMethod.toUpperCase,
+                                    filterDiscardHeaders(parsedHeaders._1,discardHeaders),
+                                    ReqResUtil.readPayload(msg.request.getInputStream,parsedHeaders._2.get("content-length")),
+                                    msg.request.getRemoteAddr)
 
       val message = new WebParsedRequestMessage(wrapper, msg.backend,
                                                 msg.flow, msg.deferredResult,

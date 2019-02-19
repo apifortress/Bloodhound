@@ -34,6 +34,9 @@ object ConfigUtil {
     * @return the parsed configuration file
     */
   def parse[T](filename : String, theClass : Class[T]): T = {
-    return Parsers.parseYaml[T](Source.fromFile("etc"+File.separator+filename).reader(), theClass)
+    val reader = Source.fromFile("etc"+File.separator+filename).reader()
+    val resp : T = Parsers.parseYaml[T](reader, theClass)
+    reader.close()
+    return resp
   }
 }

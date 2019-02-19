@@ -31,10 +31,15 @@ import scala.collection.mutable
   * @param meta metadata. A new collection will be created if null
   * @param backendConfig the backend configuration
   */
-case class WebParsedRequestMessage(request: HttpWrapper,
+class WebParsedRequestMessage(val request: HttpWrapper,
                                    override val backend: Backend,
                                    override val flow: Flow,
                                    override val deferredResult: AfthemResult,
                                    override val date: Date = new Date(),
                                    override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
-      extends BaseMessage(backend, flow, deferredResult, date, meta)
+      extends BaseMessage(backend, flow, deferredResult, date, meta) {
+
+  override def clone(): WebParsedRequestMessage = {
+    return new WebParsedRequestMessage(request.clone(),backend,flow,deferredResult,date,meta)
+  }
+}

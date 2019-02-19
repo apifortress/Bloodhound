@@ -16,10 +16,9 @@
   */
 package com.apifortress.afthem.actors.transformers
 
-import com.apifortress.afthem.{Metric, Parsers}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import org.apache.commons.codec.binary.StringUtils
+import com.apifortress.afthem.{Metric, Parsers}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule

@@ -19,7 +19,6 @@ package com.apifortress.afthem.actors.essentials
 import java.io.InputStream
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.config.Backend
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
@@ -53,16 +52,14 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
       val discardHeaders = getPhase(msg).getConfigList("discard_headers")
 
       msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
-      val httpReq: HttpUriRequest = createRequest(msg.request.url, msg.request, discardHeaders)
+      val httpReq: HttpUriRequest = createRequest(msg.request, discardHeaders)
       metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
       DownloaderActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
         override def completed(response: HttpResponse): Unit = {
           val entity = response.getEntity
           val inputStream = entity.getContent
 
-          val wrapper = createResponseWrapper(response, inputStream)
-          wrapper.url = msg.request.url
-          wrapper.method = msg.request.method
+          val wrapper = createResponseWrapper(msg.request, response, inputStream)
 
           EntityUtils.consumeQuietly(entity)
           inputStream.close()
@@ -82,13 +79,20 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
 
   }
 
-  private def createRequest(url: String, wrapper: HttpWrapper, discardHeaders : List[String]): HttpUriRequest = {
+  /**
+    * Creates an HTTP client request with the provided data
+    * @param url the URL the request will hit
+    * @param wrapper the
+    * @param discardHeaders
+    * @return
+    */
+  private def createRequest(wrapper: HttpWrapper, discardHeaders : List[String]): HttpUriRequest = {
     val request = wrapper.method match {
-      case "GET" =>  new HttpGet(url)
-      case "POST" => new HttpPost(url)
-      case "PUT" =>  new HttpPut(url)
-      case "DELETE" => new HttpDelete(url)
-      case "PATCH" =>  new HttpPatch(url)
+      case "GET" =>  new HttpGet(wrapper.url)
+      case "POST" => new HttpPost(wrapper.url)
+      case "PUT" =>  new HttpPut(wrapper.url)
+      case "DELETE" => new HttpDelete(wrapper.url)
+      case "PATCH" =>  new HttpPatch(wrapper.url)
       case _ =>  null
     }
     if(wrapper.payload != null && request.isInstanceOf[HttpEntityEnclosingRequestBase])
@@ -102,12 +106,12 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
     return request
   }
 
-  private def createResponseWrapper(response : HttpResponse, inputStream: InputStream): HttpWrapper = {
-    val wrapper = new HttpWrapper
-    wrapper.status = response.getStatusLine.getStatusCode
+  private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
-    wrapper.headers = headersInfo._1
-    wrapper.payload = ReqResUtil.readPayload(inputStream,headersInfo._2.get("content-length"))
-    return wrapper
+    return new HttpWrapper(requestWrapper.url,
+      response.getStatusLine.getStatusCode,
+      requestWrapper.method,
+      headersInfo._1,
+      ReqResUtil.readPayload(inputStream,headersInfo._2.get("content-length")))
   }
 }

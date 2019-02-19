@@ -25,8 +25,15 @@ import com.apifortress.afthem.messages.WebParsedResponseMessage
 
 import scala.collection.mutable
 
+/**
+  * Actor that serializes a full HTTP conversation to file
+  * @param phaseId the ID of the phase
+  */
 class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerActor(phaseId : String)  {
 
+  /**
+    * We retain all output streams we write to
+    */
   private val outputStreams = mutable.HashMap.empty[String,FileOutputStream]
 
   override def receive: Receive = {
@@ -37,6 +44,11 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerAc
       metricsLog.debug(m.toString())
   }
 
+  /**
+    * Creates and/or returns an output stream for a given file name
+    * @param filename a file name
+    * @return an output stream for the given file name
+    */
   private def getOutputStream(filename : String): FileOutputStream ={
     val streamOption = outputStreams.get(filename)
     if(streamOption.isDefined)

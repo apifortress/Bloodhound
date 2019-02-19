@@ -45,7 +45,8 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
   }
 
   protected def tellSidecars(message : BaseMessage) : Unit = {
-    selectSidecarsActors(message).foreach( actor => actor ! message)
+    val msg = message.clone()
+    selectSidecarsActors(message).foreach( actor => actor ! msg)
   }
 
   protected def forward(message: BaseMessage) : Unit = {

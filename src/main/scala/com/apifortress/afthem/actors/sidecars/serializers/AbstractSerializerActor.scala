@@ -19,15 +19,26 @@ package com.apifortress.afthem.actors.sidecars.serializers
 
 import java.nio.charset.StandardCharsets
 
-import com.apifortress.afthem.{Parsers, UriUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.WebParsedResponseMessage
+import com.apifortress.afthem.{Parsers, UriUtil}
 
 import scala.collection.mutable
 
+/**
+  * Abstract actor to serve as a base for all sidecar actors that serialize a full request/response
+  * conversation
+  * @param phaseId the phase ID
+  */
 abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
-  def serialize(message: WebParsedResponseMessage): String = {
+  /**
+    * Before any valid serialization takes place, the data needs to be transformed in a data structure
+    * we agree upon
+    * @param message a WebParsedResponseMessage object
+    * @return the message, converted to the agreed data structure
+    */
+  def toExportableObject(message: WebParsedResponseMessage): Map[String,Any] = {
     val obj = mutable.HashMap.empty[String,Any]
     obj.put("client_ip",message.request.remoteIP)
     obj.put("started_at",message.date.getTime)
@@ -53,8 +64,17 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     request.put("headers",responseHeaders)
     obj.put("response",response)
 
-    return Parsers.serializeAsJsonString(obj, pretty = false)
+    return obj.toMap
+  }
 
+  /**
+    * Serializes a WebParsedResponseMessage to string
+    * @param message a WebParsedResponseMessage object
+    * @return the serialized version of the object
+    */
+  def serialize(message: WebParsedResponseMessage): String = {
+    val obj = toExportableObject(message)
+    return Parsers.serializeAsJsonString(obj, pretty = false)
   }
 
 }

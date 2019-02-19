@@ -38,6 +38,9 @@ object ReqResUtil {
     */
   val HEADER_CONTENT_TYPE : String = "content-type"
 
+  /**
+    * The name of the host header
+    */
   val HEADER_HOST : String = "host"
 
   /**

@@ -31,10 +31,15 @@ import scala.collection.mutable
   * @param date the date the message has been created. A new date will be created if null
   * @param meta metadata. A new collection will be created if null
   */
-case class WebParsedResponseMessage(response: HttpWrapper, request: HttpWrapper,
+class WebParsedResponseMessage(val response: HttpWrapper, val request: HttpWrapper,
                                     override val backend: Backend,
                                     override val flow: Flow,
                                     override val deferredResult: AfthemResult,
                                     override val date: Date = new Date(),
                                     override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
-      extends BaseMessage(backend, flow, deferredResult, date, meta)
+      extends BaseMessage(backend, flow, deferredResult, date, meta) {
+
+  override def clone(): WebParsedResponseMessage = {
+    return new WebParsedResponseMessage(response.clone(), request, backend, flow, deferredResult, date, meta)
+  }
+}
