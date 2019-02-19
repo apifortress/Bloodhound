@@ -17,11 +17,10 @@
 
 package com.apifortress.afthem
 
-import org.springframework.expression.spel.standard.SpelExpressionParser
+import com.apifortress.afthem.config.AfthemCache
 import org.springframework.expression.Expression
+import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.expression.spel.support.StandardEvaluationContext
-import collection.JavaConverters._
-import scala.collection.mutable
 
 /**
   * Object caring about everything concerning SpEL expressions
@@ -34,24 +33,21 @@ object SpelEvaluator {
   val parser = new SpelExpressionParser
 
   /**
-    * A cache of parsed expressions met along the way
-    */
-  val parsedExpressions = mutable.HashMap.empty[String,Expression]
-
-  /**
     * If the expression has already been parsed and cached, the cache is returned.
     * Otherwise, the expression gets parsed, cached and returned
     * @param expression the SPeL expression to be parsed
     * @return a parsed expression
     */
   def parse(expression : String) : Expression = {
-    val parsedExpressionOption = parsedExpressions.get(expression)
-    if(parsedExpressionOption.isDefined)
-      return parsedExpressionOption.get
-
-    val parsedExpression = parser.parseExpression(expression)
-    parsedExpressions.put(expression,parsedExpression)
-    return parsedExpression
+    return this.synchronized {
+      var i2 = AfthemCache.expressionsCache.get(expression)
+      if (i2 != null) i2
+      else {
+        i2 = parser.parseExpression(expression)
+        AfthemCache.expressionsCache.put(expression, i2)
+        i2
+      }
+    }
   }
 
   def evaluate(expression : String, variables : Map[String,Any]) : Any = {

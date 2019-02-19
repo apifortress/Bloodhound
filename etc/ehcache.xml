@@ -30,4 +30,13 @@
         <heap>2</heap>
     </cache>
 
+    <cache alias="expressions">
+        <key-type>java.lang.String</key-type>
+        <value-type>org.springframework.expression.Expression</value-type>
+        <expiry>
+            <tti>600</tti>
+        </expiry>
+        <heap>100</heap>
+    </cache>
+
 </config>
