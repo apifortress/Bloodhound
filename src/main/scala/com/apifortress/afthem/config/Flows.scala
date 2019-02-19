@@ -28,12 +28,15 @@ import scala.collection.mutable
 object Flows {
 
   def instance() : Flows = {
-    val instance = Cache.configCache.get("flows")
-    if (instance != null)
-      return instance.asInstanceOf[Flows]
-    val i2 = new Flows
-    Cache.configCache.put("flows",i2)
-    return i2
+    return this.synchronized {
+      var i2 = Cache.configCache.get("flows")
+      if (i2 != null) i2.asInstanceOf[Flows]
+      else {
+        i2 = new Flows
+        Cache.configCache.put("flows", i2)
+        i2.asInstanceOf[Flows]
+      }
+    }
   }
 
 }

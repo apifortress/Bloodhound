@@ -25,12 +25,15 @@ import com.fasterxml.jackson.annotation.JsonProperty
 object Backends  {
 
     def instance() : Backends = {
-        val instance = Cache.configCache.get("backends")
-        if (instance != null)
-            return instance.asInstanceOf[Backends]
-        val i2 = ConfigUtil.parse[Backends]("backends.yml", classOf[Backends])
-        Cache.configCache.put("backends",i2)
-        return i2
+        return this.synchronized {
+            var i2 = Cache.configCache.get("backends")
+            if (i2 != null) i2.asInstanceOf[Backends]
+            else {
+                i2 = ConfigUtil.parse[Backends]("backends.yml", classOf[Backends])
+                Cache.configCache.put("backends", i2)
+                i2.asInstanceOf[Backends]
+            }
+        }
     }
 
 }
