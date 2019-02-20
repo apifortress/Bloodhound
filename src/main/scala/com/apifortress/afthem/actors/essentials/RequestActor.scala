@@ -25,7 +25,7 @@ import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
   * The actor in charge of parsing the inbound request data
   * @param phaseId the phase ID
   */
-class RequestParserActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg : WebRawRequestMessage =>

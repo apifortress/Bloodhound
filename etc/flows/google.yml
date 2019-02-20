@@ -1,11 +1,11 @@
-request_parser:
-  next: downloader
+request:
+  next: upstream_http
   config:
     discard_headers:
       - host
       - content-length
 
-downloader:
+upstream_http:
   next: send_back
 
 send_back:

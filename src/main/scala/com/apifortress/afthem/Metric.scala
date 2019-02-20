@@ -17,6 +17,10 @@
 
 package com.apifortress.afthem
 
+/**
+  * Utility class to calculate the execution time of a procedure
+  * @param start
+  */
 class Metric(val start: Long = System.nanoTime()) {
 
   override def toString() : String = {

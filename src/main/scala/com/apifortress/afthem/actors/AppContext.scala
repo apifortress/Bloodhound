@@ -35,7 +35,10 @@ object AppContext {
 
   Implementers.instance.implementers.foreach{ item =>
     val theClass = Class.forName(item.className)
-    actorSystem.actorOf(FromConfig.getInstance.props(Props.create(theClass,item.id)), item.id)
+    if(config.hasPath("akka.actor.deployment./"+item.id))
+      actorSystem.actorOf(FromConfig.getInstance.props(Props.create(theClass,item.id)), item.id)
+    else
+      actorSystem.actorOf(Props.create(theClass,item.id), item.id)
   }
 
   def init() : Unit = {}

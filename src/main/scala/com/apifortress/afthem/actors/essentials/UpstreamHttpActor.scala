@@ -31,7 +31,7 @@ import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.util.EntityUtils
 
-object DownloaderActor {
+object UpstreamHttpActor {
 
   val ioReactor = new DefaultConnectingIOReactor()
   val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
@@ -43,7 +43,7 @@ object DownloaderActor {
 /**
   * The actor taking care of retrieving the resource from the origin
   */
-class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
 
   override def receive: Receive = {
@@ -54,7 +54,7 @@ class DownloaderActor(phaseId: String) extends AbstractAfthemActor(phaseId: Stri
       msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
       val httpReq: HttpUriRequest = createRequest(msg.request, discardHeaders)
       metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-      DownloaderActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
+      UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
         override def completed(response: HttpResponse): Unit = {
           val entity = response.getEntity
           val inputStream = entity.getContent

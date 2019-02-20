@@ -1,11 +1,13 @@
 implementers:
 # ESSENTIALS
-  - id: request_parser
-    class: com.apifortress.afthem.actors.essentials.RequestParserActor
-  - id: downloader
-    class: com.apifortress.afthem.actors.essentials.DownloaderActor
+  - id: request
+    class: com.apifortress.afthem.actors.essentials.RequestActor
+  - id: upstream_http
+    class: com.apifortress.afthem.actors.essentials.UpstreamHttpActor
   - id: send_back
     class: com.apifortress.afthem.actors.essentials.SendBackActor
+  - id: upstream_file
+    class: com.apifortress.afthem.actors.essentials.UpstreamFileActor
 
 # TRANSFORMERS
   - id: out_beautifier

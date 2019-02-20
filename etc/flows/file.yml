@@ -8,7 +8,7 @@ request:
       - content-length
 
 transform_headers:
-  next: upstream_http
+  next: upstream_file
   config:
     add:
       - name: x-foo
@@ -17,11 +17,10 @@ transform_headers:
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
 
-upstream_http:
+upstream_file:
   next: out_beautifier
   config:
-    discard_headers:
-      - "content-length"
+    subpath: mock
 
 out_beautifier:
   next: send_back
@@ -31,11 +30,6 @@ out_beautifier:
 send_back:
   sidecars:
     - access_logger
-    - file_appender_serializer
-
-file_appender_serializer:
-  config:
-    filename: log/serialized.log
 
 access_logger:
   config: {}

@@ -46,7 +46,7 @@ class AfthemController {
         val flow = Flows.instance.getFlow(backend.flowId)
         val message = new WebRawRequestMessage(request, backend, flow, deferredResult)
         message.meta.put("__start",System.nanoTime())
-        AppContext.actorSystem.actorSelection("/user/request_parser") ! message
+        AppContext.actorSystem.actorSelection("/user/request") ! message
       } else {
         deferredResult.setData(new BackendConfigurationMissingException, 404)
       }
