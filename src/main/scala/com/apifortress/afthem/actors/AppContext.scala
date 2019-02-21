@@ -28,11 +28,18 @@ import com.typesafe.config.ConfigFactory
   */
 object AppContext {
 
-
-
+  /**
+    * The Akka configuration
+    */
   private val config = ConfigFactory.parseFile(new File("etc"+File.separator+"application.conf"))
+  /**
+    * The actor system
+    */
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
 
+   /*
+    * For each implementer, we create an actor.
+    */
   Implementers.instance.implementers.foreach{ item =>
     val theClass = Class.forName(item.className)
     if(config.hasPath("akka.actor.deployment./"+item.id))

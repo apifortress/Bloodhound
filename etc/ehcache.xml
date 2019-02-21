@@ -23,7 +23,7 @@
 
     <cache alias="configs">
         <key-type>java.lang.String</key-type>
-        <value-type>com.apifortress.afthem.config.ICachableConfig</value-type>
+        <value-type>com.apifortress.afthem.config.ICacheableConfig</value-type>
         <expiry>
             <ttl>600</ttl>
         </expiry>

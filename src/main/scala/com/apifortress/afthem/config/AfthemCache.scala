@@ -24,13 +24,25 @@ import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.xml.XmlConfiguration
 import org.springframework.expression.Expression
 
+/**
+  * Object managing Afthem caches
+  */
 object AfthemCache {
 
+  /**
+    * The EHCache manager
+    */
   val cacheManager : CacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(new File("etc/ehcache.xml").getAbsoluteFile.toURI.toURL))
   cacheManager.init()
 
-  val configCache : Cache[String,ICachableConfig] = cacheManager.getCache("configs",classOf[String],classOf[ICachableConfig])
+  /**
+    * Cache dedicated to reloadable configuration files
+    */
+  val configCache : Cache[String,ICacheableConfig] = cacheManager.getCache("configs",classOf[String],classOf[ICacheableConfig])
 
+  /**
+    * Cache dedicated to parsed expressions
+    */
   val expressionsCache : Cache[String,Expression] = cacheManager.getCache("expressions",classOf[String],classOf[Expression])
 
 }

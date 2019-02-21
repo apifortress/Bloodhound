@@ -26,21 +26,29 @@ import javax.servlet.Filter
 import javax.servlet.http.HttpServletRequest
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation._
-import org.springframework.web.context.request.async.DeferredResult
 import org.springframework.web.filter.HiddenHttpMethodFilter
 
+/**
+  * The main controller
+  */
 @Controller
 class AfthemController {
 
 
+  /**
+    * The action taking care of the actual proxying activity
+    * @param request the inbound request
+    * @return a deferred result
+    */
   @RequestMapping(value = Array("**"),method = Array(RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.PATCH,RequestMethod.DELETE))
   def proxy(request: HttpServletRequest): AfthemResult = {
     val deferredResult = new AfthemResult
     try {
+      // find a suitable backend for the inbound URL
       val backendOption = Backends.instance.findByUrl(request.getRequestURL.toString)
+      // if one is found then we can proceed
       if (backendOption.isDefined) {
         val backend = backendOption.get
         val flow = Flows.instance.getFlow(backend.flowId)
@@ -48,16 +56,23 @@ class AfthemController {
         message.meta.put("__start",System.nanoTime())
         AppContext.actorSystem.actorSelection("/user/request") ! message
       } else {
+        // If none are found, we return an exception
         deferredResult.setData(new BackendConfigurationMissingException, 404)
       }
     }catch {
+      // Generic exception. Something went wrong
       case e: Exception => deferredResult.setData(new GenericException("controller"),500)
     }
-
 
     return deferredResult
   }
 
+  /**
+    * This configuration bean stops Spring Boot from parsing parameters before forwarding to
+    * the actual action
+    * @param filter
+    * @return
+    */
   @Bean
   def registration(filter: HiddenHttpMethodFilter) : FilterRegistrationBean[Filter] = {
     val registration = new FilterRegistrationBean[Filter](filter)

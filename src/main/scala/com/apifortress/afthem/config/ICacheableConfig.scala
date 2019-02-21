@@ -17,6 +17,7 @@
 
 package com.apifortress.afthem.config
 
-trait ICachableConfig {
-
-}
+/**
+  * Trait common to all cacheable configuration items
+  */
+trait ICacheableConfig

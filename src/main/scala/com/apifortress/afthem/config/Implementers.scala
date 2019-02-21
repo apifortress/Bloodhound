@@ -20,11 +20,23 @@ package com.apifortress.afthem.config
 import com.apifortress.afthem.ConfigUtil
 import com.fasterxml.jackson.annotation.JsonProperty
 
+/**
+  * Companion class to obtain singleton Implementers instance
+  */
 object Implementers {
   val instance: Implementers = ConfigUtil.parse[Implementers]("implementers.yml",classOf[Implementers])
 
 }
 
+/**
+  * A class to store the implements configuration file
+  * @param implementers the list of implementers
+  */
 case class Implementers(implementers: List[Implementer])
 
+/**
+  * The single implementer class
+  * @param id the ID of the implementer
+  * @param className the class name of the implementer
+  */
 case class Implementer(id : String, @JsonProperty("class") className : String)

@@ -41,7 +41,7 @@ object Backends  {
 /**
   * Data structure representing the configuration of backends
   */
-class Backends(backends: List[Backend]) extends ICachableConfig {
+class Backends(backends: List[Backend]) extends ICacheableConfig {
 
     def findByUrl(url : String) : Option[Backend] = {
         val signature = UriUtil.getSignature(url)

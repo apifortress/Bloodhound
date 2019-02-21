@@ -40,14 +40,32 @@ object ResponseEntityUtil {
     return envelopeBuilder.body(response.payload)
   }
 
-  def createEntity(data : String, status : Int) : ResponseEntity[Array[Byte]] = {
-    return ResponseEntity.status(status).body(data.getBytes(StandardCharsets.UTF_8))
+  /**
+    * Given a string to be used as a response body and a status code, it produces a ResponseEntity off it
+    * @param data a string to be used as a response
+    * @param status a status code
+    * @return a response entity
+    */
+  def createEntity(data : String, status : Int, contentType: String) : ResponseEntity[Array[Byte]] = {
+    return ResponseEntity.status(status).header("Content-Type",contentType)
+                          .body(data.getBytes(StandardCharsets.UTF_8))
   }
 
+  /**
+    * Given an exception to be used as a response body and a status code, it produces a ResponseEntity off it
+    * @param exception an exception
+    * @param status a status code
+    * @return a response entity
+    */
   def createEntity(exception : Exception, status : Int) : ResponseEntity[Array[Byte]] = {
-    return createEntity(exceptionToJSON(exception),status)
+    return createEntity(exceptionToJSON(exception),status,"application/json")
   }
 
+  /**
+    * Converts an exception to a JSON message
+    * @param e an exception
+    * @return a JSON message
+    */
   def exceptionToJSON(e : Exception): String = {
     return "{ \"status\": \"error\", \"message\": \""+StringEscapeUtils.escapeJavaScript(ExceptionUtils.getMessage(e))+"\"}\n"
   }

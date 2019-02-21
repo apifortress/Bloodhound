@@ -50,6 +50,12 @@ object SpelEvaluator {
     }
   }
 
+  /**
+    * Evaluates a SpEL exception against a group of variables
+    * @param expression the expression
+    * @param variables the variables
+    * @return the result of the evaluation
+    */
   def evaluate(expression : String, variables : Map[String,Any]) : Any = {
     val parsedException = parse(expression)
     val ctx = new StandardEvaluationContext()

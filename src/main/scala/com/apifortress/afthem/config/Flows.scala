@@ -44,7 +44,7 @@ object Flows {
 /**
   * Flows will load from disk, parse and retain in memory all flows that get requested
   */
-class Flows extends mutable.LinkedHashMap[String,Flow] with ICachableConfig {
+class Flows extends mutable.LinkedHashMap[String,Flow] with ICacheableConfig {
 
   /**
     * If the flow has already been loaded and parsed, that gets returned.
@@ -128,7 +128,7 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
   }
 
   /**
-    * Retrieves a configuration item as a list
+    * Retrieves a configuration item as a list of strings
     * @param key the key of the configuration item
     * @return the configuration item as a list
     */
@@ -137,6 +137,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return if (data.isDefined) data.get.asInstanceOf[List[String]] else List.empty[String]
   }
 
+  /**
+    * Retrieves a configuration item as a list of maps
+    * @param key the key of the configuration item
+    * @return the configuration item as a list of maps
+    */
   def getConfigListMap(key : String) : List[Map[String,Any]] = {
     val data = getConfig.get(key)
     return if (data.isDefined) data.get.asInstanceOf[List[Map[String,Any]]] else List.empty[Map[String,Any]]

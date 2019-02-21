@@ -19,7 +19,8 @@ package com.apifortress.afthem
 
 /**
   * Utility class to calculate the execution time of a procedure
-  * @param start
+  * @param start time in nanoseconds. Use the argument if you already have a time measurement, otherwise
+  *              disregard
   */
 class Metric(val start: Long = System.nanoTime()) {
 
