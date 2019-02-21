@@ -15,22 +15,15 @@
  *
  */
 
-package com.apifortress.afthem.actors.sidecars.serializers
+package com.apifortress.afthem
 
 import java.nio.charset.StandardCharsets
 
-import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.WebParsedResponseMessage
-import com.apifortress.afthem.{Parsers, UriUtil}
 
 import scala.collection.mutable
 
-/**
-  * Abstract actor to serve as a base for all sidecar actors that serialize a full request/response
-  * conversation
-  * @param phaseId the phase ID
-  */
-abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
+object AfthemResponseSerializer {
 
   /**
     * Before any valid serialization takes place, the data needs to be transformed in a data structure
@@ -76,5 +69,4 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     val obj = toExportableObject(message)
     return Parsers.serializeAsJsonString(obj, pretty = false)
   }
-
 }

@@ -81,6 +81,6 @@ object UriUtil {
     */
   def toSerializerUri(uri : String): String = {
     val url = new URL(uri)
-    return url.getPath+(if (url.getQuery!=null) "?"+url.getQuery)
+    return url.getPath+(if (url.getQuery!=null) "?"+url.getQuery else "")
   }
 }
