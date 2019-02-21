@@ -17,7 +17,7 @@
 package com.apifortress.afthem.actors.essentials
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebRawRequestMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 
@@ -35,14 +35,15 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
       val phase = getPhase(msg)
 
       val parsedHeaders = ReqResUtil.parseHeaders(msg.request)
-      val discardHeaders = phase.getConfigList("discard_headers")
 
       val wrapper = new HttpWrapper(UriUtil.composeUriAndQuery(msg.request.getRequestURL.toString,msg.request.getQueryString),
                                     -1,
                                     msg.request.getMethod.toUpperCase,
-                                    filterDiscardHeaders(parsedHeaders._1,discardHeaders),
+                                    parsedHeaders._1,
                                     ReqResUtil.readPayload(msg.request.getInputStream,parsedHeaders._2.get("content-length")),
                                     msg.request.getRemoteAddr)
+
+      wrapper.removeHeaders(phase.getConfigList("discard_headers"))
 
       val message = new WebParsedRequestMessage(wrapper, msg.backend,
                                                 msg.flow, msg.deferredResult,
@@ -52,8 +53,8 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
       metricsLog.debug(m.toString())
   }
 
-  def filterDiscardHeaders(headers: List[(String Tuple2 String)],discardHeaders: List[String]): List[(String Tuple2 String)] = {
-    return headers.filter(item => !discardHeaders.contains(item._1))
+  def filterDiscardHeaders(headers: List[Header], discardHeaders: List[String]): List[Header] = {
+    return headers.filter(item => !discardHeaders.contains(item.key))
   }
 
 }

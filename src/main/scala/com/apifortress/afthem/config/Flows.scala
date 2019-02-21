@@ -18,7 +18,7 @@ package com.apifortress.afthem.config
 
 import java.io.File
 
-import com.apifortress.afthem.ConfigUtil
+import com.apifortress.afthem.{ConfigUtil, SpelEvaluator}
 
 import scala.collection.mutable
 
@@ -147,6 +147,10 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return if (data.isDefined) data.get.asInstanceOf[List[Map[String,Any]]] else List.empty[Map[String,Any]]
   }
 
+  def getConfigListEvalNameValue(key : String) : List[EvalNameValue] = {
+    return getConfigListMap(key).map(item => new EvalNameValue(item))
+  }
+
   /**
     * Retrieves a configuration item as a boolean
     * @param key the key of the configuration item
@@ -156,4 +160,21 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
   def getConfigBoolean(key : String) : Option[Boolean] = {
     return getConfig().get(key).asInstanceOf[Option[Boolean]]
   }
+}
+
+class EvalNameValue(val name : String, val value : String, val evaluated: Boolean) {
+
+  def this(item : Map[String,Any]) {
+    this(item.getOrElse("name",null).asInstanceOf[String],
+        item.getOrElse("value",null).asInstanceOf[String],
+        item.getOrElse("evaluated",false).asInstanceOf[Boolean])
+  }
+
+  def evaluateIfNeeded(scope : Map[String,Any]) : Any = {
+    if(evaluated)
+      return SpelEvaluator.evaluate(value,scope)
+    else
+      return value
+  }
+
 }

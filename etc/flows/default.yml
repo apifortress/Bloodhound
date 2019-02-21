@@ -10,7 +10,7 @@ request:
 transform_headers:
   next: upstream_http
   config:
-    add:
+    set:
       - name: x-foo
         value: bar
       - name: user-agent

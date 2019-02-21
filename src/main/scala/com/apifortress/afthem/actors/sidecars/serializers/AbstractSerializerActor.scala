@@ -51,7 +51,7 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     request.put("request_uri",message.request.url)
     request.put("method",message.request.method)
     val requestHeaders = mutable.HashMap.empty[String,String]
-    message.request.headers.foreach(header => requestHeaders.put(header._1,header._2))
+    message.request.headers.foreach(header => requestHeaders.put(header.key,header.value))
     request.put("headers",requestHeaders)
     obj.put("request",request)
 
@@ -60,7 +60,7 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     response.put("size",message.response.payload.length)
     response.put("status",message.response.status)
     val responseHeaders = mutable.HashMap.empty[String,String]
-    message.response.headers.foreach(header => responseHeaders.put(header._1,header._2))
+    message.response.headers.foreach(header => responseHeaders.put(header.key,header.value))
     request.put("headers",responseHeaders)
     obj.put("response",response)
 

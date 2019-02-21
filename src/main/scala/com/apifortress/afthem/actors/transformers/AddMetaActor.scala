@@ -29,7 +29,7 @@ class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
       val m = new Metric
       val phase = getPhase(msg)
       val evaluated = phase.getConfigBoolean("evaluated").getOrElse(false)
-      val data = phase.getConfigString("data")
+      val data = phase.getConfigString("value")
       val name = phase.getConfigString("name")
       if(evaluated) {
         val parsedExpression = SpelEvaluator.parse(data)

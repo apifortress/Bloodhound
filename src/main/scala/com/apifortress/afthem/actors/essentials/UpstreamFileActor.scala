@@ -20,7 +20,7 @@ package com.apifortress.afthem.actors.essentials
 import java.io.{File, FileInputStream}
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, UriUtil}
 import org.apache.commons.io.IOUtils
@@ -38,7 +38,7 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       val wrapper = new HttpWrapper("http://origin",
                               200,
                             "GET",
-                                    List.empty[(String, String)],
+                                    List.empty[Header],
                                     data)
       forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
       metricsLog.debug(m.toString())

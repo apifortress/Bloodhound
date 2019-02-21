@@ -99,8 +99,8 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
     wrapper.headers.foreach(header =>
-      if(!discardHeaders.contains(header._1.toLowerCase))
-        request.setHeader(header._1,header._2)
+      if(!discardHeaders.contains(header.key.toLowerCase))
+        request.setHeader(header.key,header.value)
     )
 
     return request

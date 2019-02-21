@@ -22,6 +22,7 @@ import org.apache.commons.io.input.BoundedInputStream
 import org.apache.http.HttpResponse
 import scala.collection.mutable
 import java.io.InputStream
+import com.apifortress.afthem.messages.beans.Header
 
 /**
   * Utils to handle requests and responses
@@ -48,8 +49,8 @@ object ReqResUtil {
     * @param request an HttpServletRequest to parse the headers from
     * @return a tuple made up of (list of headers, interesting headers)
     */
-  def parseHeaders(request: HttpServletRequest, discardHeaders : mutable.MutableList[String] = mutable.MutableList.empty[String]) : (List[(String Tuple2 String)],Map[String,Any]) = {
-    val headers = new mutable.MutableList[String Tuple2 String]
+  def parseHeaders(request: HttpServletRequest, discardHeaders : mutable.MutableList[String] = mutable.MutableList.empty[String]) : (List[Header],Map[String,Any]) = {
+    val headers = new mutable.MutableList[Header]
     val interestingHeaders = new mutable.HashMap[String,Any]
 
     val headerNames = request.getHeaderNames
@@ -63,7 +64,7 @@ object ReqResUtil {
         case _ =>
       }
       if (!discardHeaders.contains(headerName.toLowerCase))
-        headers+=new Tuple2(headerName,request.getHeader(headerName))
+        headers+=new Header(headerName,request.getHeader(headerName))
     }
     return (headers.toList,interestingHeaders.toMap)
   }
@@ -73,11 +74,11 @@ object ReqResUtil {
     * @param response an HttpResponse object
     * @return a tuple made up of (list of headers, interesting headers)
     */
-  def parseHeaders(response: HttpResponse) : (List[(String Tuple2 String)],Map[String,Any]) = {
-    val headers = new mutable.MutableList[String Tuple2 String]
+  def parseHeaders(response: HttpResponse) : (List[Header],Map[String,Any]) = {
+    val headers = new mutable.MutableList[Header]
     val interestingHeaders = new mutable.HashMap[String,Any]
     response.getAllHeaders.foreach{ header =>
-      headers+=new Tuple2(header.getName,header.getValue)
+      headers+=new Header(header.getName,header.getValue)
       header.getName match {
         case HEADER_CONTENT_LENGTH =>
           interestingHeaders.put(HEADER_CONTENT_LENGTH, header.getValue.toInt)

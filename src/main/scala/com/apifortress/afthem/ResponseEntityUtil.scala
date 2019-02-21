@@ -36,7 +36,7 @@ object ResponseEntityUtil {
     */
   def createEntity(response: HttpWrapper) : ResponseEntity[Array[Byte]] = {
     var envelopeBuilder = ResponseEntity.status(response.status)
-    response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header._1,header._2))
+    response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header.key,header.value))
     return envelopeBuilder.body(response.payload)
   }
 

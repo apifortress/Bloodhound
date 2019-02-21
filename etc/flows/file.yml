@@ -18,14 +18,9 @@ transform_headers:
         evaluated: true
 
 upstream_file:
-  next: out_beautifier
-  config:
-    subpath: mock
-
-out_beautifier:
   next: send_back
   config:
-    mode: json
+    subpath: mock
 
 send_back:
   sidecars:

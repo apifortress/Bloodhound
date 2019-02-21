@@ -22,18 +22,26 @@ package com.apifortress.afthem.messages.beans
 class HttpWrapper(var url: String = null,
                   val status: Int = 200,
                   val method: String = null,
-                  var headers: List[(String, String)] = null,
+                  var headers: List[Header] = null,
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null) {
 
   def getHeader(name : String) : String = {
-    val header = headers.find(item => item._1.toLowerCase == name.toLowerCase)
-    if(header.isDefined) return header.get._2
+    val header = headers.find(item => item.key.toLowerCase == name.toLowerCase)
+    if(header.isDefined) return header.get.value
     return ""
   }
 
   override def clone(): HttpWrapper = {
     new HttpWrapper(url,status,method,headers,payload,remoteIP)
+  }
+
+  def removeHeaders(headerNames : List[String]) = {
+    headers = headers.filter( header => !headerNames.contains(header.key.toLowerCase) )
+  }
+
+  def removeHeader(headerName: String) = {
+    removeHeaders(List(headerName))
   }
 
 }

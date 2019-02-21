@@ -17,9 +17,10 @@
 
 package com.apifortress.afthem.actors.transformers
 
-import com.apifortress.afthem.{Metric, SpelEvaluator}
+import com.apifortress.afthem.Metric
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.config.EvalNameValue
+import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 
 class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseId) {
@@ -39,36 +40,31 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
   }
 
   def perform(msg : BaseMessage, wrapper : HttpWrapper): Unit ={
-    val headersToRemove = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("remove"))
+    val headersToRemove = parseConfigHeaders(msg,getPhase(msg).getConfigListEvalNameValue("remove"))
     removeHeaders(wrapper,headersToRemove)
-    val headersToAdd = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("add"))
+    val headersToAdd = parseConfigHeaders(msg,getPhase(msg).getConfigListEvalNameValue("add"))
     addHeaders(wrapper,headersToAdd)
-    val headersToSet = parseConfigHeaders(msg,getPhase(msg).getConfigListMap("set"))
+    val headersToSet = parseConfigHeaders(msg,getPhase(msg).getConfigListEvalNameValue("set"))
     setHeaders(wrapper,headersToSet)
   }
 
-  def parseConfigHeaders(msg: BaseMessage, headers : List[Map[String,Any]]) : List[(String Tuple2 String)] = {
+  def parseConfigHeaders(msg: BaseMessage, headers : List[EvalNameValue]) : List[Header] = {
     return headers.map { item =>
-      val headerName : String = item.get("name").get.asInstanceOf[String]
-      val evaluated : Boolean = item.getOrElse("evaluated",false).asInstanceOf[Boolean]
-      val data : String = item.getOrElse("value",null).asInstanceOf[String]
-      val result = if (evaluated)
-                    SpelEvaluator.evaluate(data,Map[String,Any]("msg" -> msg)).asInstanceOf[String]
-                   else data
-      (headerName,result)
+      val result = item.evaluateIfNeeded(Map[String,Any]("msg" -> msg)).asInstanceOf[String]
+      new Header(item.name,result)
     }
   }
 
-  def addHeaders(wrapper : HttpWrapper, headers : List[(String Tuple2 String)]) : Unit= {
+  def addHeaders(wrapper : HttpWrapper, headers : List[Header]) : Unit = {
     wrapper.headers = wrapper.headers++headers
   }
 
-  def removeHeaders(wrapper: HttpWrapper, headers: List[(String Tuple2 String)]): Unit= {
-    val names= headers.map(h => h._1)
-    wrapper.headers = wrapper.headers.filter( item => !names.contains(item._1))
+  def removeHeaders(wrapper: HttpWrapper, headers: List[Header]): Unit = {
+    val names= headers.map(h => h.key)
+    wrapper.removeHeaders(names)
   }
 
-  def setHeaders(wrapper: HttpWrapper, headers: List[String Tuple2 String]): Unit = {
+  def setHeaders(wrapper: HttpWrapper, headers: List[Header]): Unit = {
     removeHeaders(wrapper,headers)
     addHeaders(wrapper,headers)
   }

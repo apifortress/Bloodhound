@@ -40,14 +40,14 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
     case msg : WebParsedRequestMessage =>
       val m = new Metric
       msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-      msg.request.headers = msg.request.headers.filter( header => header._1.toLowerCase!="content-length")
+      msg.request.removeHeader("content-length")
       forward(msg)
       metricsLog.debug(m.toString())
 
     case msg : WebParsedResponseMessage =>
       val m = new Metric
       msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-      msg.response.headers = msg.response.headers.filter( header => header._1.toLowerCase!="content-length")
+      msg.response.removeHeader("content-length")
       forward(msg)
       metricsLog.debug(m.toString())
 
