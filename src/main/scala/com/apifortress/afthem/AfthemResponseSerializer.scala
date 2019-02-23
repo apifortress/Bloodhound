@@ -54,7 +54,7 @@ object AfthemResponseSerializer {
     response.put("status",message.response.status)
     val responseHeaders = mutable.HashMap.empty[String,String]
     message.response.headers.foreach(header => responseHeaders.put(header.key,header.value))
-    request.put("headers",responseHeaders)
+    response.put("headers",responseHeaders)
     obj.put("response",response)
 
     return obj.toMap
