@@ -10,9 +10,11 @@ request:
 transform_headers:
   next: upstream_http
   config:
+    add:
+      - name: x-original-remoteIP
+        value: "#msg.request().remoteIP()"
+        evaluated: true
     set:
-      - name: x-foo
-        value: bar
       - name: user-agent
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
