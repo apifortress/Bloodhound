@@ -17,6 +17,12 @@ implementers:
   - id: transform_headers
     class: com.apifortress.afthem.actors.transformers.TransformHeadersActor
 
+# FILTERS
+  - id: header_filter
+    class: com.apifortress.afthem.actors.filters.FilterActor
+  - id: delay_filter
+    class: com.apifortress.afthem.actors.filters.DelayActor
+
 # SIDECARS
   - id: access_logger
     class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor

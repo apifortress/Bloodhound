@@ -11,6 +11,10 @@ backends:
   upstream: 'http://foofoobar.bar'
   flow_id: default
 
+- prefix: '127.0.0.1:8080/filters'
+  upstream: 'https://postman-echo.com/'
+  flow_id: filters
+
 - prefix: '127.0.0.1:8080/file'
   upstream: 'http://file'
   flow_id: file

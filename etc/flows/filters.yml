@@ -1,0 +1,33 @@
+request:
+  next: header_filter
+  sidecars:
+    - access_logger
+  config:
+    discard_headers:
+      - host
+
+header_filter:
+  next: delay_filter
+  config:
+    reject:
+      - name: ex
+        value: "#msg.request().getHeader('key')!='ABC123'"
+        evaluated: true
+
+delay_filter:
+  next: upstream_http
+  config:
+    delay: 5 seconds
+
+upstream_http:
+  next: send_back
+  config:
+    discard_headers:
+      - "content-length"
+
+send_back:
+  sidecars:
+    - access_logger
+
+access_logger:
+  config: {}
