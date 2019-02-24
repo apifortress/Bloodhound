@@ -26,14 +26,19 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
   override def receive: Receive = {
     case msg : BaseMessage =>
       val reject = getPhase(msg).getConfigListEvalNameValue("reject")
-      var found = false
+      var rejected = false
+      val scope = Map("msg" -> msg)
       for (item <- reject) {
-        if (!found && item.evaluateIfNeeded(Map("msg" -> msg)) == true) {
-          found = true
+        if (!rejected && item.evaluateIfNeeded(scope) == true) {
+          rejected = true
           msg.deferredResult.setData(new RejectedRequestException(), 400)
         }
       }
-      if(!found)
+      if(rejected)
+        log.debug("Message rejected")
+      else {
+        log.debug("Message accepted")
         forward(msg)
+      }
   }
 }
