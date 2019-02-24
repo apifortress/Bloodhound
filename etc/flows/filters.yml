@@ -8,6 +8,8 @@ request:
 
 header_filter:
   next: delay_filter
+  sidecars:
+    - access_logger
   config:
     reject:
       - name: ex

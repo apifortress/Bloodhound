@@ -17,4 +17,7 @@
 
 package com.apifortress.afthem.exceptions
 
-case class RejectedRequestException(message : String = "Request has been rejected") extends Exception(message : String)
+import com.apifortress.afthem.messages.WebParsedRequestMessage
+
+case class RejectedRequestException(request: WebParsedRequestMessage, message : String = "Request has been rejected")
+                                    extends Exception(message : String)

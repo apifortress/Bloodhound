@@ -28,13 +28,13 @@ import scala.collection.mutable
   * @param dateParam the date the message has been created. A new date will be created if null
   * @param metaParam metadata. A new collection will be created if null
   */
-class BaseMessage(val backend : Backend,
+abstract class BaseMessage(val backend : Backend,
                   val flow: Flow,
                   val deferredResult: AfthemResult,
                   val date : Date = new Date(),
                   val meta : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]()) {
 
   override def clone(): BaseMessage = {
-    return new BaseMessage(backend,flow,deferredResult,date,meta)
+    throw new IllegalStateException("Cannot clone abstract class")
   }
 }

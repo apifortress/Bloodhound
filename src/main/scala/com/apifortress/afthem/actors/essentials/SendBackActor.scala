@@ -29,7 +29,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
   override def receive: Receive = {
     case msg: WebParsedResponseMessage =>
       val m = new Metric
-      tellSidecars(msg)
+      tellSidecars(msg.clone())
 
       msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
       metricsLog.debug(m.toString())

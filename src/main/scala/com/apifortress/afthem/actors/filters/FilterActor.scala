@@ -19,26 +19,29 @@ package com.apifortress.afthem.actors.filters
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.RejectedRequestException
-import com.apifortress.afthem.messages.BaseMessage
+import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
 
 class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
-    case msg : BaseMessage =>
+    case msg : WebParsedRequestMessage =>
       val reject = getPhase(msg).getConfigListEvalNameValue("reject")
       var rejected = false
       val scope = Map("msg" -> msg)
+      val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
       for (item <- reject) {
         if (!rejected && item.evaluateIfNeeded(scope) == true) {
           rejected = true
-          msg.deferredResult.setData(new RejectedRequestException(), 400)
         }
       }
-      if(rejected)
+      if(rejected) {
         log.debug("Message rejected")
+        exceptionMessage.respond()
+        tellSidecars(exceptionMessage)
+      }
       else {
         log.debug("Message accepted")
-        forward(msg)
+        tellNextActor(msg)
       }
   }
 }

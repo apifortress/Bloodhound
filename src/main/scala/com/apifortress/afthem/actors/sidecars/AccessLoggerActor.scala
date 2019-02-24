@@ -17,8 +17,9 @@
 package com.apifortress.afthem.actors.sidecars
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import org.slf4j.{LoggerFactory}
+import com.apifortress.afthem.exceptions.RejectedRequestException
+import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
+import org.slf4j.LoggerFactory
 
 
 class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
@@ -26,6 +27,11 @@ class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
   private val accessInboundLog = LoggerFactory.getLogger("Access-Inbound")
   private val upstreamLog = LoggerFactory.getLogger("Upstream")
   override def receive: Receive = {
+    case msg: ExceptionMessage =>
+      if(msg.exception.isInstanceOf[RejectedRequestException]) {
+        val exception = msg.exception.asInstanceOf[RejectedRequestException]
+        accessInboundLog.info(exception.request.request.remoteIP + " - " + exception.request.request.method + " " + exception.request.request.url + " [REJECTED]")
+      }
     case msg: WebParsedRequestMessage =>
       accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.url)
     case msg: WebParsedResponseMessage =>
