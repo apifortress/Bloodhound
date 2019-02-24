@@ -59,6 +59,9 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractAfthemActor(
     return outputStream
   }
 
+  /**
+    * When the actor stops, all output streams have to close
+    */
   override def postStop(): Unit = {
     super.postStop()
     outputStreams.foreach( os => os._2.close())

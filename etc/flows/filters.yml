@@ -11,9 +11,13 @@ header_filter:
   sidecars:
     - access_logger
   config:
+    accept:
+      - value: "#msg.request().getHeader('key')=='ABC123'"
+        evaluated: true
+      - value: "#msg.request().getHeader('accept')=='application/json'"
+        evaluated: true
     reject:
-      - name: ex
-        value: "#msg.request().getHeader('key')!='ABC123'"
+      - value: "#msg.request().method()!='GET'"
         evaluated: true
 
 delay_filter:

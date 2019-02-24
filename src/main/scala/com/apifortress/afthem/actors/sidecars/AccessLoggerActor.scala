@@ -21,19 +21,34 @@ import com.apifortress.afthem.exceptions.RejectedRequestException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.slf4j.LoggerFactory
 
-
+/**
+  * Actor in charge of logging accesses to the gateway and the upstream API
+  * @param phaseId the phase ID
+  */
 class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
+  /**
+    * The inbound logger
+    */
   private val accessInboundLog = LoggerFactory.getLogger("Access-Inbound")
+  /**
+    * The upstream logger
+    */
   private val upstreamLog = LoggerFactory.getLogger("Upstream")
+
   override def receive: Receive = {
+    // Logging exceptions
     case msg: ExceptionMessage =>
+      // If the exception is the result of a request rejection
       if(msg.exception.isInstanceOf[RejectedRequestException]) {
         val exception = msg.exception.asInstanceOf[RejectedRequestException]
         accessInboundLog.info(exception.request.request.remoteIP + " - " + exception.request.request.method + " " + exception.request.request.url + " [REJECTED]")
       }
+    // Logging a request to the gateway
     case msg: WebParsedRequestMessage =>
       accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.url)
+
+    // Logging a response from the upstream SPI
     case msg: WebParsedResponseMessage =>
       upstreamLog.info("["+msg.response.status+"] - "+msg.response.method+" "+msg.response.url)
   }

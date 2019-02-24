@@ -42,7 +42,7 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
   }
 
   private def selectSidecarsActors(message : BaseMessage): List[ActorSelection] = {
-    val sidecarIds = message.flow.getPhase(getPhaseId()).sidecars
+    val sidecarIds = getPhase(message).sidecars
     if (sidecarIds == null)
       return List.empty[ActorSelection]
     return sidecarIds.map(id => AppContext.actorSystem.actorSelection("/user/"+id))
@@ -52,8 +52,13 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     selectSidecarsActors(message).foreach( actor => actor ! message)
   }
 
+  protected def hasSidecarActors(message : BaseMessage) : Boolean = {
+    return getPhase(message).sidecars != null
+  }
+
   protected def forward(message: BaseMessage) : Unit = {
-    tellSidecars(message.clone())
+    if(hasSidecarActors(message))
+      tellSidecars(message.clone())
     tellNextActor(message)
   }
 

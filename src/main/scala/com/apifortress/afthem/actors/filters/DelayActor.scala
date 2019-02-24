@@ -22,6 +22,10 @@ import com.apifortress.afthem.messages.BaseMessage
 
 import scala.concurrent.duration.Duration
 
+/**
+  * Actor delaying a request
+  * @param phaseId phase ID
+  */
 class DelayActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {

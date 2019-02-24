@@ -21,25 +21,44 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.RejectedRequestException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
 
+/**
+  * Actor filtering requests
+  * @param phaseId the phase ID
+  */
 class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
-      val reject = getPhase(msg).getConfigListEvalNameValue("reject")
-      var rejected = false
+
       val scope = Map("msg" -> msg)
-      val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
-      for (item <- reject) {
-        if (!rejected && item.evaluateIfNeeded(scope) == true) {
+
+      // ACCEPT cycle. All conditions need to meet for the request to be considered accepted
+      val acceptConditions = getPhase(msg).getConfigListEvalNameValue("accept")
+      var accepted = acceptConditions != null
+
+      for (item <- acceptConditions)
+        if (item.evaluateIfNeeded(scope) == false)
+          accepted = false
+
+      // REJECT cycle. If at least one condition is met, then the request is rejected
+      val rejectConditions = getPhase(msg).getConfigListEvalNameValue("reject")
+      var rejected = false
+
+      for (item <- rejectConditions)
+        if (!rejected && item.evaluateIfNeeded(scope) == true)
           rejected = true
-        }
-      }
-      if(rejected) {
+
+      // If the request has not been accepted or has been rejected, we return the error
+      if(!accepted||rejected) {
         log.debug("Message rejected")
+        val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
+        // Respond to the controller
         exceptionMessage.respond()
+        // and let sidecars know about the rejection
         tellSidecars(exceptionMessage)
       }
       else {
+        // Otherwise, we can proceed. No sidecars here.
         log.debug("Message accepted")
         tellNextActor(msg)
       }
