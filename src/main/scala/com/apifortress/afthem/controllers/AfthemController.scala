@@ -61,7 +61,9 @@ class AfthemController {
       }
     }catch {
       // Generic exception. Something went wrong
-      case e: Exception => deferredResult.setData(new GenericException("controller"),500)
+      case e: Exception =>
+        deferredResult.setData(new GenericException("controller"),500)
+
     }
 
     return deferredResult

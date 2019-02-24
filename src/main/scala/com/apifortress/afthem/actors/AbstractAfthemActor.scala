@@ -38,7 +38,7 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     if(nextId.startsWith("akka://"))
       return AppContext.actorSystem.actorSelection(nextId)
     else
-      return AppContext.actorSystem.actorSelection("/user/"+message.flow.getNextPhase(getPhaseId()).id)
+      return AppContext.actorSystem.actorSelection("/user/" + nextId)
   }
 
   private def selectSidecarsActors(message : BaseMessage): List[ActorSelection] = {

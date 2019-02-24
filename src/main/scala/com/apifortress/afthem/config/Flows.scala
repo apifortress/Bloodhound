@@ -123,8 +123,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     * @return the configuration item as string or null
     */
   def getConfigString(key : String) : String = {
-    val data = getConfig.get(key)
-    return if (data.isDefined) data.get.asInstanceOf[String] else null
+    return getConfig.getOrElse(key,null).asInstanceOf[String]
+  }
+
+  def getConfigInt(key : String) : Int = {
+    return getConfig.getOrElse(key,-1).asInstanceOf[Int]
   }
 
   /**
@@ -133,8 +136,7 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     * @return the configuration item as a list
     */
   def getConfigList(key : String) : List[String] = {
-    val data = getConfig.get(key)
-    return if (data.isDefined) data.get.asInstanceOf[List[String]] else List.empty[String]
+    return getConfig.getOrElse(key,List.empty[String]).asInstanceOf[List[String]]
   }
 
   /**
@@ -147,6 +149,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return if (data.isDefined) data.get.asInstanceOf[List[Map[String,Any]]] else List.empty[Map[String,Any]]
   }
 
+  /**
+    * Retrieves a configuration item as an EvalNameValue
+    * @param key the key of the configuration item
+    * @return the configuration item as an EvalNameValue
+    */
   def getConfigListEvalNameValue(key : String) : List[EvalNameValue] = {
     return getConfigListMap(key).map(item => new EvalNameValue(item))
   }
@@ -162,6 +169,13 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
   }
 }
 
+/**
+  * A class representing a name / value pair which may require expression evaluation.
+  * The "evaluated" boolean attribute will tell whether the value should be evaluated
+  * @param name the name of the item
+  * @param value the value of the item
+  * @param evaluated true if the value is an expression and needs evaluation
+  */
 class EvalNameValue(val name : String, val value : String, val evaluated: Boolean) {
 
   def this(item : Map[String,Any]) {
