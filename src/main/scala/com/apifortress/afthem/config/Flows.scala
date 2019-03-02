@@ -167,6 +167,10 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
   def getConfigBoolean(key : String) : Option[Boolean] = {
     return getConfig().get(key).asInstanceOf[Option[Boolean]]
   }
+
+  def getConfigAsEvalNameValue() : EvalNameValue = {
+    return new EvalNameValue(getConfig())
+  }
 }
 
 /**
