@@ -19,26 +19,27 @@ package com.apifortress.afthem.actors.sidecars
 import com.apifortress.afthem.SpelEvaluator
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
+import org.slf4j.LoggerFactory
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
-
+/**
+  * A generic logger actor that will log a piece of information you will provide as configuration
+  *
+  * @param phaseId the phase ID
+  */
 class GenericLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+
+  val genericLoggerLog = LoggerFactory.getLogger("Generic")
 
   override def receive: Receive = {
     case msg : BaseMessage =>
-      val evaluated = getPhase(msg).getConfigBoolean("evaluated").getOrElse(false)
-      val data = getPhase(msg).getConfigString("data")
-      if(evaluated) {
-        val parsedExpression = SpelEvaluator.parse(data)
+      val config = getPhase(msg).getConfigAsEvalNameValue()
+      if(config.evaluated) {
+        val parsedExpression = SpelEvaluator.parse(config.value)
         val ctx = new StandardEvaluationContext()
         ctx.setVariable("msg",msg)
-        val item = parsedExpression.getValue(ctx)
-        print(item)
-      } else print(data)
-  }
-
-  private def print(data : Any): Unit = {
-    println(data)
+        genericLoggerLog.info(parsedExpression.getValue(ctx).toString)
+      } else genericLoggerLog.info(config.value)
   }
 
 }

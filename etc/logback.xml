@@ -40,6 +40,14 @@
         </encoder>
     </appender>
 
+    <appender name="GENERIC_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/generic.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%date{ISO8601}	 [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
     <appender name="METRICS_LOGGER" class="ch.qos.logback.core.FileAppender">
         <file>log/metrics.log</file>
         <append>true</append>
@@ -84,6 +92,9 @@
     </logger>
     <logger name="Upstream" level="INFO" additivity="false">
         <appender-ref ref="UPSTREAM_LOGGER" />
+    </logger>
+    <logger name="Generic" level="INFO" additivity="false">
+        <appender-ref ref="GENERIC_LOGGER"/>
     </logger>
     <logger name="_metrics" level="DEBUG" additivity="false">
         <appender-ref ref="METRICS_LOGGER" />
