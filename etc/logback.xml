@@ -23,6 +23,23 @@
         </encoder>
     </appender>
 
+    <appender name="FILE_DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/afthem.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>afthem.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%date{ISO8601}	 [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="METRICS_LOGGER" class="ch.qos.logback.core.FileAppender">
         <file>log/metrics.log</file>
         <append>true</append>
@@ -53,7 +70,13 @@
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="FILE_DEFAULT" />
+    </logger>
     <logger name="com.apifortress" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_DEFAULT"/>
+    </logger>
+    <logger name="ch.qos.logback" level="WARN" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="Access-Inbound" level="INFO" additivity="false">
