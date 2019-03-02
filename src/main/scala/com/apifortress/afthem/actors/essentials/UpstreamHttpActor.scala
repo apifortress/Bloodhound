@@ -35,7 +35,7 @@ object UpstreamHttpActor {
 
   val ioReactor = new DefaultConnectingIOReactor()
   val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
-  val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().setConnectionManager(connectionManager).build()
+  val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement().setConnectionManager(connectionManager).build()
   httpClient.start()
 
 }
@@ -81,10 +81,9 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
   /**
     * Creates an HTTP client request with the provided data
-    * @param url the URL the request will hit
-    * @param wrapper the
-    * @param discardHeaders
-    * @return
+    * @param wrapper the request wrapper
+    * @param discardHeaders list of header names to discard
+    * @return an HttpURiRequest
     */
   private def createRequest(wrapper: HttpWrapper, discardHeaders : List[String]): HttpUriRequest = {
     val request = wrapper.method match {
@@ -103,12 +102,12 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         request.setHeader(header.key,header.value)
     )
 
-    return request
+    request
   }
 
   private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
-    return new HttpWrapper(requestWrapper.url,
+    new HttpWrapper(requestWrapper.url,
       response.getStatusLine.getStatusCode,
       requestWrapper.method,
       headersInfo._1,
