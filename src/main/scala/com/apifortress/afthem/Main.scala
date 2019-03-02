@@ -32,15 +32,15 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     log.info("Afthem starting...")
-    Runtime.getRuntime().addShutdownHook(new Thread()
+    Runtime.getRuntime.addShutdownHook(new Thread()
     {
       override def run() : Unit =  {
         log.info("Afthem shutting down...")
         AppContext.actorSystem.terminate()
       }
     })
-  AppContext.init()
     SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args)
+    AppContext.init()
   }
 
 
