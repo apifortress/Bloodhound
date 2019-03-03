@@ -19,6 +19,10 @@ backends:
   upstream: 'http://file'
   flow_id: file
 
+- prefix: '127.0.0.1:8080/meta'
+  upstream: 'https://postman-echo.com/'
+  flow_id: meta
+
 - prefix: '127.0.0.1:8080/echo'
   upstream: 'https://postman-echo.com/'
   flow_id: default

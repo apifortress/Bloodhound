@@ -1,0 +1,23 @@
+request:
+  next: add_meta
+  sidecars:
+    - access_logger
+
+add_meta:
+  next: upstream_http
+  config:
+    name: foobar
+    value: "#msg.request().getHeader('accept')"
+    evaluated: true
+
+upstream_http:
+  next: send_back
+
+send_back:
+  sidecars:
+  - generic_logger
+
+generic_logger:
+  config:
+    value: "#msg.meta().get('foobar')"
+    evaluated: true
