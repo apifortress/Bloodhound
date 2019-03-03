@@ -20,20 +20,6 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, Parsers}
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-
-object BeautifyPayloadActor {
-
-  val objectMapper: ObjectMapper = new ObjectMapper
-  objectMapper.registerModule(DefaultScalaModule)
-
-  val xmlMapper : XmlMapper = new XmlMapper
-  xmlMapper.registerModule(DefaultScalaModule)
-
-}
 
 /**
   * Actor that beautifies a request or response payload
