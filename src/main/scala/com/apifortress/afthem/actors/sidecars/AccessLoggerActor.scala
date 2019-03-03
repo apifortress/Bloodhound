@@ -42,7 +42,7 @@ class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       // If the exception is the result of a request rejection
       if(msg.exception.isInstanceOf[RejectedRequestException]) {
         val exception = msg.exception.asInstanceOf[RejectedRequestException]
-        accessInboundLog.info(exception.request.request.remoteIP + " - " + exception.request.request.method + " " + exception.request.request.url + " [REJECTED]")
+        accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.url + " [REJECTED]")
       }
     // Logging a request to the gateway
     case msg: WebParsedRequestMessage =>

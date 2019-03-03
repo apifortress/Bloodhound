@@ -17,6 +17,7 @@
 package com.apifortress.afthem.actors.transformers
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, Parsers}
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -38,18 +39,26 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
-      val m = new Metric
-      msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-      msg.request.removeHeader("content-length")
-      forward(msg)
-      metricsLog.debug(m.toString())
+      try {
+        val m = new Metric
+        msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
+        msg.request.removeHeader("content-length")
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
 
     case msg : WebParsedResponseMessage =>
-      val m = new Metric
-      msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-      msg.response.removeHeader("content-length")
-      forward(msg)
-      metricsLog.debug(m.toString())
+      try{
+        val m = new Metric
+        msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
+        msg.response.removeHeader("content-length")
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
 
   }
 

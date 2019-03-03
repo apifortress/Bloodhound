@@ -17,27 +17,34 @@
 package com.apifortress.afthem.actors.essentials
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, ResponseEntityUtil}
 
 /**
   * The actor taking care of sending the response back to the requesting controller
+  *
   * @param phaseId the phase ID
   */
 class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg: WebParsedResponseMessage =>
-      val m = new Metric
-      tellSidecars(msg.clone())
+      try {
+        val m = new Metric
+        tellSidecars(msg.clone())
 
-      msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
-      metricsLog.debug(m.toString())
-      logProcessingTime(msg)
+        msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
+        metricsLog.debug(m.toString())
+        logProcessingTime(msg)
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 
   /**
     * Given a WebParsedResponseMessage, it retrieves the start metadata to calculate the roundtrip time and log it
+    *
     * @param msg a WebParsedResponseMessage
     */
   private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {

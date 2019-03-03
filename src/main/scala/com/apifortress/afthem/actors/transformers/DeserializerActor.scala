@@ -16,6 +16,7 @@
   */
 package com.apifortress.afthem.actors.transformers
 
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.{Metric, Parsers, SpelEvaluator}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
@@ -25,22 +26,26 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
   override def receive: Receive = {
     case msg : BaseMessage =>
-      val m = new Metric
-      val phase = getPhase(msg)
+      try{
+        val m = new Metric
+        val phase = getPhase(msg)
 
-      val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
+        val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
 
-      val meta = phase.getConfigString("meta")
-      val contentType  = phase.getConfigString("contentType")
+        val meta = phase.getConfigString("meta")
+        val contentType  = phase.getConfigString("contentType")
 
-      val ctx = new StandardEvaluationContext()
-      ctx.setVariable("msg",msg)
-      val output = deserialize(parsedExpression.getValue(ctx),contentType)
+        val ctx = new StandardEvaluationContext()
+        ctx.setVariable("msg",msg)
+        val output = deserialize(parsedExpression.getValue(ctx),contentType)
 
-      msg.meta.put(meta,output)
+        msg.meta.put(meta,output)
 
-      forward(msg)
-      metricsLog.debug(m.toString())
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 
   def deserialize(data : Any, contentType : String): Any = {

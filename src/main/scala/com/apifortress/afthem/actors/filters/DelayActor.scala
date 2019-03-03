@@ -18,21 +18,27 @@
 package com.apifortress.afthem.actors.filters
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.BaseMessage
 
 import scala.concurrent.duration.Duration
 
 /**
   * Actor delaying a request
+  *
   * @param phaseId phase ID
   */
 class DelayActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
     case msg : BaseMessage =>
-      val delay = getPhase(msg).getConfigString("delay")
-      Thread.sleep(Duration.create(delay).toMillis)
-      forward(msg)
+      try {
+        val delay = getPhase(msg).getConfigString("delay")
+        Thread.sleep(Duration.create(delay).toMillis)
+        forward(msg)
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 
 }

@@ -20,31 +20,42 @@ package com.apifortress.afthem.actors.transformers
 import com.apifortress.afthem.Metric
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.EvalNameValue
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 
 /**
   * Actor taking care of transforming request or response headers
+  *
   * @param phaseId the ID of the phase
   */
 class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseId) {
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
-      val m = new Metric
-      perform(msg,msg.request)
-      forward(msg)
-      metricsLog.debug(m.toString())
+      try{
+        val m = new Metric
+        perform(msg,msg.request)
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
 
     case msg : WebParsedResponseMessage =>
-      val m = new Metric
-      perform(msg,msg.response)
-      forward(msg)
-      metricsLog.debug(m.toString())
+      try{
+        val m = new Metric
+        perform(msg,msg.response)
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 
   /**
     * Performs the transformation on a provided HttpWrapper
+    *
     * @param msg a message
     * @param wrapper the wrapper to alter
     */
@@ -59,6 +70,7 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
 
   /**
     * Evaluates a list of EvalNameValue into headers
+    *
     * @param msg the message, used as the scope of the evaluation
     * @param headers a list of EvalNameValue
     * @return a list of headers
@@ -72,6 +84,7 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
 
   /**
     * Adds a list of headers to an HttpWrapper
+    *
     * @param wrapper an HttpWrapper
     * @param headers a list of headers
     */
@@ -81,6 +94,7 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
 
   /**
     * Removes a list of headers from an HttpWrapper
+    *
     * @param wrapper an HttpWrapper
     * @param headers a list of headers
     */
@@ -91,6 +105,7 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
 
   /**
     * Sets a list of headers to an HttpWrapper
+    *
     * @param wrapper an HttpWrapper
     * @param headers a list of headers
     */

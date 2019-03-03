@@ -18,7 +18,7 @@
 package com.apifortress.afthem.actors.filters
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.exceptions.RejectedRequestException
+import com.apifortress.afthem.exceptions.{AfthemFlowException, RejectedRequestException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
 
 /**
@@ -29,38 +29,41 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
+      try {
+        val scope = Map("msg" -> msg)
 
-      val scope = Map("msg" -> msg)
+        // ACCEPT cycle. All conditions need to meet for the request to be considered accepted
+        val acceptConditions = getPhase(msg).getConfigListEvalNameValue("accept")
+        var accepted = acceptConditions != null
 
-      // ACCEPT cycle. All conditions need to meet for the request to be considered accepted
-      val acceptConditions = getPhase(msg).getConfigListEvalNameValue("accept")
-      var accepted = acceptConditions != null
+        for (item <- acceptConditions)
+          if (item.evaluateIfNeeded(scope) == false)
+            accepted = false
 
-      for (item <- acceptConditions)
-        if (item.evaluateIfNeeded(scope) == false)
-          accepted = false
+        // REJECT cycle. If at least one condition is met, then the request is rejected
+        val rejectConditions = getPhase(msg).getConfigListEvalNameValue("reject")
+        var rejected = false
 
-      // REJECT cycle. If at least one condition is met, then the request is rejected
-      val rejectConditions = getPhase(msg).getConfigListEvalNameValue("reject")
-      var rejected = false
+        for (item <- rejectConditions)
+          if (!rejected && item.evaluateIfNeeded(scope) == true)
+            rejected = true
 
-      for (item <- rejectConditions)
-        if (!rejected && item.evaluateIfNeeded(scope) == true)
-          rejected = true
-
-      // If the request has not been accepted or has been rejected, we return the error
-      if(!accepted||rejected) {
-        log.debug("Message rejected")
-        val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
-        // Respond to the controller
-        exceptionMessage.respond()
-        // and let sidecars know about the rejection
-        tellSidecars(exceptionMessage)
-      }
-      else {
-        // Otherwise, we can proceed. No sidecars here.
-        log.debug("Message accepted")
-        tellNextActor(msg)
+        // If the request has not been accepted or has been rejected, we return the error
+        if(!accepted||rejected) {
+          log.debug("Message rejected")
+          val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
+          // Respond to the controller
+          exceptionMessage.respond()
+          // and let sidecars know about the rejection
+          tellSidecars(exceptionMessage)
+        }
+        else {
+          // Otherwise, we can proceed. No sidecars here.
+          log.debug("Message accepted")
+          tellNextActor(msg)
+        }
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 }

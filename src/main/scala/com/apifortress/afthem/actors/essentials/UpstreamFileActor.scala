@@ -20,6 +20,7 @@ package com.apifortress.afthem.actors.essentials
 import java.io.{File, FileInputStream}
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, UriUtil}
@@ -27,6 +28,7 @@ import org.apache.commons.io.IOUtils
 
 /**
   * In case you want to use a local file as the upstream service, this actor does it
+  *
   * @param phaseId the phase ID
   */
 class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
@@ -34,15 +36,19 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
   override def receive: Receive = {
     case msg: WebParsedRequestMessage =>
-      val m = new Metric
-      metricsLog.debug("Time to Request: " + new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-      val data = IOUtils.toByteArray(new FileInputStream(new File(getPhase(msg).getConfigString("subpath")+File.separator+UriUtil.determineUpstreamPart(msg.request.url,msg.backend))))
-      val wrapper = new HttpWrapper("http://origin",
-                              200,
-                            "GET",
-                                    List.empty[Header],
-                                    data)
-      forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
-      metricsLog.debug(m.toString())
+      try {
+        val m = new Metric
+        metricsLog.debug("Time to Request: " + new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        val data = IOUtils.toByteArray(new FileInputStream(new File(getPhase(msg).getConfigString("subpath")+File.separator+UriUtil.determineUpstreamPart(msg.request.url,msg.backend))))
+        val wrapper = new HttpWrapper("http://origin",
+                                200,
+                              "GET",
+                                      List.empty[Header],
+                                      data)
+        forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 }
