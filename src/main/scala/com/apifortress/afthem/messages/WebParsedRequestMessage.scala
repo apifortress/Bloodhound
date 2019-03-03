@@ -24,12 +24,13 @@ import com.apifortress.afthem.messages.beans.{AfthemResult, HttpWrapper}
 import scala.collection.mutable
 
 /**
-  * Message containing a parsed request
-  * @param request the actual request data
-  * @param deferredResult the deferred result awaiting content to conclude the communication
-  * @param date the date the message has been created. A new date will be created if null
-  * @param meta metadata. A new collection will be created if null
-  * @param backendConfig the backend configuration
+  * Message containing the parsed request
+  * @param request the parsed request
+  * @param backend the backend configuration for this transaction
+  * @param flow the flow configuration for this transaction
+  * @param deferredResult the deferred result to report to once the data is ready
+  * @param date the date the message was created (defaults to new date)
+  * @param meta generic metadata
   */
 class WebParsedRequestMessage(val request: HttpWrapper,
                                    override val backend: Backend,

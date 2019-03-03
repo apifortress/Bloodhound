@@ -25,9 +25,13 @@ import scala.collection.mutable
 
 
 /**
-  * A message containing a raw request
-  * @param request a raw request
-  * @param deferredResult the deferred result awaiting content to conclude the communication
+  * A message carrying the raw request
+  * @param request the raw request
+  * @param backend the backend configuration for this transaction
+  * @param flow the flow configuration for this transaction
+  * @param deferredResult the deferred result to report to once the data is ready
+  * @param date the date the message was created (defaults to new date)
+  * @param meta generic metadata
   */
 case class WebRawRequestMessage(request: HttpServletRequest,
                                 override val backend: Backend,

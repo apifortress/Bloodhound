@@ -35,6 +35,10 @@ object BeautifyPayloadActor {
 
 }
 
+/**
+  * Actor that beautifies a request or response payload
+  * @param phaseId the phase ID
+  */
 class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
@@ -62,6 +66,12 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   }
 
+  /**
+    * The actual beautification functionality
+    * @param data the data
+    * @param mode the mode (must contain either 'json' or 'xml')
+    * @return the beautificated content
+    */
   def beautify(data : Array[Byte], mode : String) : Array[Byte] = {
     try {
       if (mode.contains("json"))

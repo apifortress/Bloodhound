@@ -16,6 +16,12 @@
   */
 package com.apifortress.afthem.messages
 
+/**
+  * A message to carry an exception back to the requesting agent
+  * @param exception the exception
+  * @param status the status to return
+  * @param message the message
+  */
 class ExceptionMessage(val exception: Exception,
                        val status: Int,
                        val message: BaseMessage)

@@ -43,6 +43,7 @@ object UpstreamHttpActor {
 
 /**
   * The actor taking care of retrieving the resource from the origin
+  * @param phaseId the phase ID
   */
 class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 

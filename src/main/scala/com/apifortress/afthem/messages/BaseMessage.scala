@@ -25,8 +25,11 @@ import scala.collection.mutable
 
 /**
   * The base of all messages
-  * @param dateParam the date the message has been created. A new date will be created if null
-  * @param metaParam metadata. A new collection will be created if null
+  * @param backend the backend configuration for this transaction
+  * @param flow the flow configuration for this transaction
+  * @param deferredResult the deferred result to report to once the data is ready
+  * @param date the date the message was created (defaults to new date)
+  * @param meta generic metadata
   */
 abstract class BaseMessage(val backend : Backend,
                   val flow: Flow,

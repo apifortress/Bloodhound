@@ -18,17 +18,24 @@ package com.apifortress.afthem.config
 
 import com.apifortress.afthem.{ConfigUtil, UriUtil}
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.slf4j.LoggerFactory
 
 /**
   * Companion object to load backends from file as a singleton
   */
 object Backends  {
 
+    val log = LoggerFactory.getLogger(classOf[Backends])
+
     def instance() : Backends = {
         return this.synchronized {
             var i2 = AfthemCache.configCache.get("backends")
-            if (i2 != null) i2.asInstanceOf[Backends]
+            if (i2 != null){
+                log.debug("Backends loaded from cache")
+                i2.asInstanceOf[Backends]
+            }
             else {
+                log.debug("Backends loaded from disk")
                 i2 = ConfigUtil.parse[Backends]("backends.yml", classOf[Backends])
                 AfthemCache.configCache.put("backends", i2)
                 i2.asInstanceOf[Backends]
