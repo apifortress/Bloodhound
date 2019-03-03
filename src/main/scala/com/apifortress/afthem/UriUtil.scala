@@ -41,6 +41,12 @@ object UriUtil {
     return uri
   }
 
+  /**
+    * Given a URL and a backend object, it determines the part of the path that belongs to the upstream
+    * @param url the URL
+    * @param backend the backend configuration object
+    * @return the part of the path belonging to the upstream
+    */
   def determineUpstreamPart(url: String, backend: Backend): String = {
     var subPath = url.substring(url.indexOf(backend.prefix)+backend.prefix.length)
     var upstreamUrl = backend.upstream

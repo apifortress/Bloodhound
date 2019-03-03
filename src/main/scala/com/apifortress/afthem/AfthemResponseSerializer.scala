@@ -23,6 +23,10 @@ import com.apifortress.afthem.messages.WebParsedResponseMessage
 
 import scala.collection.mutable
 
+/**
+  * Utility to convert a WebParsedResponseMessage into a Map that is compatible with the API Fortress platform
+  * expectations. The map can then be converted into a JSON for proper serialization
+  */
 object AfthemResponseSerializer {
 
   /**

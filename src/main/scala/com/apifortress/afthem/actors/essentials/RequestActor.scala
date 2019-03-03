@@ -40,9 +40,8 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
                                     -1,
                                     msg.request.getMethod.toUpperCase,
                                     parsedHeaders._1,
-                                    ReqResUtil.readPayload(msg.request.getInputStream,parsedHeaders._2.get("content-length")),
+                                    ReqResUtil.readPayload(msg.request.getInputStream(),parsedHeaders._2.get("content-length")),
                                     msg.request.getRemoteAddr)
-
       wrapper.removeHeaders(phase.getConfigList("discard_headers"))
 
       val message = new WebParsedRequestMessage(wrapper, msg.backend,
@@ -53,6 +52,13 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
       metricsLog.debug(m.toString())
   }
 
+  /**
+    * Given a list of headers and a list of header names, it filters the headers discarding the ones whose name appear
+    * in the list
+    * @param headers the headers
+    * @param discardHeaders the name of the headers to discard
+    * @return the filtered headers
+    */
   def filterDiscardHeaders(headers: List[Header], discardHeaders: List[String]): List[Header] = {
     return headers.filter(item => !discardHeaders.contains(item.key))
   }

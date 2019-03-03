@@ -105,6 +105,13 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     request
   }
 
+  /**
+    * Creates an HttpWrapper for the response
+    * @param requestWrapper the HttpWrapper of the request
+    * @param response the response from the HTTP Client
+    * @param inputStream the stream connected to the response body
+    * @return the response HttpWrapper
+    */
   private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
     new HttpWrapper(requestWrapper.url,
