@@ -17,7 +17,13 @@
 package com.apifortress.afthem.messages.beans
 
 /**
-  * An object wrapping information about either a request or a response
+  * A wrapper suitable for both a request or a response
+  * @param url the URL (typically null when it's a response)
+  * @param status the status code (defaults to 200)
+  * @param method the method (typically null when it's a response)
+  * @param headers the headers
+  * @param payload the payload
+  * @param remoteIP the remote IP of the requesting agent (typically null when it's a response)
   */
 class HttpWrapper(var url: String = null,
                   val status: Int = 200,
@@ -26,6 +32,11 @@ class HttpWrapper(var url: String = null,
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null) {
 
+  /**
+    * Retrieves a header value by name. Returns empty if the header was not found
+    * @param name the name of the header to retrieve
+    * @return the header value or empty string if not found
+    */
   def getHeader(name : String) : String = {
     val header = headers.find(item => item.key.toLowerCase == name.toLowerCase)
     if(header.isDefined) return header.get.value
@@ -36,10 +47,18 @@ class HttpWrapper(var url: String = null,
     new HttpWrapper(url,status,method,headers,payload,remoteIP)
   }
 
+  /**
+    * Removes the headers given a list of header names
+    * @param headerNames a list of header names
+    */
   def removeHeaders(headerNames : List[String]) = {
     headers = headers.filter( header => !headerNames.contains(header.key.toLowerCase) )
   }
 
+  /**
+    * Removes a header by its name
+    * @param headerName a header name
+    */
   def removeHeader(headerName: String) = {
     removeHeaders(List(headerName))
   }

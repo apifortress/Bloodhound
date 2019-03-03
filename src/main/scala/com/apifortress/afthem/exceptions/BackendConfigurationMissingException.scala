@@ -17,4 +17,7 @@
 
 package com.apifortress.afthem.exceptions
 
+/**
+  * Exception to be thrown when no backend configuration was found
+  */
 class BackendConfigurationMissingException extends Exception("No backend configuration found")

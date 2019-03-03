@@ -21,6 +21,10 @@ import com.apifortress.afthem.ResponseEntityUtil
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult
 
+/**
+  * Our implementation of the deferred result
+  * @param data
+  */
 class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEntity[Array[Byte]]] {
 
   if(data != null)

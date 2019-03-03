@@ -126,6 +126,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return getConfig.getOrElse(key,null).asInstanceOf[String]
   }
 
+  /**
+    * Retrieves a configuration item as an integer
+    * @param key the key of the configuration item
+    * @return the configuration item as string or -1
+    */
   def getConfigInt(key : String) : Int = {
     return getConfig.getOrElse(key,-1).asInstanceOf[Int]
   }
@@ -168,6 +173,11 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return getConfig().get(key).asInstanceOf[Option[Boolean]]
   }
 
+  /**
+    * Retrieves a configuration item as an EvalNameValue object
+    * @return an EvalNameValue object
+    *
+    */
   def getConfigAsEvalNameValue() : EvalNameValue = {
     return new EvalNameValue(getConfig())
   }
@@ -188,6 +198,11 @@ class EvalNameValue(val name : String, val value : String, val evaluated: Boolea
         item.getOrElse("evaluated",false).asInstanceOf[Boolean])
   }
 
+  /**
+    * Evaluates the EvalNameValue if 'evaluated' is true, or the content of the value string if false
+    * @param scope the variable scope
+    * @return the value
+    */
   def evaluateIfNeeded(scope : Map[String,Any]) : Any = {
     if(evaluated)
       return SpelEvaluator.evaluate(value,scope)

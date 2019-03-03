@@ -19,5 +19,9 @@ package com.apifortress.afthem.exceptions
 
 import com.apifortress.afthem.messages.WebParsedRequestMessage
 
+/**
+  * An exception to be thrown when a filter rejects a request
+  * @param message the message that was being processed
+  */
 case class RejectedRequestException(override val message: WebParsedRequestMessage)
                                       extends AfthemFlowException(message,"Request has been rejected")

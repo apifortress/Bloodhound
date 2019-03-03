@@ -17,6 +17,11 @@
 
 package com.apifortress.afthem.messages.beans
 
+/**
+  * A key value object to represent a header
+  * @param keyItem the header name
+  * @param value the header value
+  */
 class Header(keyItem : String, val value : String) {
   val key = keyItem.toLowerCase
 }
