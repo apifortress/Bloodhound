@@ -39,4 +39,4 @@ case class Implementers(implementers: List[Implementer])
   * @param id the ID of the implementer
   * @param className the class name of the implementer
   */
-case class Implementer(id : String, @JsonProperty("class") className : String)
+case class Implementer(id : String, @JsonProperty("class") className : String, @JsonProperty("type") actorType : String)

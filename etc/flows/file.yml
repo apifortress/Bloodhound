@@ -1,14 +1,14 @@
-request:
-  next: transform_headers
+proxy/request:
+  next: transformer/transform_headers
   sidecars:
-    - access_logger
+    - sidecar/access_logger
   config:
     discard_headers:
       - host
       - content-length
 
-transform_headers:
-  next: upstream_file
+transformer/transform_headers:
+  next: proxy/upstream_file
   config:
     add:
       - name: x-foo
@@ -17,21 +17,21 @@ transform_headers:
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
 
-upstream_file:
-  next: send_back
+proxy/upstream_file:
+  next: proxy/send_back
   sidecars:
-    - generic_logger
+    - sidecar/generic_logger
   config:
     subpath: mock
 
-send_back:
+proxy/send_back:
   sidecars:
-    - access_logger
+    - sidecar/access_logger
 
-generic_logger:
+sidecar/generic_logger:
   config:
     value: "'loaded file for : '+#msg.request().url()"
     evaluated: true
 
-access_logger:
+sidecar/access_logger:
   config: {}

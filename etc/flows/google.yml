@@ -1,12 +1,12 @@
-request:
-  next: upstream_http
+proxy/request:
+  next: proxy/upstream_http
   config:
     discard_headers:
       - host
       - content-length
 
-upstream_http:
-  next: send_back
+proxy/upstream_http:
+  next: proxy/send_back
 
-send_back:
+proxy/send_back:
   config: {}

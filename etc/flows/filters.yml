@@ -1,15 +1,15 @@
-request:
-  next: header_filter
+proxy/request:
+  next: filter/header_filter
   sidecars:
-    - access_logger
+    - sidecar/access_logger
   config:
     discard_headers:
       - host
 
-header_filter:
-  next: delay_filter
+filter/header_filter:
+  next: filter/delay_filter
   sidecars:
-    - access_logger
+    - sidecar/access_logger
   config:
     accept:
       - value: "#msg.request().getHeader('key')=='ABC123'"
@@ -20,20 +20,20 @@ header_filter:
       - value: "#msg.request().method()!='GET'"
         evaluated: true
 
-delay_filter:
-  next: upstream_http
+filter/delay_filter:
+  next: proxy/upstream_http
   config:
     delay: 5 seconds
 
-upstream_http:
-  next: send_back
+proxy/upstream_http:
+  next: proxy/send_back
   config:
     discard_headers:
       - "content-length"
 
-send_back:
+proxy/send_back:
   sidecars:
-    - access_logger
+    - sidecar/access_logger
 
-access_logger:
+sidecar/access_logger:
   config: {}

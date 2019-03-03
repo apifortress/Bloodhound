@@ -21,6 +21,7 @@ import java.io.File
 import akka.actor.{ActorSystem, Props}
 import akka.routing.FromConfig
 import com.apifortress.afthem.config.Implementers
+import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -40,12 +41,10 @@ object AppContext {
    /*
     * For each implementer, we create an actor.
     */
-  Implementers.instance.implementers.foreach{ item =>
-    val theClass = Class.forName(item.className)
-    if(config.hasPath("akka.actor.deployment./"+item.id))
-      actorSystem.actorOf(FromConfig.getInstance.props(Props.create(theClass,item.id)), item.id)
-    else
-      actorSystem.actorOf(Props.create(theClass,item.id), item.id)
+  val types = Implementers.instance.implementers.map(item=> item.actorType).distinct
+  types.foreach { actorType =>
+    val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
+    supervisor ! new StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
   def init() : Unit = {}

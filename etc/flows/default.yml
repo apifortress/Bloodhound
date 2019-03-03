@@ -1,14 +1,14 @@
-request:
-  next: transform_headers
+proxy/request:
+  next: transformer/transform_headers
   sidecars:
-    - access_logger
+    - sidecar/access_logger
   config:
     discard_headers:
       - host
       - content-length
 
-transform_headers:
-  next: upstream_http
+transformer/transform_headers:
+  next: proxy/upstream_http
   config:
     add:
       - name: x-original-remoteIP
@@ -19,25 +19,25 @@ transform_headers:
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
 
-upstream_http:
-  next: out_beautifier
+proxy/upstream_http:
+  next: transformer/out_beautifier
   config:
     discard_headers:
       - "content-length"
 
-out_beautifier:
-  next: send_back
+transformer/out_beautifier:
+  next: proxy/send_back
   config:
     mode: json
 
-send_back:
+proxy/send_back:
   sidecars:
-    - access_logger
-    - file_appender_serializer
+    - sidecar/access_logger
+    - sidecar/file_appender_serializer
 
-file_appender_serializer:
+sidecar/file_appender_serializer:
   config:
     filename: log/serialized.log
 
-access_logger:
+sidecar/access_logger:
   config: {}
