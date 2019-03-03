@@ -19,12 +19,19 @@ transform_headers:
 
 upstream_file:
   next: send_back
+  sidecars:
+    - generic_logger
   config:
     subpath: mock
 
 send_back:
   sidecars:
     - access_logger
+
+generic_logger:
+  config:
+    value: "'loaded file for : '+#msg.request().url()"
+    evaluated: true
 
 access_logger:
   config: {}
