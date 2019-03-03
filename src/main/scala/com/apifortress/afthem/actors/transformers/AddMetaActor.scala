@@ -22,21 +22,23 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
+/**
+  * Adds a meta information to a message. The information needs to be described in the configuration. It can be a static
+  * string or an expression
+  * @param id the ID of the phase
+  */
 class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
 
   override def receive: Receive = {
     case msg : BaseMessage =>
       val m = new Metric
-      val phase = getPhase(msg)
-      val evaluated = phase.getConfigBoolean("evaluated").getOrElse(false)
-      val data = phase.getConfigString("value")
-      val name = phase.getConfigString("name")
-      if(evaluated) {
-        val parsedExpression = SpelEvaluator.parse(data)
+      val config = getPhase(msg).getConfigAsEvalNameValue()
+      if(config.evaluated) {
+        val parsedExpression = SpelEvaluator.parse(config.value)
         val ctx = new StandardEvaluationContext()
         ctx.setVariable("msg",msg)
-        msg.meta.put(name,parsedExpression.getValue(ctx))
-      } else msg.meta.put(name,data)
+        msg.meta.put(config.name,parsedExpression.getValue(ctx))
+      } else msg.meta.put(config.name,config.value)
       forward(msg)
       metricsLog.debug(m.toString())
   }
