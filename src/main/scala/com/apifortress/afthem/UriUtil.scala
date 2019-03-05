@@ -16,10 +16,8 @@
   */
 package com.apifortress.afthem
 
-import java.net.URL
-
 import com.apifortress.afthem.config.Backend
-
+import org.springframework.web.util.{UriComponents, UriComponentsBuilder}
 
 
 /**
@@ -32,6 +30,7 @@ object UriUtil {
   /**
     * Given a Uri, it generates a signature off that. A signature is a URI without protocol and
     * query string
+    *
     * @param uri a uri
     * @return the signagure
     */
@@ -43,6 +42,7 @@ object UriUtil {
 
   /**
     * Given a URL and a backend object, it determines the part of the path that belongs to the upstream
+    *
     * @param url the URL
     * @param backend the backend configuration object
     * @return the part of the path belonging to the upstream
@@ -60,6 +60,7 @@ object UriUtil {
   /**
     * Given the URL of an incoming request, and a matching backend configuration,
     * it obtains the upstream URL to hit
+    *
     * @param url incoming request URL
     * @param backend the backend configuration
     * @return the upstream URL
@@ -70,6 +71,7 @@ object UriUtil {
 
   /**
     * Combines an URI and a query string
+    *
     * @param uri a URI
     * @param queryString a query string
     * @return URI and query string combined
@@ -82,11 +84,15 @@ object UriUtil {
 
   /**
     * Transforms the URI that is compatible with the expectations of the API Fortress serializer
+    *
     * @param uri the URI to be transformed
     * @return the transformed URI
     */
-  def toSerializerUri(uri : String): String = {
-    val url = new URL(uri)
-    return url.getPath+(if (url.getQuery!=null) "?"+url.getQuery else "")
+  def toSerializerUri(uri : UriComponents): String = {
+    return uri.getPath+(if (uri.getQuery!=null) "?"+uri.getQuery else "")
+  }
+
+  def toUriBuilder(uri : String): UriComponents = {
+    return UriComponentsBuilder.fromUriString(uri).build()
   }
 }
