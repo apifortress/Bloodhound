@@ -17,14 +17,13 @@
 
 package com.apifortress.afthem.config
 
-import com.apifortress.afthem.ConfigUtil
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
   * Companion class to obtain singleton Implementers instance
   */
 object Implementers {
-  val instance: Implementers = ConfigUtil.parse[Implementers]("implementers.yml",classOf[Implementers])
+  val instance: Implementers = ConfigLoader.loadImplementers()
 
 }
 

@@ -66,7 +66,7 @@ class Flows extends mutable.LinkedHashMap[String,Flow] with ICacheableConfig {
     * @return the loaded flow
     */
   private def loadFlow(flowId : String) : Flow = {
-    val flow = ConfigUtil.parse[Flow]("flows"+File.separator+flowId+".yml",classOf[Flow])
+    val flow = ConfigLoader.loadFlow(flowId)
     put(flowId,flow)
     return flow
   }
