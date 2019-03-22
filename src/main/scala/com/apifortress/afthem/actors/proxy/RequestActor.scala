@@ -14,7 +14,7 @@
   *
   * @author Simone Pezzano
   */
-package com.apifortress.afthem.actors.essentials
+package com.apifortress.afthem.actors.proxy
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException

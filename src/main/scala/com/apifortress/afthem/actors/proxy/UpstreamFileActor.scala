@@ -15,7 +15,7 @@
  *
  */
 
-package com.apifortress.afthem.actors.essentials
+package com.apifortress.afthem.actors.proxy
 
 import java.io.{File, FileInputStream}
 
