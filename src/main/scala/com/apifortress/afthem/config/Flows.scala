@@ -117,6 +117,10 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     return if (config == null) return Map.empty[String,Any] else config
   }
 
+  def getConfigMap(key : String) : Map[String,Any] = {
+    return getConfig.getOrElse(key,Map[String,Any]()).asInstanceOf[Map[String,Any]]
+  }
+
   /**
     * Retrieves a configuration item as string
     * @param key the key of the configuration item

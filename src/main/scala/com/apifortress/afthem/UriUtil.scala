@@ -32,7 +32,7 @@ object UriUtil {
     * query string
     *
     * @param uri a uri
-    * @return the signagure
+    * @return the signature
     */
   def getSignature(uri: String): String = {
     if(uri.startsWith("http"))
