@@ -10,6 +10,10 @@ import scala.io.Source
 
 class YamlConfigLoader extends TConfigLoader {
 
+  def loadAfthemRootConf() : RootConfigConf = {
+    return parse[RootConfigConf]("afthem.yml", classOf[RootConfigConf])
+  }
+
   override def loadBackends(): Backends = {
     var instance : Backends = AfthemCache.configCache.get("backends").asInstanceOf[Backends]
     if (instance != null){

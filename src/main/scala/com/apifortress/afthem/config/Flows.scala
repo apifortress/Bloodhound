@@ -16,9 +16,7 @@
   */
 package com.apifortress.afthem.config
 
-import java.io.File
-
-import com.apifortress.afthem.{ConfigUtil, SpelEvaluator}
+import com.apifortress.afthem.SpelEvaluator
 
 import scala.collection.mutable
 

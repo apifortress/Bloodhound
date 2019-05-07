@@ -4,7 +4,7 @@ import com.apifortress.afthem.config.loaders.YamlConfigLoader
 
 object ConfigLoader extends TConfigLoader {
 
-  val implementer = new YamlConfigLoader
+  val implementer = Class.forName(new YamlConfigLoader().loadAfthemRootConf().config_loader_class).newInstance().asInstanceOf[TConfigLoader]
 
   override def loadBackends(): Backends = return implementer.loadBackends()
 
