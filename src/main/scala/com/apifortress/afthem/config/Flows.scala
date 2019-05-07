@@ -126,8 +126,8 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     * @param key the key of the configuration item
     * @return the configuration item as string or null
     */
-  def getConfigString(key : String) : String = {
-    return getConfig.getOrElse(key,null).asInstanceOf[String]
+  def getConfigString(key : String, default : String = null) : String = {
+    return getConfig.getOrElse(key,default).asInstanceOf[String]
   }
 
   /**
@@ -135,8 +135,8 @@ class Phase(var id: String, val next: String, val sidecars: List[String], val co
     * @param key the key of the configuration item
     * @return the configuration item as string or -1
     */
-  def getConfigInt(key : String) : Int = {
-    return getConfig.getOrElse(key,-1).asInstanceOf[Int]
+  def getConfigInt(key : String, default : Int = -1) : Int = {
+    return getConfig.getOrElse(key,default).asInstanceOf[Int]
   }
 
   /**
