@@ -24,6 +24,7 @@ import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.http.HttpResponse
+import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
@@ -52,10 +53,10 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     case msg : WebParsedRequestMessage =>
       try {
         val m = new Metric
-        val discardHeaders = getPhase(msg).getConfigList("discard_headers")
+
 
         msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
-        val httpReq: HttpUriRequest = createRequest(msg.request, discardHeaders)
+        val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
           override def completed(response: HttpResponse): Unit = {
@@ -88,12 +89,17 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
   /**
     * Creates an HTTP client request with the provided data
-    *
-    * @param wrapper the request wrapper
-    * @param discardHeaders list of header names to discard
-    * @return an HttpURiRequest
+    * @param msg a WebParsedRequestMessage
     */
-  private def createRequest(wrapper: HttpWrapper, discardHeaders : List[String]): HttpUriRequest = {
+  private def createRequest(msg: WebParsedRequestMessage): HttpUriRequest = {
+
+    val wrapper = msg.request
+
+    val phase = getPhase(msg)
+
+    val discardHeaders = phase.getConfigList("discard_headers")
+
+
     val request = wrapper.method match {
       case "GET" =>  new HttpGet(wrapper.url)
       case "POST" => new HttpPost(wrapper.url)
@@ -102,6 +108,14 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       case "PATCH" =>  new HttpPatch(wrapper.url)
       case _ =>  null
     }
+
+    val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
+      .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))
+      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(true))
+      .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
+
+    request.setConfig(requestConfig)
+
     if(wrapper.payload != null && request.isInstanceOf[HttpEntityEnclosingRequestBase])
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
