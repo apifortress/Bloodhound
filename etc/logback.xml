@@ -82,7 +82,8 @@
         <appender-ref ref="FILE_DEFAULT" />
     </logger>
     <logger name="com.apifortress" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE_DEFAULT"/>
+        <!--<appender-ref ref="FILE_DEFAULT"/>-->
+        <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="ch.qos.logback" level="WARN" additivity="false">
         <appender-ref ref="STDOUT"/>
