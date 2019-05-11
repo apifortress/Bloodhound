@@ -1,6 +1,12 @@
 backends:
 - prefix: '127.0.0.1:8080/demo/'
-  upstream: 'http://demoapi.apifortress.com/api/retail/'
+  headers:
+    x-demo: 'true'
+  upstream: 'http://utils.apifortress.com/api/retail/'
+  flow_id: default
+
+- prefix: '127.0.0.1:8080/demo/'
+  upstream: 'https://google.com/'
   flow_id: default
 
 - prefix: '127.0.0.1:8080/google'

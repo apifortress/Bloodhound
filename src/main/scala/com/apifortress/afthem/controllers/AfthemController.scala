@@ -47,7 +47,7 @@ class AfthemController {
     val deferredResult = new AfthemResult
     try {
       // find a suitable backend for the inbound URL
-      val backendOption = Backends.instance.findByUrl(request.getRequestURL.toString)
+      val backendOption = Backends.instance.findByRequest(request)
       // if one is found then we can proceed
       if (backendOption.isDefined) {
         val backend = backendOption.get

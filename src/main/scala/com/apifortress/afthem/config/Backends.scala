@@ -16,8 +16,9 @@
   */
 package com.apifortress.afthem.config
 
-import com.apifortress.afthem.{ConfigUtil, UriUtil}
+import com.apifortress.afthem.UriUtil
 import com.fasterxml.jackson.annotation.JsonProperty
+import javax.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 
 /**
@@ -44,6 +45,23 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
         val signature = UriUtil.getSignature(url)
         return backends.find(bec => signature.startsWith(bec.prefix))
     }
+
+    def findByRequest(request : HttpServletRequest) : Option[Backend] = {
+        val signature = UriUtil.getSignature(request.getRequestURL.toString)
+        val backend = backends.find { backend =>
+            var found = true
+            if(signature.startsWith(backend.prefix)) {
+                if(backend.headers != null)
+                    for ((k, v) <- backend.headers)
+                        if (v != request.getHeader(k))
+                            found = false
+            }
+            else
+                found = false
+            found
+        }
+        return backend
+    }
 }
 
 /**
@@ -51,4 +69,4 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
   */
-case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, upstream: String)
+case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], upstream: String)
