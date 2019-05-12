@@ -49,11 +49,6 @@ object UriUtil {
     */
   def determineUpstreamPart(url: String, backend: Backend): String = {
     var subPath = url.substring(url.indexOf(backend.prefix)+backend.prefix.length)
-    var upstreamUrl = backend.upstream
-    if(!upstreamUrl.endsWith("/"))
-      upstreamUrl+='/'
-    if(subPath.startsWith("/"))
-      subPath = subPath.substring(1)
     return subPath
   }
 
