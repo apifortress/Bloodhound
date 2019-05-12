@@ -18,6 +18,11 @@ implementers:
     class: com.apifortress.afthem.actors.transformers.TransformHeadersActor
     type: transformer
 
+# FILTERS
+  - id: header_filter
+    class: com.apifortress.afthem.actors.filters.FilterActor
+    type: filter
+
 # SIDECARS
   - id: access_logger
     class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor

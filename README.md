@@ -35,6 +35,7 @@ bin/
 
 **Note:** we provide various *etc* configurations to test, named `etc.whatever`. Copy (or `ln -s`) that directory
 as `etc` and you're set to go.
+**Note:** each `etc.whatever` directory contains a README.md file with description and example calls.
 
 ## Run!
 

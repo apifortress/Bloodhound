@@ -1,4 +1,7 @@
 backends:
+- prefix: '127.0.0.1:8080/any/with/filter'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: filtered
 - prefix: '127.0.0.1:8080/any'
   upstream: 'https://httpbin.org/anything'
   flow_id: default
