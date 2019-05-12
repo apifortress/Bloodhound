@@ -1,0 +1,30 @@
+proxy/request:
+  next: transformer/transform_headers
+  sidecars:
+    - sidecar/access_logger
+  config:
+    discard_headers:
+      - host
+
+transformer/transform_headers:
+  next: proxy/upstream_http
+  config:
+    set:
+      - name: user-agent
+        value: "#msg.request().getHeader('user-agent')+' - Afthem'"
+        evaluated: true
+      - name: accept
+        value: "application/json"
+
+proxy/upstream_http:
+  next: proxy/send_back
+  config:
+    discard_headers:
+      - "content-length"
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+
+sidecar/access_logger:
+  config: {}
