@@ -5,6 +5,7 @@ proxy/request:
   config:
     discard_headers:
       - host
+      - content-length
 
 transformer/transform_headers:
   next: proxy/upstream_http

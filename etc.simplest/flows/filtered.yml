@@ -4,7 +4,7 @@ proxy/request:
     - sidecar/access_logger
   config:
     discard_headers:
-      - host
+    - host
 
 filter/header_filter:
   next: transformer/transform_headers
@@ -27,8 +27,6 @@ transformer/transform_headers:
       - name: user-agent
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
-      - name: accept
-        value: "application/json"
 
 proxy/upstream_http:
   next: proxy/send_back
