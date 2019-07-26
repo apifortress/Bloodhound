@@ -63,4 +63,11 @@ class HttpWrapper(var url: String = null,
     removeHeaders(List(headerName))
   }
 
+  def setHeader(key: String, value : String): Unit = {
+    val existingHeader = getHeader(key)
+    if(existingHeader != null)
+      removeHeader(key)
+    headers = headers:+new Header(key,value)
+  }
+
 }

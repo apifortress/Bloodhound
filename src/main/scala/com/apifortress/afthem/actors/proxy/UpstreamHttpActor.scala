@@ -57,6 +57,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
 
         msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
+        msg.request.setHeader("host",ReqResUtil.extractHost(msg.request.url))
         val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {

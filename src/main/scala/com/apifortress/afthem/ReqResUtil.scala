@@ -22,6 +22,8 @@ import org.apache.commons.io.input.BoundedInputStream
 import org.apache.http.HttpResponse
 import scala.collection.mutable
 import java.io.InputStream
+import java.net.URL
+
 import com.apifortress.afthem.messages.beans.Header
 
 /**
@@ -114,4 +116,6 @@ object ReqResUtil {
     }
     return data
   }
+
+  def extractHost(url : String) : String = new URL(url).getHost
 }
