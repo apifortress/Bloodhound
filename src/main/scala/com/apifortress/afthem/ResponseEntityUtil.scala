@@ -36,7 +36,15 @@ object ResponseEntityUtil {
     */
   def createEntity(response: HttpWrapper) : ResponseEntity[Array[Byte]] = {
     var envelopeBuilder = ResponseEntity.status(response.status)
-    response.headers.foreach( header=> envelopeBuilder=envelopeBuilder.header(header.key,header.value))
+    response.headers.foreach { header =>
+      /*
+       * As this gateway is meant for debugging purposes, we always decode GZIPped entities, therefore the content
+       * encoding cannot be passed back as is, since the content encoding between the proxy and the client is decided
+       * by the proxy configuration. If nothing is configured, Identity is the default
+       */
+      if(header.key != "content-encoding")
+        envelopeBuilder = envelopeBuilder.header(header.key, header.value)
+    }
     return envelopeBuilder.body(response.payload)
   }
 

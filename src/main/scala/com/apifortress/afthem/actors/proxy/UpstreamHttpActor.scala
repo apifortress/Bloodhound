@@ -25,6 +25,7 @@ import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessag
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.entity.GzipDecompressingEntity
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
@@ -60,13 +61,19 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
           override def completed(response: HttpResponse): Unit = {
-            val entity = response.getEntity
-            val inputStream = entity.getContent
+              /*
+               * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
+               * the appropriate header and handle it manually.
+               */
+              var entity = response.getEntity
+              if(entity.getContentEncoding != null && entity.getContentEncoding.getValue.toLowerCase.contains("gzip"))
+                entity = new GzipDecompressingEntity(entity)
+              val inputStream = entity.getContent
 
-            val wrapper = createResponseWrapper(msg.request, response, inputStream)
+              val wrapper = createResponseWrapper(msg.request, response, inputStream)
 
-            EntityUtils.consumeQuietly(entity)
-            inputStream.close()
+              EntityUtils.consumeQuietly(entity)
+              inputStream.close()
 
             val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
 
