@@ -35,7 +35,9 @@ object AfthemResponseSerializer {
     * @param message a WebParsedResponseMessage object
     * @return the message, converted to the agreed data structure
     */
-  def toExportableObject(message: WebParsedResponseMessage): Map[String,Any] = {
+  def toExportableObject(message: WebParsedResponseMessage,
+                         discardRequestHeaders : List[String] = List.empty[String],
+                         discardResponseHeaders : List[String] = List.empty[String]): Map[String,Any] = {
     val obj = mutable.HashMap.empty[String,Any]
     obj.put("client_ip",message.request.remoteIP)
     obj.put("started_at",message.date.getTime)
@@ -49,7 +51,10 @@ object AfthemResponseSerializer {
     request.put("querystring",uriComponents.getQueryParams.toSingleValueMap)
     request.put("method",message.request.method)
     val requestHeaders = mutable.HashMap.empty[String,String]
-    message.request.headers.foreach(header => requestHeaders.put(header.key,header.value))
+    message.request.headers.foreach { header =>
+      if (discardRequestHeaders != null && !discardRequestHeaders.contains(header.key))
+        requestHeaders.put(header.key, header.value)
+    }
     request.put("headers",requestHeaders)
     obj.put("request",request)
 
@@ -58,7 +63,10 @@ object AfthemResponseSerializer {
     response.put("size",message.response.payload.length)
     response.put("status",message.response.status)
     val responseHeaders = mutable.HashMap.empty[String,String]
-    message.response.headers.foreach(header => responseHeaders.put(header.key,header.value))
+    message.response.headers.foreach{ header =>
+      if (discardResponseHeaders != null && !discardResponseHeaders.contains(header.key))
+        responseHeaders.put(header.key,header.value)
+    }
     response.put("headers",responseHeaders)
     obj.put("response",response)
 
@@ -70,8 +78,10 @@ object AfthemResponseSerializer {
     * @param message a WebParsedResponseMessage object
     * @return the serialized version of the object
     */
-  def serialize(message: WebParsedResponseMessage): String = {
-    val obj = toExportableObject(message)
+  def serialize(message: WebParsedResponseMessage,
+                discardRequestHeaders : List[String] = List.empty[String],
+                discardResponseHeaders : List[String] = List.empty[String]): String = {
+    val obj = toExportableObject(message, discardRequestHeaders, discardResponseHeaders)
     return Parsers.serializeAsJsonString(obj, pretty = false)
   }
 }
