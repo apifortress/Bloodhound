@@ -33,6 +33,8 @@ object AfthemResponseSerializer {
     * we agree upon
     *
     * @param message a WebParsedResponseMessage object
+    * @param discardRequestHeaders a list of request header names you want to omit
+    * @param discardResponseHeaders a list of response header names you want to omit
     * @return the message, converted to the agreed data structure
     */
   def toExportableObject(message: WebParsedResponseMessage,
@@ -76,6 +78,8 @@ object AfthemResponseSerializer {
     * Serializes a WebParsedResponseMessage to string
     *
     * @param message a WebParsedResponseMessage object
+    * @param discardRequestHeaders a list of request header names you want to omit
+    * @param discardResponseHeaders a list of response header names you want to omit
     * @return the serialized version of the object
     */
   def serialize(message: WebParsedResponseMessage,

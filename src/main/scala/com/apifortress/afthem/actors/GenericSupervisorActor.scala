@@ -8,6 +8,10 @@ import com.apifortress.afthem.messages.{ExceptionMessage, StartActorsCommand}
 import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
+/**
+  * A supervisor and creator of all other actors
+  * @param id the ID of the supervisor
+  */
 class GenericSupervisorActor(val id : String) extends Actor {
 
   val log = LoggerFactory.getLogger(classOf[GenericSupervisorActor])

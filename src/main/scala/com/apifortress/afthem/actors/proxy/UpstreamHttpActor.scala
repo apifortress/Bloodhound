@@ -98,6 +98,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
   /**
     * Creates an HTTP client request with the provided data
     * @param msg a WebParsedRequestMessage
+    * @return an HttpUriRequest, ready to be executed
     */
   private def createRequest(msg: WebParsedRequestMessage): HttpUriRequest = {
 
