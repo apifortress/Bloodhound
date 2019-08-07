@@ -17,12 +17,14 @@
 
 package com.apifortress.afthem
 
-import java.io.Reader
+import java.io.{ByteArrayInputStream, Reader}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+import scala.xml.{PrettyPrinter, XML}
 
 /**
   * All parsing functions
@@ -168,7 +170,7 @@ object Parsers {
     * @param pretty true if pretty print is desired
     * @return the XML-serialized object as a byte array
     */
-  def deserializeAsXmlByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
+  def serializeAsXmlByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
     if(pretty) prettyXmlMapper.writeValueAsBytes(data)
     else xmlMapper.writeValueAsBytes(data)
   }
@@ -188,7 +190,11 @@ object Parsers {
     * @return a byte array containing the beautified XML
     */
   def beautifyXML(data : Array[Byte]) : Array[Byte] = {
-    return deserializeAsXmlByteArray(parseXML[Object](data, classOf[Object]))
+    val p = new PrettyPrinter(80,4)
+    val is = new ByteArrayInputStream(data)
+    val xml = XML.load(is)
+    is.close()
+    return p.format(xml).getBytes
   }
 
 
