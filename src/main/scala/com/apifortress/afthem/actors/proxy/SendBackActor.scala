@@ -34,6 +34,13 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
         val m = new Metric
         tellSidecars(msg.clone())
 
+        /**
+          * Content-Length is a sensitive header. If something in the flow changed the length of the response by
+          * transformation or simply unzipping, the response body will break so we have to remove it.
+          * Tomcat will replace it with the correct length once it sends the response
+          */
+        msg.response.removeHeader("content-length")
+
         msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
         metricsLog.debug(m.toString())
         logProcessingTime(msg)
