@@ -8,7 +8,7 @@ import com.apifortress.afthem.config._
 
 import scala.io.Source
 
-class YamlConfigLoader extends TConfigLoader {
+class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
 
   def loadAfthemRootConf() : RootConfigConf = {
     return parse[RootConfigConf]("afthem.yml", classOf[RootConfigConf])

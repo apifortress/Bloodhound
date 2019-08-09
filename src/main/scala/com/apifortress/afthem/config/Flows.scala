@@ -17,6 +17,7 @@
 package com.apifortress.afthem.config
 
 import com.apifortress.afthem.SpelEvaluator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import scala.collection.mutable
 
@@ -42,6 +43,7 @@ object Flows {
 /**
   * Flows will load from disk, parse and retain in memory all flows that get requested
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Flows extends mutable.LinkedHashMap[String,Flow] with ICacheableConfig {
 
   /**
@@ -74,6 +76,7 @@ class Flows extends mutable.LinkedHashMap[String,Flow] with ICacheableConfig {
 /**
   * A Flow is a sequence of Phases, representing the events happening to a request
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Flow extends java.util.HashMap[String,Phase] {
 
   /**
@@ -105,7 +108,9 @@ class Flow extends java.util.HashMap[String,Phase] {
   * @param sidecars a list of the IDs of the sidecar phases
   * @param config the configuration object, if any
   */
-class Phase(var id: String, val next: String, val sidecars: List[String], val config: Map[String,Any]){
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Phase(var id: String, val next: String, val sidecars: List[String] = List.empty[String],
+            val config: Map[String,Any] = Map.empty[String,Any]){
 
   /**
     * Returns the config object

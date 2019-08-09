@@ -17,7 +17,7 @@
 
 package com.apifortress.afthem.config
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 
 /**
   * Companion class to obtain singleton Implementers instance
@@ -31,6 +31,7 @@ object Implementers {
   * A class to store the implements configuration file
   * @param implementers the list of implementers
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class Implementers(implementers: List[Implementer])
 
 /**
@@ -38,4 +39,5 @@ case class Implementers(implementers: List[Implementer])
   * @param id the ID of the implementer
   * @param className the class name of the implementer
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class Implementer(id : String, @JsonProperty("class") className : String, @JsonProperty("type") actorType : String)

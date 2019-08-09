@@ -17,7 +17,7 @@
 package com.apifortress.afthem.config
 
 import com.apifortress.afthem.UriUtil
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 
@@ -39,6 +39,7 @@ object Backends  {
 /**
   * Data structure representing the configuration of backends
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Backends(backends: List[Backend]) extends ICacheableConfig {
 
     def findByUrl(url : String) : Option[Backend] = {
@@ -69,4 +70,5 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
   */
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], upstream: String)
