@@ -27,8 +27,12 @@ class ExceptionMessage(val exception: Exception,
                        val message: BaseMessage)
     extends BaseMessage(message.backend, message.flow, message.deferredResult, message.date, message.meta) {
 
-  def respond(): Unit = {
-    deferredResult.setData(exception,status)
+  /**
+    * Will respond to the requesting agent with the given content type
+    * @param contentType the content type, typically the value of the accept header
+    */
+  def respond(contentType : String = "application/json"): Unit = {
+    deferredResult.setData(exception,status, contentType)
   }
 }
 

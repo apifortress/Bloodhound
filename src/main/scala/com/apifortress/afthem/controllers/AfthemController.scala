@@ -17,6 +17,7 @@
 package com.apifortress.afthem.controllers
 
 
+import com.apifortress.afthem.ReqResUtil
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{Backends, Flows}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
@@ -57,12 +58,12 @@ class AfthemController {
         AppContext.actorSystem.actorSelection("/user/proxy/request") ! message
       } else {
         // If none are found, we return an exception
-        deferredResult.setData(new BackendConfigurationMissingException, 404)
+        deferredResult.setData(new BackendConfigurationMissingException, 404, ReqResUtil.extractAccept(request))
       }
     }catch {
       // Generic exception. Something went wrong
       case e: Exception =>
-        deferredResult.setData(new GenericException("controller"),500)
+        deferredResult.setData(new GenericException("controller"),500, ReqResUtil.extractAccept(request))
 
     }
 

@@ -1,8 +1,9 @@
 package com.apifortress.afthem.actors
 
 import akka.actor.SupervisorStrategy.{Restart, Resume}
-import akka.actor.{OneForOneStrategy, Props, Actor}
+import akka.actor.{Actor, OneForOneStrategy, Props}
 import akka.routing.FromConfig
+import com.apifortress.afthem.ReqResUtil
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{ExceptionMessage, StartActorsCommand}
 import org.slf4j.LoggerFactory
@@ -21,7 +22,7 @@ class GenericSupervisorActor(val id : String) extends Actor {
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
       case exception : AfthemFlowException =>
-        new ExceptionMessage(exception,500,exception.message).respond()
+        new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
         Resume
       case exception : Exception     => Restart
     }

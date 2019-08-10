@@ -49,24 +49,23 @@ object ResponseEntityUtil {
   }
 
   /**
-    * Given a string to be used as a response body and a status code, it produces a ResponseEntity off it
-    * @param data a string to be used as a response
-    * @param status a status code
-    * @return a response entity
-    */
-  def createEntity(data : String, status : Int, contentType: String) : ResponseEntity[Array[Byte]] = {
-    return ResponseEntity.status(status).header("Content-Type",contentType)
-                          .body(data.getBytes(StandardCharsets.UTF_8))
-  }
-
-  /**
     * Given an exception to be used as a response body and a status code, it produces a ResponseEntity off it
     * @param exception an exception
     * @param status a status code
+    * @param mimeType the sanitized mime type of the response
     * @return a response entity
     */
-  def createEntity(exception : Exception, status : Int) : ResponseEntity[Array[Byte]] = {
-    return createEntity(exceptionToJSON(exception),status,"application/json")
+  def createEntity(exception : Exception, status : Int, mimeType : String = "application/json") : ResponseEntity[Array[Byte]] = {
+    val data = mimeType match {
+      case "application/json" =>
+        exceptionToJSON(exception)
+      case "text/xml" =>
+        exceptionToXML(exception)
+      case _ =>
+        exceptionToText(exception)
+    }
+    return ResponseEntity.status(status).header("Content-Type",mimeType).body(data.getBytes(StandardCharsets.UTF_8))
+
   }
 
   /**
@@ -76,6 +75,24 @@ object ResponseEntityUtil {
     */
   def exceptionToJSON(e : Exception): String = {
     return "{ \"status\": \"error\", \"message\": \""+StringEscapeUtils.escapeJavaScript(ExceptionUtils.getMessage(e))+"\"}\n"
+  }
+
+  /**
+    * Converts an exception to an XML message
+    * @param e an exception
+    * @return an XML message
+    */
+  def exceptionToXML(e : Exception): String = {
+    return "<exception><status>error</status><message>"+StringEscapeUtils.escapeXml(ExceptionUtils.getMessage(e))+"</message></exception>"
+  }
+
+  /**
+    * Converts an exception to plain text message
+    * @param e an exception
+    * @return a plain text message
+    */
+  def exceptionToText(e : Exception): String = {
+    return "status: error\nexception: "+ExceptionUtils.getMessage(e)
   }
 
 }

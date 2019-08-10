@@ -24,6 +24,7 @@ import scala.collection.mutable
 import java.io.InputStream
 import java.net.URL
 
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.messages.beans.Header
 
 /**
@@ -117,5 +118,55 @@ object ReqResUtil {
     return data
   }
 
+  /**
+    * Given a URL in the form of a string, it extracts the host part and returns it
+    * @param url a URL in the form of a string
+    * @return the host
+    */
   def extractHost(url : String) : String = new URL(url).getHost
+
+  /**
+    * Extracts the "accept" header from an HttpServletRequest
+    * @param request the request
+    * @param default the default value, in case no "accept" header is present
+    * @return the value of the accept header
+    */
+  def extractAccept(request : HttpServletRequest, default : String = "application/json") : String = {
+    val accept = request.getHeader("accept")
+    if(accept == null)
+      return default
+    return accept
+  }
+
+  /**
+    * Extracts the "accept" header from either a WebParsedRequestMessage or a WebParsedResponseMessage
+    * @param message the message
+    * @param default the default value in case no "accept" header is present
+    * @return the value of the accept header
+    */
+  def extractAcceptFromMessage(message : BaseMessage, default : String = "application/json") : String = {
+    val request = message match {
+      case message if (message.isInstanceOf[WebParsedRequestMessage]) => message.asInstanceOf[WebParsedRequestMessage].request
+      case message if (message.isInstanceOf[WebParsedResponseMessage]) => message.asInstanceOf[WebParsedResponseMessage].request
+    }
+    if(request == null)
+      return default
+    val accept = request.getHeader("accept")
+    if (accept == null)
+      return default
+    return accept
+  }
+
+  /**
+    * Determines a sanitized mime type, based off a content-type
+    * @param contentType a content-type
+    * @return a sanitized mime type
+    */
+  def determineMimeFromContentType(contentType : String) : String = {
+    if(contentType.contains("json"))
+      return "application/json"
+    if(contentType.contains("xml"))
+      return "text/xml"
+    return "text/plain"
+  }
 }
