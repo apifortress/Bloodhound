@@ -23,5 +23,5 @@ package com.apifortress.afthem.messages.beans
   * @param value the header value
   */
 class Header(keyItem : String, val value : String) {
-  val key = keyItem.toLowerCase
+  val key : String = keyItem.toLowerCase
 }

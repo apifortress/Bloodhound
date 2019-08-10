@@ -53,7 +53,7 @@ class AfthemController {
       if (backendOption.isDefined) {
         val backend = backendOption.get
         val flow = Flows.instance.getFlow(backend.flowId)
-        val message = new WebRawRequestMessage(request, backend, flow, deferredResult)
+        val message = WebRawRequestMessage(request, backend, flow, deferredResult)
         message.meta.put("__start",System.nanoTime())
         AppContext.actorSystem.actorSelection("/user/proxy/request") ! message
       } else {

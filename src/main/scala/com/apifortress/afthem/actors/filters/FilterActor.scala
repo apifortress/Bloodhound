@@ -17,6 +17,7 @@
 
 package com.apifortress.afthem.actors.filters
 
+import com.apifortress.afthem.ReqResUtil
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.{AfthemFlowException, RejectedRequestException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
@@ -53,7 +54,7 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
           log.debug("Message rejected")
           val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
           // Respond to the controller
-          exceptionMessage.respond()
+          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg,"application/json"))
           // and let sidecars know about the rejection
           tellSidecars(exceptionMessage)
         }

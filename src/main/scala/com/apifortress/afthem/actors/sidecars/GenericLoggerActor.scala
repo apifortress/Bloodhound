@@ -19,7 +19,7 @@ package com.apifortress.afthem.actors.sidecars
 import com.apifortress.afthem.SpelEvaluator
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext
   */
 class GenericLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
-  val genericLoggerLog = LoggerFactory.getLogger("Generic")
+  val genericLoggerLog : Logger = LoggerFactory.getLogger("Generic")
 
   override def receive: Receive = {
     case msg : BaseMessage =>

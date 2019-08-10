@@ -146,8 +146,8 @@ object ReqResUtil {
     */
   def extractAcceptFromMessage(message : BaseMessage, default : String = "application/json") : String = {
     val request = message match {
-      case message if (message.isInstanceOf[WebParsedRequestMessage]) => message.asInstanceOf[WebParsedRequestMessage].request
-      case message if (message.isInstanceOf[WebParsedResponseMessage]) => message.asInstanceOf[WebParsedResponseMessage].request
+      case message : WebParsedRequestMessage => message.asInstanceOf[WebParsedRequestMessage].request
+      case message : WebParsedResponseMessage => message.asInstanceOf[WebParsedResponseMessage].request
     }
     if(request == null)
       return default

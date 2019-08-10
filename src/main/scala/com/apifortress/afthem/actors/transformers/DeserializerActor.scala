@@ -60,17 +60,17 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     */
   def deserialize(data : Any, contentType : String): Any = {
     var output : Any = null
-    if(data.isInstanceOf[String]) {
-      if(contentType.contains("json"))
-        output = Parsers.parseJSON[Any](data.asInstanceOf[String], classOf[Any])
-      if(contentType.contains("xml"))
-        output = Parsers.parseXML[Any](data.asInstanceOf[String], classOf[Any])
-    }
-    if(data.isInstanceOf[Array[Byte]]) {
-      if(contentType.contains("json"))
-        output = Parsers.parseJSON[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
-      if(contentType.contains("xml"))
-        output = Parsers.parseXML[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
+    data match {
+      case data : String =>
+        if(contentType.contains("json"))
+          output = Parsers.parseJSON[Any](data.asInstanceOf[String], classOf[Any])
+        if(contentType.contains("xml"))
+          output = Parsers.parseXML[Any](data.asInstanceOf[String], classOf[Any])
+      case data : Array[Byte] =>
+        if(contentType.contains("json"))
+          output = Parsers.parseJSON[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
+        if(contentType.contains("xml"))
+          output = Parsers.parseXML[Any](data.asInstanceOf[Array[Byte]], classOf[Any])
     }
     return output
   }

@@ -6,9 +6,9 @@ object ConfigLoader extends TConfigLoader {
 
   private val rootConfig = new YamlConfigLoader().loadAfthemRootConf()
 
-  val implementer = Class.forName(rootConfig.configLoader.className)
-                      .getDeclaredConstructor(classOf[Map[String,Any]])
-                      .newInstance(rootConfig.configLoader.params).asInstanceOf[TConfigLoader]
+  val implementer : TConfigLoader = Class.forName(rootConfig.configLoader.className)
+                                      .getDeclaredConstructor(classOf[Map[String,Any]])
+                                      .newInstance(rootConfig.configLoader.params).asInstanceOf[TConfigLoader]
 
   override def loadBackends(): Backends = return implementer.loadBackends()
 

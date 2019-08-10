@@ -19,14 +19,14 @@ package com.apifortress.afthem.config
 import com.apifortress.afthem.UriUtil
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Companion object to load backends from file as a singleton
   */
 object Backends  {
 
-    val log = LoggerFactory.getLogger(classOf[Backends])
+    val log : Logger = LoggerFactory.getLogger(classOf[Backends])
 
     def instance() : Backends = {
         return this.synchronized {

@@ -41,10 +41,10 @@ object AppContext {
    /*
     * For each implementer, we create an actor.
     */
-  val types = Implementers.instance.implementers.map(item=> item.actorType).distinct
+  val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
   types.foreach { actorType =>
     val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
-    supervisor ! new StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
+    supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
   def init() : Unit = {}

@@ -51,7 +51,7 @@ class HttpWrapper(var url: String = null,
     * Removes the headers given a list of header names
     * @param headerNames a list of header names
     */
-  def removeHeaders(headerNames : List[String]) = {
+  def removeHeaders(headerNames : List[String]) : Unit = {
     headers = headers.filter( header => !headerNames.contains(header.key.toLowerCase) )
   }
 
@@ -59,7 +59,7 @@ class HttpWrapper(var url: String = null,
     * Removes a header by its name
     * @param headerName a header name
     */
-  def removeHeader(headerName: String) = {
+  def removeHeader(headerName: String) : Unit = {
     removeHeaders(List(headerName))
   }
 
