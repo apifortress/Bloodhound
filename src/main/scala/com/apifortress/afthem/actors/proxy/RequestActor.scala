@@ -42,7 +42,7 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
           -1,
           msg.request.getMethod.toUpperCase,
           parsedHeaders._1,
-          ReqResUtil.readPayload(msg.request.getInputStream(), parsedHeaders._2.get("content-length")),
+          ReqResUtil.readPayload(msg.request.getInputStream(), parsedHeaders._2.get(ReqResUtil.HEADER_CONTENT_LENGTH)),
           msg.request.getRemoteAddr)
         wrapper.removeHeaders(phase.getConfigList("discard_headers"))
 

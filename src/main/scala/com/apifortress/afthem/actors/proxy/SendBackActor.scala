@@ -19,7 +19,7 @@ package com.apifortress.afthem.actors.proxy
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{Metric, ResponseEntityUtil}
+import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
 
 /**
   * The actor taking care of sending the response back to the requesting controller
@@ -39,7 +39,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
           * transformation or simply unzipping, the response body will break so we have to remove it.
           * Tomcat will replace it with the correct length once it sends the response
           */
-        msg.response.removeHeader("content-length")
+        msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
 
         msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
         metricsLog.debug(m.toString())

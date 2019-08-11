@@ -19,7 +19,7 @@ package com.apifortress.afthem.actors.transformers
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{Metric, Parsers}
+import com.apifortress.afthem.{Metric, Parsers, ReqResUtil}
 
 /**
   * Actor that beautifies a request or response payload
@@ -32,7 +32,7 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
       try {
         val m = new Metric
         msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-        msg.request.removeHeader("content-length")
+        msg.request.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
@@ -43,7 +43,7 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
       try{
         val m = new Metric
         msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
-        msg.response.removeHeader("content-length")
+        msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {

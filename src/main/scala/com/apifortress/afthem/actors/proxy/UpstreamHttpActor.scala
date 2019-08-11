@@ -150,6 +150,6 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       response.getStatusLine.getStatusCode,
       requestWrapper.method,
       headersInfo._1,
-      ReqResUtil.readPayload(inputStream,headersInfo._2.get("content-length")))
+      ReqResUtil.readPayload(inputStream,headersInfo._2.get(ReqResUtil.HEADER_CONTENT_LENGTH)))
   }
 }

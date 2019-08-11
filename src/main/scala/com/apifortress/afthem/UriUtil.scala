@@ -87,6 +87,11 @@ object UriUtil {
     return uri.getPath+(if (uri.getQuery!=null) "?"+uri.getQuery else "")
   }
 
+  /**
+    * Makes a URI Builder off a URI
+    * @param uri a URI
+    * @return a URI Builder
+    */
   def toUriBuilder(uri : String): UriComponents = {
     return UriComponentsBuilder.fromUriString(uri).build()
   }

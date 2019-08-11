@@ -54,7 +54,7 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
           log.debug("Message rejected")
           val exceptionMessage = new ExceptionMessage(new RejectedRequestException(msg),400,msg)
           // Respond to the controller
-          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg,"application/json"))
+          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, ReqResUtil.MIME_JSON))
           // and let sidecars know about the rejection
           tellSidecars(exceptionMessage)
         }

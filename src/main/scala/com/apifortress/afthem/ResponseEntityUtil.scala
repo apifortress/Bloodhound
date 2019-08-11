@@ -42,7 +42,7 @@ object ResponseEntityUtil {
        * encoding cannot be passed back as is, since the content encoding between the proxy and the client is decided
        * by the proxy configuration. If nothing is configured, Identity is the default
        */
-      if(header.key != "content-encoding")
+      if(header.key != ReqResUtil.HEADER_CONTENT_ENCODING)
         envelopeBuilder = envelopeBuilder.header(header.key, header.value)
     }
     return envelopeBuilder.body(response.payload)
@@ -55,16 +55,16 @@ object ResponseEntityUtil {
     * @param mimeType the sanitized mime type of the response
     * @return a response entity
     */
-  def createEntity(exception : Exception, status : Int, mimeType : String = "application/json") : ResponseEntity[Array[Byte]] = {
+  def createEntity(exception : Exception, status : Int, mimeType : String = ReqResUtil.MIME_JSON) : ResponseEntity[Array[Byte]] = {
     val data = mimeType match {
-      case "application/json" =>
+      case ReqResUtil.MIME_JSON =>
         exceptionToJSON(exception)
-      case "text/xml" =>
+      case ReqResUtil.MIME_XML =>
         exceptionToXML(exception)
       case _ =>
         exceptionToText(exception)
     }
-    return ResponseEntity.status(status).header("Content-Type",mimeType).body(data.getBytes(StandardCharsets.UTF_8))
+    return ResponseEntity.status(status).header(ReqResUtil.HEADER_CONTENT_TYPE,mimeType).body(data.getBytes(StandardCharsets.UTF_8))
 
   }
 

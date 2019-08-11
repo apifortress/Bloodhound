@@ -47,9 +47,34 @@ object ReqResUtil {
   val HEADER_CONTENT_TYPE : String = "content-type"
 
   /**
+    * The name of the content-encoding header
+    */
+  val HEADER_CONTENT_ENCODING : String = "content-encoding"
+
+  /**
     * The name of the host header
     */
   val HEADER_HOST : String = "host"
+
+  /**
+    * The name of the accept header
+    */
+  val HEADER_ACCEPT : String = "accept"
+
+  /**
+    * application/json mime
+    */
+  val MIME_JSON = "application/json"
+
+  /**
+    * text/xml mime
+    */
+  val MIME_XML = "text/xml"
+
+  /**
+    * text/plain mime
+    */
+  val MIME_PLAIN_TEXT = "text/plain"
 
   /**
     * Parses servlet headers into a list of tuples and collects a map of interesting headers
@@ -135,8 +160,8 @@ object ReqResUtil {
     * @param default the default value, in case no "accept" header is present
     * @return the value of the accept header
     */
-  def extractAccept(request : HttpServletRequest, default : String = "application/json") : String = {
-    val accept = request.getHeader("accept")
+  def extractAccept(request : HttpServletRequest, default : String = MIME_JSON) : String = {
+    val accept = request.getHeader(HEADER_ACCEPT)
     if(accept == null)
       return default
     return accept
@@ -148,14 +173,14 @@ object ReqResUtil {
     * @param default the default value in case no "accept" header is present
     * @return the value of the accept header
     */
-  def extractAcceptFromMessage(message : BaseMessage, default : String = "application/json") : String = {
+  def extractAcceptFromMessage(message : BaseMessage, default : String = MIME_JSON) : String = {
     val request = message match {
       case message : WebParsedRequestMessage => message.asInstanceOf[WebParsedRequestMessage].request
       case message : WebParsedResponseMessage => message.asInstanceOf[WebParsedResponseMessage].request
     }
     if(request == null)
       return default
-    val accept = request.getHeader("accept")
+    val accept = request.getHeader(HEADER_ACCEPT)
     if (accept == null)
       return default
     return accept
@@ -168,12 +193,17 @@ object ReqResUtil {
     */
   def determineMimeFromContentType(contentType : String) : String = {
     if(contentType.contains("json"))
-      return "application/json"
+      return MIME_JSON
     if(contentType.contains("xml"))
-      return "text/xml"
-    return "text/plain"
+      return MIME_XML
+    return MIME_PLAIN_TEXT
   }
 
+  /**
+    * Extracts a list of NameValuePair off a URL, containing the parameters in the query string
+    * @param url a URL
+    * @return a list of NameValuePair, containing the parameters in the query string
+    */
   def parseQueryString(url : String) : List[NameValuePair] =
     URLEncodedUtils.parse(new URI(url),Charset.defaultCharset()).asScala.toList
 }
