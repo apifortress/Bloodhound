@@ -19,13 +19,17 @@ package com.apifortress.afthem
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.BoundedInputStream
-import org.apache.http.HttpResponse
+import org.apache.http.{HttpResponse, NameValuePair}
+
 import scala.collection.mutable
 import java.io.InputStream
-import java.net.URL
+import java.net.{URI, URL}
+import java.nio.charset.Charset
 
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.messages.beans.Header
+import org.apache.http.client.utils.URLEncodedUtils
+import collection.JavaConverters._
 
 /**
   * Utils to handle requests and responses
@@ -169,4 +173,7 @@ object ReqResUtil {
       return "text/xml"
     return "text/plain"
   }
+
+  def parseQueryString(url : String) : List[NameValuePair] =
+    URLEncodedUtils.parse(new URI(url),Charset.defaultCharset()).asScala.toList
 }

@@ -40,6 +40,8 @@ object AfthemCache {
     */
   val configCache : Cache[String,ICacheableConfig] = cacheManager.getCache("configs",classOf[String],classOf[ICacheableConfig])
 
+  val apiKeysCache : Cache[String,ApiKeys] = cacheManager.getCache("api_keys",classOf[String],classOf[ApiKeys])
+
   /**
     * Cache dedicated to parsed expressions
     */
