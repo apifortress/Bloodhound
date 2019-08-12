@@ -3,7 +3,7 @@ package com.apifortress.afthem.actors.filters
 import java.io.{File, FileInputStream}
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.config.{AfthemCache, ApiKeys}
+import com.apifortress.afthem.config.{AfthemCache, ApiKey, ApiKeys, Phase}
 import com.apifortress.afthem.exceptions.UnauthorizedException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
 import com.apifortress.afthem.{Parsers, ReqResUtil}
@@ -19,7 +19,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
     case msg : WebParsedRequestMessage =>
       val phase = getPhase(msg)
       val foundKey = determineKey(phase.getConfigString("in"),phase.getConfigString("name"),msg)
-      val key = loadKeys(phase.getConfigString("filename","apikeys.yml")).getApiKey(foundKey)
+      val key = findKey(foundKey, phase)
       if(key.isDefined){
         msg.meta.put("key",key.get)
         tellNextActor(msg)
@@ -51,6 +51,10 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
     return keys
   }
 
+  def findKey(key : String, phase : Phase) : Option[ApiKey] = {
+    return loadKeys(phase.getConfigString("filename","apikeys.yml")).getApiKey(key)
+  }
+
   /**
     * Determines the API key provided in the request
     * @param in "query" or "header". Where the API key is expected to appear
@@ -58,7 +62,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
     * @param msg the inbound message
     * @return the found key, if any
     */
-  private def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
+  def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
     val found = in match {
       case "header" => msg.request.getHeader(name)
       case "query" =>
