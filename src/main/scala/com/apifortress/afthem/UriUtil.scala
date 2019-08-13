@@ -34,10 +34,9 @@ object UriUtil {
     * @param uri a uri
     * @return the signature
     */
-  def getSignature(uri: String): String = {
-    if(uri.startsWith("http"))
-      return uri.substring(uri.indexOf("//")+2)
-    return uri
+  def getSignature(uri : String): String = {
+    val builder = toUriBuilder(uri)
+    return builder.getHost+builder.getPath
   }
 
   /**
