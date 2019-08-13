@@ -16,8 +16,12 @@
  */
 package com.apifortress.afthem.messages.beans
 
+import com.apifortress.afthem.UriUtil
+import org.springframework.web.util.UriComponents
+
 /**
   * A wrapper suitable for both a request or a response
+ *
   * @param url the URL (typically null when it's a response)
   * @param status the status code (defaults to 200)
   * @param method the method (typically null when it's a response)
@@ -25,13 +29,25 @@ package com.apifortress.afthem.messages.beans
   * @param payload the payload
   * @param remoteIP the remote IP of the requesting agent (typically null when it's a response)
   */
-class HttpWrapper(var url: String = null,
+class HttpWrapper(private var url: String = null,
                   val status: Int = 200,
                   val method: String = null,
                   var headers: List[Header] = null,
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null) {
 
+
+  var uriComponents : UriComponents = null
+
+
+  def setURL(url : String) : Unit = {
+    this.url = url
+    uriComponents = UriUtil.toUriComponents(url)
+  }
+
+  def getURL() : String = {
+    return url
+  }
   /**
     * Retrieves a header value by name. Returns empty if the header was not found
     * @param name the name of the header to retrieve

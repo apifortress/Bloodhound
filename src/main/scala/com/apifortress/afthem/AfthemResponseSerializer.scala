@@ -47,10 +47,9 @@ object AfthemResponseSerializer {
     val request = mutable.HashMap.empty[String,Any]
     request.put("body",new String(message.request.payload,StandardCharsets.UTF_8))
     request.put("size",message.request.payload.length)
-    val uriComponents = UriUtil.toUriBuilder(message.request.url)
-    request.put("uri",UriUtil.toSerializerUri(uriComponents))
-    request.put("request_uri",message.request.url)
-    request.put("querystring",uriComponents.getQueryParams.toSingleValueMap)
+    request.put("uri",UriUtil.toSerializerUri(message.request.uriComponents))
+    request.put("request_uri",message.request.getURL())
+    request.put("querystring",message.request.uriComponents.getQueryParams.toSingleValueMap)
     request.put("method",message.request.method)
     val requestHeaders = mutable.HashMap.empty[String,String]
     message.request.headers.foreach { header =>

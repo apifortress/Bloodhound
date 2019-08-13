@@ -39,7 +39,7 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       try {
         val m = new Metric
         metricsLog.debug("Time to Request: " + new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-        val fis = new FileInputStream(new File(getPhase(msg).getConfigString("subpath")+File.separator+UriUtil.determineUpstreamPart(msg.request.url,msg.backend)))
+        val fis = new FileInputStream(new File(getPhase(msg).getConfigString("subpath")+File.separator+UriUtil.determineUpstreamPart(msg.request.uriComponents, msg.backend)))
         val data = IOUtils.toByteArray(fis)
         fis.close()
         val wrapper = new HttpWrapper("http://origin",

@@ -41,13 +41,13 @@ class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     case msg: ExceptionMessage if(msg.exception.isInstanceOf[RejectedRequestException]) =>
       // If the exception is the result of a request rejection
       val exception = msg.exception.asInstanceOf[RejectedRequestException]
-      accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.url + " [REJECTED]")
+      accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [REJECTED]")
     // Logging a request to the gateway
     case msg: WebParsedRequestMessage =>
-      accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.url)
+      accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.getURL())
     // Logging a response from the upstream SPI
     case msg: WebParsedResponseMessage =>
-      upstreamLog.info("["+msg.response.status+"] - "+msg.response.method+" "+msg.response.url)
+      upstreamLog.info("["+msg.response.status+"] - "+msg.response.method+" "+msg.response.getURL())
   }
 
 }

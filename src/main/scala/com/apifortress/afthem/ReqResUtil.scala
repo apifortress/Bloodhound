@@ -199,11 +199,4 @@ object ReqResUtil {
     return MIME_PLAIN_TEXT
   }
 
-  /**
-    * Extracts a list of NameValuePair off a URL, containing the parameters in the query string
-    * @param url a URL
-    * @return a list of NameValuePair, containing the parameters in the query string
-    */
-  def parseQueryString(url : String) : List[NameValuePair] =
-    URLEncodedUtils.parse(new URI(url),Charset.defaultCharset()).asScala.toList
 }

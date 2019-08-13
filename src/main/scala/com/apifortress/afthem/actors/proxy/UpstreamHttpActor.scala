@@ -56,8 +56,8 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         val m = new Metric
 
 
-        msg.request.url = UriUtil.determineUpstreamUrl(msg.request.url, msg.backend)
-        msg.request.setHeader("host",ReqResUtil.extractHost(msg.request.url))
+        msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, msg.backend))
+        msg.request.setHeader("host",ReqResUtil.extractHost(msg.request.getURL()))
         val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
@@ -108,13 +108,14 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
     val discardHeaders = phase.getConfigList("discard_headers")
 
+    val url = wrapper.getURL()
 
     val request = wrapper.method match {
-      case "GET" =>  new HttpGet(wrapper.url)
-      case "POST" => new HttpPost(wrapper.url)
-      case "PUT" =>  new HttpPut(wrapper.url)
-      case "DELETE" => new HttpDelete(wrapper.url)
-      case "PATCH" =>  new HttpPatch(wrapper.url)
+      case "GET" =>  new HttpGet(url)
+      case "POST" => new HttpPost(url)
+      case "PUT" =>  new HttpPut(url)
+      case "DELETE" => new HttpDelete(url)
+      case "PATCH" =>  new HttpPatch(url)
       case _ =>  null
     }
 
@@ -146,7 +147,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     */
   private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
-    new HttpWrapper(requestWrapper.url,
+    new HttpWrapper(requestWrapper.getURL(),
       response.getStatusLine.getStatusCode,
       requestWrapper.method,
       headersInfo._1,

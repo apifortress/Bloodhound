@@ -35,7 +35,7 @@ object UriUtil {
     * @return the signature
     */
   def getSignature(uri : String): String = {
-    val builder = toUriBuilder(uri)
+    val builder = toUriComponents(uri)
     return builder.getHost+builder.getPath
   }
 
@@ -46,8 +46,9 @@ object UriUtil {
     * @param backend the backend configuration object
     * @return the part of the path belonging to the upstream
     */
-  def determineUpstreamPart(url: String, backend: Backend): String = {
-    var subPath = url.substring(url.indexOf(backend.prefix)+backend.prefix.length)
+  def determineUpstreamPart(uriComponents: UriComponents, backend: Backend): String = {
+    val sanitizedUrl = uriComponents.getScheme+"://"+uriComponents.getHost+uriComponents.getPath+(if (uriComponents.getQuery != null) "?"+uriComponents.getQuery)
+    var subPath = sanitizedUrl.substring(sanitizedUrl.indexOf(backend.prefix)+backend.prefix.length)
     return subPath
   }
 
@@ -59,8 +60,8 @@ object UriUtil {
     * @param backend the backend configuration
     * @return the upstream URL
     */
-  def determineUpstreamUrl(url: String, backend: Backend): String = {
-    return backend.upstream+determineUpstreamPart(url,backend)
+  def determineUpstreamUrl(uriComponents: UriComponents, backend: Backend): String = {
+    return backend.upstream+determineUpstreamPart(uriComponents, backend)
   }
 
   /**
@@ -91,7 +92,7 @@ object UriUtil {
     * @param uri a URI
     * @return a URI Builder
     */
-  def toUriBuilder(uri : String): UriComponents = {
+  def toUriComponents(uri : String): UriComponents = {
     return UriComponentsBuilder.fromUriString(uri).build()
   }
 }
