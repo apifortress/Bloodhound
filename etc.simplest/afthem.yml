@@ -1,1 +1,2 @@
-config_loader_class: com.apifortress.afthem.config.loaders.YamlConfigLoader
+config_loader:
+  class: com.apifortress.afthem.config.loaders.YamlConfigLoader
