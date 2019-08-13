@@ -36,8 +36,7 @@ class HttpWrapper(private var url: String = null,
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null) {
 
-
-  var uriComponents : UriComponents = null
+  var uriComponents : UriComponents = UriUtil.toUriComponents(url)
 
 
   def setURL(url : String) : Unit = {
@@ -56,7 +55,7 @@ class HttpWrapper(private var url: String = null,
   def getHeader(name : String) : String = {
     val header = headers.find(item => item.key.toLowerCase == name.toLowerCase)
     if(header.isDefined) return header.get.value
-    return ""
+    return null
   }
 
   override def clone(): HttpWrapper = {
