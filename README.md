@@ -21,14 +21,19 @@ The processing engine can also be fine tuned to the extreme to have it perform t
 
 ## Building
 
-just use Maven to package the software. One big fat JAR will be created.
+just use Maven to package the software. One big fat JAR will be created:
+
+```text
+mvn compile package
+```
 
 ## Runtime setup
 It's very easy really.
 directory structure should look as follows:
 
-```aidl
+```text
 etc/
+modules/
 afthem.jar
 bin/
 ```
