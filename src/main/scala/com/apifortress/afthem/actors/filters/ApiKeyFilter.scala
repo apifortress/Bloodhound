@@ -20,7 +20,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
       val phase = getPhase(msg)
       val foundKey = determineKey(phase.getConfigString("in"),phase.getConfigString("name"),msg)
       val key = findKey(foundKey, phase)
-      if(key.isDefined){
+      if(key.isDefined && key.get.enabled){
         msg.meta.put("key",key.get)
         tellNextActor(msg)
       } else {
