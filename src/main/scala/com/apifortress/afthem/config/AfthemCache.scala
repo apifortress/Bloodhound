@@ -40,6 +40,9 @@ object AfthemCache {
     */
   val configCache : Cache[String,ICacheableConfig] = cacheManager.getCache("configs",classOf[String],classOf[ICacheableConfig])
 
+  /**
+    * Cache for API keys
+    */
   val apiKeysCache : Cache[String,ApiKeys] = cacheManager.getCache("api_keys",classOf[String],classOf[ApiKeys])
 
   /**
