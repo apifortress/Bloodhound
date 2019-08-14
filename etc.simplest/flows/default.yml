@@ -14,8 +14,6 @@ transformer/transform_headers:
       - name: user-agent
         value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
-      - name: accept
-        value: "application/json"
 
 proxy/upstream_http:
   next: proxy/send_back
