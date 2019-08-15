@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.BoundedInputStream
 import org.apache.http.HttpResponse
+import org.apache.http.entity.ContentType
 
 import scala.collection.mutable
 
@@ -232,6 +233,20 @@ object ReqResUtil {
     */
   def isTextPayload(wrapper: HttpWrapper) : Boolean = {
     return isText(extractContentType(wrapper,null))
+  }
+
+  def getCharsetFromResponse(httpResponse: HttpResponse, default : String = "UTF-8") : String = {
+    val charset = ContentType.get(httpResponse.getEntity).getCharset
+    if(charset == null)
+      return default
+    return charset.name()
+  }
+
+  def getCharsetFromRequest(httpServletRequest: HttpServletRequest, default : String = "UTF-8") : String = {
+    val headerValue = httpServletRequest.getCharacterEncoding
+    if(headerValue == null)
+      return default
+    return headerValue
   }
 
 }

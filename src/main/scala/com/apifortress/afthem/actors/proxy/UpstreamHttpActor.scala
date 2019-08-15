@@ -146,12 +146,14 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     * @param inputStream the stream connected to the response body
     * @return the response HttpWrapper
     */
-  private def   createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
+  private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
     new HttpWrapper(requestWrapper.getURL(),
       response.getStatusLine.getStatusCode,
       requestWrapper.method,
       headersInfo._1,
-      ReqResUtil.readPayload(inputStream,headersInfo._2.get(ReqResUtil.HEADER_CONTENT_LENGTH)))
+      ReqResUtil.readPayload(inputStream,headersInfo._2.get(ReqResUtil.HEADER_CONTENT_LENGTH)),
+      null,
+      ReqResUtil.getCharsetFromResponse(response))
   }
 }

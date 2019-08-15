@@ -17,9 +17,10 @@
 
 package com.apifortress.afthem
 
-import java.nio.charset.StandardCharsets
+import java.nio.charset.Charset
 
 import com.apifortress.afthem.messages.WebParsedResponseMessage
+
 import scala.collection.mutable
 
 /**
@@ -46,7 +47,7 @@ object AfthemResponseSerializer {
 
     val request = mutable.HashMap.empty[String,Any]
     request.put("body",if(ReqResUtil.isTextPayload(message.request))
-                          new String(message.request.payload,StandardCharsets.UTF_8)
+                          new String(message.request.payload,Charset.forName(message.request.characterEncoding))
                             else "---BINARY---")
     request.put("size",message.request.payload.length)
     request.put("uri",UriUtil.toSerializerUri(message.request.uriComponents))
@@ -63,7 +64,7 @@ object AfthemResponseSerializer {
 
     val response = mutable.HashMap.empty[String,Any]
     response.put("body",if(ReqResUtil.isTextPayload(message.response))
-                            new String(message.response.payload,StandardCharsets.UTF_8)
+                            new String(message.response.payload,Charset.forName(message.response.characterEncoding))
                               else "---BINARY---")
     response.put("size",message.response.payload.length)
     response.put("status",message.response.status)

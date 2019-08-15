@@ -34,7 +34,8 @@ class HttpWrapper(private var url: String = null,
                   val method: String = null,
                   var headers: List[Header] = null,
                   var payload: Array[Byte] = null,
-                  val remoteIP: String = null) {
+                  val remoteIP: String = null,
+                  val characterEncoding: String = null) {
 
   var uriComponents : UriComponents = UriUtil.toUriComponents(url)
 
@@ -59,7 +60,7 @@ class HttpWrapper(private var url: String = null,
   }
 
   override def clone(): HttpWrapper = {
-    new HttpWrapper(url,status,method,headers,payload,remoteIP)
+    new HttpWrapper(url,status,method,headers,payload,remoteIP,characterEncoding)
   }
 
   /**
