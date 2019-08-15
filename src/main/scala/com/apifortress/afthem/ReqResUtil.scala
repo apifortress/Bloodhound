@@ -18,6 +18,7 @@ package com.apifortress.afthem
 
 import java.io.InputStream
 import java.net.URL
+import java.nio.charset.Charset
 
 import com.apifortress.afthem.config.ConfigLoader
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
@@ -235,6 +236,12 @@ object ReqResUtil {
     return isText(extractContentType(wrapper,null))
   }
 
+  /**
+    * Extracts charset information from the response
+    * @param httpResponse an HttpResponse
+    * @param default a default value in case charset information is not present
+    * @return the detected charset
+    */
   def getCharsetFromResponse(httpResponse: HttpResponse, default : String = "UTF-8") : String = {
     val charset = ContentType.get(httpResponse.getEntity).getCharset
     if(charset == null)
@@ -242,11 +249,19 @@ object ReqResUtil {
     return charset.name()
   }
 
+  /**
+    * Extracts charset information from the request
+    * @param httpServletRequest an HttpServletRequest
+    * @param default the default value in case charset information is not present
+    * @return the detected charset
+    */
   def getCharsetFromRequest(httpServletRequest: HttpServletRequest, default : String = "UTF-8") : String = {
     val headerValue = httpServletRequest.getCharacterEncoding
     if(headerValue == null)
       return default
     return headerValue
   }
+
+  def byteArrayToString(wrapper : HttpWrapper) : String = new String(wrapper.payload,Charset.forName(wrapper.characterEncoding))
 
 }
