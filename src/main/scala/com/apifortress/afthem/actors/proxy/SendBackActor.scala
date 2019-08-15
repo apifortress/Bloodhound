@@ -18,7 +18,7 @@ package com.apifortress.afthem.actors.proxy
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
-import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.messages.WebParsedResponseMessage
 import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
 
 /**

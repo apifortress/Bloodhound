@@ -19,7 +19,6 @@ package com.apifortress.afthem.actors
 import java.io.File
 
 import akka.actor.{ActorSystem, Props}
-import akka.routing.FromConfig
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory

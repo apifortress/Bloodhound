@@ -19,7 +19,7 @@ package com.apifortress.afthem
 import java.io.InputStream
 import java.net.URL
 
-import com.apifortress.afthem.config.{ConfigLoader, RootConfigConf}
+import com.apifortress.afthem.config.ConfigLoader
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage, WebRawRequestMessage}
 import javax.servlet.http.HttpServletRequest
