@@ -55,9 +55,10 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       try {
         val m = new Metric
 
-
-        msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, msg.backend))
-        msg.request.setHeader("host",ReqResUtil.extractHost(msg.request.getURL()))
+        if(msg.backend.upstream!=null) {
+          msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, msg.backend))
+          msg.request.setHeader("host", ReqResUtil.extractHost(msg.request.getURL()))
+        }
         val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
@@ -145,7 +146,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     * @param inputStream the stream connected to the response body
     * @return the response HttpWrapper
     */
-  private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
+  private def   createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
     new HttpWrapper(requestWrapper.getURL(),
       response.getStatusLine.getStatusCode,
