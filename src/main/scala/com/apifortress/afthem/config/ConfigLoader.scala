@@ -26,7 +26,7 @@ object ConfigLoader extends TConfigLoader {
   /**
     * The root configuration
     */
-  private val rootConfig = new YamlConfigLoader().loadAfthemRootConf()
+  val rootConfig = new YamlConfigLoader().loadAfthemRootConf()
 
   /**
     * The implementation for all configurations except root

@@ -45,7 +45,9 @@ object AfthemResponseSerializer {
     obj.put("started_at",message.date.getTime)
 
     val request = mutable.HashMap.empty[String,Any]
-    request.put("body",new String(message.request.payload,StandardCharsets.UTF_8))
+    request.put("body",if(ReqResUtil.isTextPayload(message.request))
+                          new String(message.request.payload,StandardCharsets.UTF_8)
+                            else "---BINARY---")
     request.put("size",message.request.payload.length)
     request.put("uri",UriUtil.toSerializerUri(message.request.uriComponents))
     request.put("request_uri",message.request.getURL())
@@ -60,7 +62,9 @@ object AfthemResponseSerializer {
     obj.put("request",request)
 
     val response = mutable.HashMap.empty[String,Any]
-    response.put("body",new String(message.response.payload,StandardCharsets.UTF_8))
+    response.put("body",if(ReqResUtil.isTextPayload(message.response))
+                            new String(message.response.payload,StandardCharsets.UTF_8)
+                              else "---BINARY---")
     response.put("size",message.response.payload.length)
     response.put("status",message.response.status)
     val responseHeaders = mutable.HashMap.empty[String,String]

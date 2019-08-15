@@ -19,8 +19,9 @@ package com.apifortress.afthem
 import java.io.InputStream
 import java.net.URL
 
-import com.apifortress.afthem.messages.beans.Header
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.config.{ConfigLoader, RootConfigConf}
+import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage, WebRawRequestMessage}
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.BoundedInputStream
@@ -174,6 +175,7 @@ object ReqResUtil {
     val request = message match {
       case message : WebParsedRequestMessage => message.asInstanceOf[WebParsedRequestMessage].request
       case message : WebParsedResponseMessage => message.asInstanceOf[WebParsedResponseMessage].request
+      case message : WebRawRequestMessage => null
     }
     if(request == null)
       return default
@@ -184,7 +186,21 @@ object ReqResUtil {
   }
 
   /**
-    * Determines a sanitized mime type, based off a content-type
+    * Given an wrapper (request or response), it searches for a the content-type header. If absent, default is returned
+    * @param wrapper the HttpWrapper
+    * @param default the default value in case of miss
+    * @return the content-type
+    */
+  def extractContentType(wrapper : HttpWrapper, default : String = null): String = {
+    val contentType = wrapper.getHeader("content-type")
+    if(contentType == null)
+      return default
+    return contentType
+  }
+
+  /**
+    * Selects a mime type between JSON, XML or TEXT, based off a content-type. This method should be used when
+    * AFtheM needs to return an internally generated message for the user
     * @param contentType a content-type
     * @return a sanitized mime type
     */
@@ -194,6 +210,28 @@ object ReqResUtil {
     if(contentType.contains("xml"))
       return MIME_XML
     return MIME_PLAIN_TEXT
+  }
+
+
+  /**
+    * Given a content-type string, it will search whether there's a match in the afthem.yml configuration. If found
+    * it means that the content type represents text. If the provided content-type is null, the return value is true
+    * @param contentType the content-type to be evaluated
+    * @return true, if afthem.yml says that the content type represents text
+    */
+  def isText(contentType : String) : Boolean = {
+    if(contentType==null)
+      return true
+    return ConfigLoader.rootConfig.mime.textContentTypeContain.find( pattern => contentType.contains(pattern)).isDefined
+  }
+
+  /**
+    * Given an HttpWrapper, it will try to determine whether the carried payload is text or binary
+    * @param wrapper an HttpWrapper
+    * @return true if the payload is binary
+    */
+  def isTextPayload(wrapper: HttpWrapper) : Boolean = {
+    return isText(extractContentType(wrapper,null))
   }
 
 }

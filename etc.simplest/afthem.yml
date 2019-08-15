@@ -1,2 +1,9 @@
 config_loader:
   class: com.apifortress.afthem.config.loaders.YamlConfigLoader
+mime:
+  text_content_types_contain:
+    - text
+    - json
+    - xml
+    - html
+    - urlencoded
