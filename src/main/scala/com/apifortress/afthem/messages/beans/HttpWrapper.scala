@@ -32,7 +32,7 @@ import org.springframework.web.util.UriComponents
 class HttpWrapper(private var url: String = null,
                   val status: Int = 200,
                   val method: String = null,
-                  var headers: List[Header] = null,
+                  var headers: List[Header] = List.empty[Header],
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null,
                   val characterEncoding: String = null) {
@@ -53,10 +53,9 @@ class HttpWrapper(private var url: String = null,
     * @param name the name of the header to retrieve
     * @return the header value or empty string if not found
     */
-  def getHeader(name : String) : String = {
+  def getHeader(name : String) : Option[String] = {
     val header = headers.find(item => item.key.toLowerCase == name.toLowerCase)
-    if(header.isDefined) return header.get.value
-    return null
+    return Option[String](if(header.isDefined) header.get.value else null)
   }
 
   override def clone(): HttpWrapper = {
@@ -81,7 +80,7 @@ class HttpWrapper(private var url: String = null,
 
   def setHeader(key: String, value : String): Unit = {
     val existingHeader = getHeader(key)
-    if(existingHeader != null)
+    if(existingHeader.isDefined)
       removeHeader(key)
     headers = headers:+new Header(key,value)
   }

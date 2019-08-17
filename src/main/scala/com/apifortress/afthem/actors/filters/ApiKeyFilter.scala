@@ -80,7 +80,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
     */
   def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
     val found = in match {
-      case "header" => msg.request.getHeader(name)
+      case "header" => msg.request.getHeader(name).getOrElse(null)
       case "query" => msg.request.uriComponents.getQueryParams.getFirst(name)
     }
     return found
