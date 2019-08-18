@@ -34,4 +34,12 @@ class ReqResUtilTests {
     assertEquals("text/xml",ReqResUtil.determineMimeFromContentType("application/xml"))
     assertEquals("text/plain",ReqResUtil.determineMimeFromContentType("application/foobar"))
   }
+
+  @Test
+  def testByteArrayToString() = {
+    val data = "Foobar".getBytes
+    val wrapper = new HttpWrapper("http://example.com",-1,
+                          "GET", List.empty[Header],data,null,"UTF-8")
+    assertEquals("Foobar",ReqResUtil.byteArrayToString(wrapper))
+  }
 }
