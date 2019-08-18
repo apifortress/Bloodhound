@@ -93,7 +93,7 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     */
   protected def forward(message: BaseMessage) : Unit = {
     if(hasSidecarActors(message))
-      tellSidecars(message.clone())
+      tellSidecars(message.shallowClone(true))
     tellNextActor(message)
   }
 

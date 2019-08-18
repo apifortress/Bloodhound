@@ -41,7 +41,9 @@ class WebParsedResponseMessage(val response: HttpWrapper, val request: HttpWrapp
                                     override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
       extends BaseMessage(backend, flow, deferredResult, date, meta) {
 
-  override def clone(): WebParsedResponseMessage = {
-    return new WebParsedResponseMessage(response.clone(), request, backend, flow, deferredResult, date, meta)
+  override def shallowClone(dropDeferredResult : Boolean = false): WebParsedResponseMessage = {
+    return new WebParsedResponseMessage(response.clone(), request, backend, flow,
+                                          if(dropDeferredResult) null else deferredResult,
+                                        date, meta)
   }
 }

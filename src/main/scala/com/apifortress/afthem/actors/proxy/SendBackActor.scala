@@ -32,7 +32,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
     case msg: WebParsedResponseMessage =>
       try {
         val m = new Metric
-        tellSidecars(msg.clone())
+        tellSidecars(msg.shallowClone(true))
 
         /**
           * Content-Length is a sensitive header. If something in the flow changed the length of the response by

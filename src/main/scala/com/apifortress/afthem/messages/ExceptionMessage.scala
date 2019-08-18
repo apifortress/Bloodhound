@@ -32,7 +32,8 @@ class ExceptionMessage(val exception: Exception,
     * @param contentType the content type, typically the value of the accept header
     */
   def respond(contentType : String = "application/json"): Unit = {
-    deferredResult.setData(exception,status, contentType)
+    if(message.deferredResult != null)
+      deferredResult.setData(exception,status, contentType)
   }
 }
 
