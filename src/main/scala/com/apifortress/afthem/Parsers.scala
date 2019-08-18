@@ -154,28 +154,6 @@ object Parsers {
   }
 
   /**
-    * Serializes an object to a XML string
-    * @param data an object to be serialized
-    * @param pretty rue if pretty print is desired
-    * @return the XML-serialized object as a string
-    */
-  def serializeAsXmlString(data : Any, pretty : Boolean = true) : String = {
-    if (pretty) prettyXmlMapper.writeValueAsString(data)
-    else xmlMapper.writeValueAsString(data)
-  }
-
-  /**
-    * Serializes an object to a XML byte array
-    * @param data an object to be serialized
-    * @param pretty true if pretty print is desired
-    * @return the XML-serialized object as a byte array
-    */
-  def serializeAsXmlByteArray(data : Any, pretty : Boolean = true) : Array[Byte] = {
-    if(pretty) prettyXmlMapper.writeValueAsBytes(data)
-    else xmlMapper.writeValueAsBytes(data)
-  }
-
-  /**
     * Beautifies a JSON stored into a byte array and returns a byte array
     * @param data a JSON stored into a byte array
     * @return a byte array containing the beautified JSON
