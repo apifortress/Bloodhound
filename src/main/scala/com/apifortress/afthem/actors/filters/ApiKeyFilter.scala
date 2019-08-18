@@ -22,7 +22,7 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.{AfthemCache, ApiKey, ApiKeys, Phase}
 import com.apifortress.afthem.exceptions.UnauthorizedException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
-import com.apifortress.afthem.{Parsers, ReqResUtil}
+import com.apifortress.afthem.{Metric, Parsers, ReqResUtil}
 import org.apache.commons.io.IOUtils
 
 /**
@@ -33,6 +33,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
+      val m = new Metric()
       val phase = getPhase(msg)
       val foundKey = determineKey(phase.getConfigString("in"),phase.getConfigString("name"),msg)
       val key = findKey(foundKey, phase)
@@ -47,6 +48,7 @@ class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : Strin
         // and let sidecars know about the rejection
         tellSidecars(exceptionMessage)
       }
+      metricsLog.debug(m.toString())
 
   }
 

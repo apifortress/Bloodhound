@@ -16,7 +16,7 @@
  */
 package com.apifortress.afthem.actors.transformers
 
-import com.apifortress.afthem.ReqResUtil
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
@@ -43,6 +43,7 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
     * @param wrapper the HttpWrapper to transform
     */
   def transform(phase : Phase, wrapper: HttpWrapper) = {
+    val m = new Metric()
     if(ReqResUtil.isTextPayload(wrapper)) {
       if (phase.getConfig().contains("set")) {
         val setValue = phase.getConfigString("set")
@@ -58,5 +59,6 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
         }
       }
     }
+    metricsLog.debug(m.toString())
   }
 }

@@ -60,7 +60,8 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
           msg.request.setHeader("host", ReqResUtil.extractHost(msg.request.getURL()))
         }
         val httpReq: HttpUriRequest = createRequest(msg)
-        metricsLog.debug("Time to Request: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
+        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
           override def completed(response: HttpResponse): Unit = {
               /*
@@ -78,7 +79,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
               inputStream.close()
 
             val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
-
+            metricsLog.info("Download time: "+m.toString())
             forward(message)
           }
 

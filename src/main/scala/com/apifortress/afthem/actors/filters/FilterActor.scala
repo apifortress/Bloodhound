@@ -17,7 +17,7 @@
 
 package com.apifortress.afthem.actors.filters
 
-import com.apifortress.afthem.ReqResUtil
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.{AfthemFlowException, RejectedRequestException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
@@ -31,6 +31,7 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
       try {
+        val m = new Metric()
         val scope = Map("msg" -> msg)
 
         // ACCEPT cycle. All conditions need to meet for the request to be considered accepted
@@ -63,6 +64,7 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
           log.debug("Message accepted")
           tellNextActor(msg)
         }
+        metricsLog.debug(m.toString())
       }catch {
         case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
       }

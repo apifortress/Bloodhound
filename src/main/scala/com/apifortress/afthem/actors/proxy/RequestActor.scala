@@ -33,7 +33,7 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
     case msg : WebRawRequestMessage =>
       try {
         val m = new Metric
-
+        msg.meta.put("__process_start",System.nanoTime())
         val phase = getPhase(msg)
 
         val parsedHeaders = ReqResUtil.parseHeaders(msg.request)

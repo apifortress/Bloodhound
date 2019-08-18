@@ -17,7 +17,7 @@
 package com.apifortress.afthem.controllers
 
 
-import com.apifortress.afthem.ReqResUtil
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{Backends, Flows}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
@@ -25,6 +25,7 @@ import com.apifortress.afthem.messages.WebRawRequestMessage
 import com.apifortress.afthem.messages.beans.AfthemResult
 import javax.servlet.Filter
 import javax.servlet.http.HttpServletRequest
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Controller
@@ -34,9 +35,12 @@ import org.springframework.web.filter.HiddenHttpMethodFilter
 /**
   * The main controller
   */
+
+object AfthemController {
+  val metricsLog : Logger = LoggerFactory.getLogger("_metrics.AfthemController")
+}
 @Controller
 class AfthemController {
-
 
   /**
     * The action taking care of the actual proxying activity
@@ -45,6 +49,7 @@ class AfthemController {
     */
   @RequestMapping(value = Array("**"),method = Array(RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.PATCH,RequestMethod.DELETE))
   def proxy(request: HttpServletRequest): AfthemResult = {
+    val m = new Metric()
     val deferredResult = new AfthemResult
     try {
       // find a suitable backend for the inbound URL
@@ -66,7 +71,7 @@ class AfthemController {
         deferredResult.setData(new GenericException("controller"),500, ReqResUtil.extractAccept(request))
 
     }
-
+    AfthemController.metricsLog.debug(m.toString())
     return deferredResult
   }
 

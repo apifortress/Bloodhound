@@ -55,7 +55,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
     * @param msg a WebParsedResponseMessage
     */
   private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {
-    metricsLog.info("Roundtrip -> "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
+    metricsLog.info("Roundtrip: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
   }
 
 }
