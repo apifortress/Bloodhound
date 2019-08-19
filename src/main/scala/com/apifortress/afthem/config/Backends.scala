@@ -71,4 +71,4 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
   * @param upstream the upstream URI
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], var upstream: String)
+case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], val upstream: String)

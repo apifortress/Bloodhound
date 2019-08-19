@@ -22,15 +22,16 @@ class HttpWrapperTests {
                               -1,"GET",
                                       List(new Header("content-type","application/json"),
                                             new Header("accept","text/plain")))
-    assertEquals("application/json",wrapper.getHeader("content-Type").get)
-    assertFalse(wrapper.getHeader("banana").isDefined)
+    assertEquals("application/json",wrapper.getHeader("content-type"))
+    assertNull(wrapper.getHeader("banana"))
+    assertNotNull(wrapper.getHeader("content-type"))
   }
 
   @Test
   def testSetHeader() = {
     val wrapper = new HttpWrapper("http://example.com/foobar?a=b")
     wrapper.setHeader("foo", "bar")
-    assertEquals("bar", wrapper.getHeader("foo").get)
+    assertEquals("bar", wrapper.getHeader("foo"))
   }
 
   @Test

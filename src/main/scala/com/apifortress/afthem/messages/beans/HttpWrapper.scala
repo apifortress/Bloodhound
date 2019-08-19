@@ -53,9 +53,12 @@ class HttpWrapper(private var url: String = null,
     * @param name the name of the header to retrieve
     * @return the header value or empty string if not found
     */
-  def getHeader(name : String) : Option[String] = {
+  def getHeader(name : String) : String = {
     val header = headers.find(item => item.key.toLowerCase == name.toLowerCase)
-    return Option[String](if(header.isDefined) header.get.value else null)
+    if(header.isDefined)
+      return header.get.value
+    else
+      return null
   }
 
   override def clone(): HttpWrapper = {
@@ -80,9 +83,8 @@ class HttpWrapper(private var url: String = null,
 
   def setHeader(key: String, value : String): Unit = {
     val existingHeader = getHeader(key)
-    if(existingHeader.isDefined)
+    if(existingHeader!=null)
       removeHeader(key)
     headers = headers:+new Header(key,value)
   }
-
 }

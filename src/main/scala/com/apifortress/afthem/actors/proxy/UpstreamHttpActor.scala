@@ -54,9 +54,10 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     case msg : WebParsedRequestMessage =>
       try {
         val m = new Metric
-
-        if(msg.backend.upstream!=null) {
-          msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, msg.backend))
+        var upstream = msg.backend.upstream
+        upstream = msg.meta.get("__replace_upstream").getOrElse(upstream).asInstanceOf[String]
+        if(upstream!=null) {
+          msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
           msg.request.setHeader("host", ReqResUtil.extractHost(msg.request.getURL()))
         }
         val httpReq: HttpUriRequest = createRequest(msg)

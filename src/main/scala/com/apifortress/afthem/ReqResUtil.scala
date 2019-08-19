@@ -181,7 +181,10 @@ object ReqResUtil {
     }
     if(request == null)
       return default
-    return request.getHeader(HEADER_ACCEPT).getOrElse(default)
+    val headerValue = request.getHeader(HEADER_ACCEPT)
+    if(headerValue == null)
+      return default
+    return headerValue
   }
 
   /**
@@ -191,7 +194,10 @@ object ReqResUtil {
     * @return the content-type
     */
   def extractContentType(wrapper : HttpWrapper, default : String = null): String = {
-    wrapper.getHeader("content-type").getOrElse(default)
+    val headerValue = wrapper.getHeader("content-type")
+    if(headerValue == null)
+      return default
+    return headerValue
   }
 
   /**

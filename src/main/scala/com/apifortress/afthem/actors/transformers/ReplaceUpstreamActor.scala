@@ -13,7 +13,7 @@ class ReplaceUpstreamActor(phaseId : String) extends AbstractAfthemActor(phaseId
       val doReplace : Boolean = SpelEvaluator.evaluate(phase.getConfigString("expression"),
                                                           Map("msg"->msg)).asInstanceOf[Boolean]
       if(doReplace)
-        msg.backend.upstream = phase.getConfigString("upstream")
+        msg.meta.put("__replace_upstream",phase.getConfigString("upstream"))
       metricsLog.debug(m.toString())
       forward(msg)
   }

@@ -60,8 +60,8 @@ object UriUtil {
     * @param backend the backend configuration
     * @return the upstream URL
     */
-  def determineUpstreamUrl(uriComponents: UriComponents, backend: Backend): String = {
-    return backend.upstream+determineUpstreamPart(uriComponents, backend)
+  def determineUpstreamUrl(uriComponents: UriComponents, upstream : String, backend: Backend): String = {
+    return upstream+determineUpstreamPart(uriComponents, backend)
   }
 
   /**
