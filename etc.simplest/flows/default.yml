@@ -12,7 +12,7 @@ transformer/transform_headers:
   config:
     set:
       - name: user-agent
-        value: "#msg.request().getHeader('user-agent')+' - Afthem'"
+        value: "#msg.request().getHeader('user-agent').get()+' - Afthem'"
         evaluated: true
 
 proxy/upstream_http:
