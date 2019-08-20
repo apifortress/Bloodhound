@@ -8,3 +8,6 @@ backends:
 - prefix: '127.0.0.1/filtered'
   upstream: 'https://httpbin.org/anything'
   flow_id: filtered
+- prefix: '127.0.0.1/serialize'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: serialize

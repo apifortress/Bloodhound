@@ -27,3 +27,6 @@ implementers:
   - id: access_logger
     class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor
     type: sidecar
+  - id: file_serializer
+    class: com.apifortress.afthem.actors.sidecars.serializers.FileAppenderSerializerActor
+    type: sidecar
