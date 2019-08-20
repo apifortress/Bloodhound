@@ -1,19 +1,7 @@
 proxy/request:
-  next: transformer/transform_headers
+  next: proxy/upstream_http
   sidecars:
     - sidecar/access_logger
-  config:
-    discard_headers:
-      - host
-      - content-length
-
-transformer/transform_headers:
-  next: proxy/upstream_http
-  config:
-    set:
-      - name: user-agent
-        value: "#msg.request().getHeader('user-agent').get()+' - Afthem'"
-        evaluated: true
 
 proxy/upstream_http:
   next: proxy/send_back

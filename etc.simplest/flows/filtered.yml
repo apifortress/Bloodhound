@@ -2,12 +2,9 @@ proxy/request:
   next: filter/header_filter
   sidecars:
     - sidecar/access_logger
-  config:
-    discard_headers:
-    - host
 
 filter/header_filter:
-  next: transformer/transform_headers
+  next: proxy/upstream_http
   sidecars:
     - sidecar/access_logger
   config:
@@ -18,14 +15,6 @@ filter/header_filter:
         evaluated: true
     reject:
       - value: "#msg.request().method()!='GET'"
-        evaluated: true
-
-transformer/transform_headers:
-  next: proxy/upstream_http
-  config:
-    set:
-      - name: user-agent
-        value: "#msg.request().getHeader('user-agent')+' - Afthem'"
         evaluated: true
 
 proxy/upstream_http:

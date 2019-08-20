@@ -1,7 +1,10 @@
 backends:
-- prefix: '127.0.0.1/any/with/filter'
-  upstream: 'https://httpbin.org/anything'
-  flow_id: filtered
 - prefix: '127.0.0.1/any'
   upstream: 'https://httpbin.org/anything'
   flow_id: default
+- prefix: '127.0.0.1/transform/headers'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: transform_headers
+- prefix: '127.0.0.1/filtered'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: filtered
