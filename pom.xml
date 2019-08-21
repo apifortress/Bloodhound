@@ -87,7 +87,7 @@
         </dependency>
 
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.apifortress.afthem.modules</groupId>
             <artifactId>mongodb</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -96,7 +96,7 @@
             <groupId>com.apifortress.afthem.modules</groupId>
             <artifactId>fortress-forwarder</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 
