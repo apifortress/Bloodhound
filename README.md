@@ -2,8 +2,6 @@
 
 ## Preamble
 
-API Fortress - The Mediator
-
 AFtheM is an Open Source, Scala / Akka based, asynchronous API Micro-Gateway.
 
 The purpose of this project is to provide a highly modular gateway to help developers, QAs and data scientists to:
