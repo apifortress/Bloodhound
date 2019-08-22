@@ -25,7 +25,7 @@ class GenericSupervisorActor(val id : String) extends Actor {
       case exception : AfthemFlowException =>
         new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
         Resume
-      case exception : Exception     => Restart
+      case _ => Restart
     }
   override def receive: Receive = {
     case cmd : StartActorsCommand =>
