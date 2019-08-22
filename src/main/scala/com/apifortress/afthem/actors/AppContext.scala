@@ -16,8 +16,6 @@
   */
 package com.apifortress.afthem.actors
 
-import java.io.File
-
 import akka.actor.{ActorSystem, Props}
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
@@ -28,10 +26,23 @@ import com.typesafe.config.ConfigFactory
   */
 object AppContext {
 
+  var cfg : StringBuffer = new StringBuffer()
+  Implementers.instance.threadPools.foreach { pool =>
+      cfg.append(s"${pool._1} {\n")
+      cfg.append("\ttype = \"Dispatcher\"\n")
+      cfg.append("\texecutor = \"fork-join-executor\"\n")
+      cfg.append("\tfork-join-executor {\n")
+      cfg.append(s"\t\tparallelism-min=${pool._2.min}\n")
+      cfg.append(s"\t\tparallelism-max=${pool._2.max}\n")
+      cfg.append(s"\t\tparallelism-factor=${pool._2.factor}\n")
+      cfg.append("\t}\n")
+      cfg.append("}\n")
+  }
   /**
+    *
     * The Akka configuration
     */
-  private val config = ConfigFactory.parseFile(new File("etc"+File.separator+"application.conf"))
+  private val config = ConfigFactory.parseString(cfg.toString)
   /**
     * The actor system
     */

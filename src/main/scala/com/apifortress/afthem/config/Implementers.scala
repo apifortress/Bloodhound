@@ -32,7 +32,8 @@ object Implementers {
   * @param implementers the list of implementers
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Implementers(implementers: List[Implementer])
+case class Implementers(implementers: List[Implementer],
+                        @JsonProperty("thread_pools") threadPools : Map[String,ThreadPool])
 
 /**
   * The single implementer class
@@ -40,4 +41,9 @@ case class Implementers(implementers: List[Implementer])
   * @param className the class name of the implementer
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Implementer(id : String, @JsonProperty("class") className : String, @JsonProperty("type") actorType : String)
+case class Implementer(id : String, @JsonProperty("class") className : String,
+                       @JsonProperty("type") actorType : String, instances: Int = 1,
+                      @JsonProperty("thread_pool") threadPool : String)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+case class ThreadPool(min: Int, max: Int, factor: Int)
