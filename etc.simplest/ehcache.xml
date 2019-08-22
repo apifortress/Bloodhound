@@ -27,7 +27,7 @@
         <expiry>
             <ttl>600</ttl>
         </expiry>
-        <heap>2</heap>
+        <heap>3</heap>
     </cache>
 
     <cache alias="expressions">
@@ -43,9 +43,9 @@
         <key-type>java.lang.String</key-type>
         <value-type>com.apifortress.afthem.config.ApiKeys</value-type>
         <expiry>
-            <tti>600</tti>
+            <ttl>200</ttl>
         </expiry>
-        <heap>100</heap>
+        <heap>10</heap>
     </cache>
 
 </config>
