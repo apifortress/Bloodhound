@@ -17,11 +17,15 @@ implementers:
   - id: transform_headers
     class: com.apifortress.afthem.actors.transformers.TransformHeadersActor
     type: transformer
+    instances: 2
+    thread_pool: computational
 
 # FILTERS
   - id: header_filter
     class: com.apifortress.afthem.actors.filters.FilterActor
     type: filter
+    instances: 2
+    thread_pool: computational
 
 # SIDECARS
   - id: access_logger
@@ -30,3 +34,13 @@ implementers:
   - id: file_serializer
     class: com.apifortress.afthem.actors.sidecars.serializers.FileAppenderSerializerActor
     type: sidecar
+
+thread_pools:
+  default:
+    min: 1
+    max: 2
+    factor: 1
+  computational:
+    min: 2
+    max: 2
+    factor: 2
