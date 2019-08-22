@@ -37,14 +37,25 @@ class HttpWrapper(private var url: String = null,
                   val remoteIP: String = null,
                   val characterEncoding: String = null) {
 
+  /**
+    * an UriComponents instance based on "url"
+    */
   var uriComponents : UriComponents = UriUtil.toUriComponents(url)
 
 
+  /**
+    * Sets the url and updates the uriComponents object
+    * @param url the URL
+    */
   def setURL(url : String) : Unit = {
     this.url = url
     uriComponents = UriUtil.toUriComponents(url)
   }
 
+  /**
+    * Returns the URL
+    * @return the URL
+    */
   def getURL() : String = {
     return url
   }
@@ -81,6 +92,11 @@ class HttpWrapper(private var url: String = null,
     removeHeaders(List(headerName))
   }
 
+  /**
+    * Sets a header
+    * @param key the key of the header
+    * @param value the value of the header
+    */
   def setHeader(key: String, value : String): Unit = {
     val existingHeader = getHeader(key)
     if(existingHeader!=null)

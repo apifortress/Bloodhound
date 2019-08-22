@@ -23,6 +23,10 @@ import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
   * Companion class to obtain singleton Implementers instance
   */
 object Implementers {
+
+  /**
+    * The Implementers singletoon
+    */
   val instance: Implementers = ConfigLoader.loadImplementers()
 
 }
@@ -39,6 +43,7 @@ case class Implementers(implementers: List[Implementer],
   * The single implementer class
   * @param id the ID of the implementer
   * @param className the class name of the implementer
+  * @param threadPool the threadPool assigned to the implementer, if any
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class Implementer(id : String, @JsonProperty("class") className : String,

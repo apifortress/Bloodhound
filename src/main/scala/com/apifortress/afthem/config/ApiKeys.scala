@@ -24,6 +24,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
   */
 class ApiKeys(@JsonProperty("api_keys") val apiKeys : List[ApiKey]) {
 
+  /**
+    * Retrives an ApiKey object based on the key
+    * @param key the key
+    * @return an Option[ApiKey]
+    */
   def getApiKey(key : String): Option[ApiKey] ={
     if(key == null)
       return Option.empty[ApiKey]

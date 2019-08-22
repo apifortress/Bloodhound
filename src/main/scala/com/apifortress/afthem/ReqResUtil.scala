@@ -262,6 +262,11 @@ object ReqResUtil {
     return headerValue
   }
 
+  /**
+    * Convert the payload stored as bytes in the wrapper, into a String
+    * @param wrapper the HttpWrapper
+    * @return the string
+    */
   def byteArrayToString(wrapper : HttpWrapper) : String = new String(wrapper.payload,Charset.forName(wrapper.characterEncoding))
 
 }

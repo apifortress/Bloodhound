@@ -37,6 +37,11 @@ abstract class BaseMessage(val backend : Backend,
                   val date : Date = new Date(),
                   val meta : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]()) {
 
+  /**
+    * Shallow-clone the message
+    * @param dropDeferredResult if true, the deferred result won't be copied over
+    * @return a shallow clone of the message
+    */
   def shallowClone(dropDeferredResult : Boolean): BaseMessage = {
     throw new IllegalStateException("Cannot clone abstract base class")
   }
