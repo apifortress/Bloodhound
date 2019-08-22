@@ -1,11 +1,11 @@
 # AFtheM - Fine Tuning
 
-AFtheM can be fine tuned for your needs. This ability comes with the price of complexity, so before we dig into the 
-details of the configuration files, it is important to understand the inner mechanism.
+AFtheM can be fine tuned for your needs. This ability comes with the price of complexity, so it is important to
+understand the inner mechanisms before modifying the configuration files.
 
 ## Actors
 
-The `implements.yml` file defines which actors need to be instantiated, as in:
+The `implementers.yml` file defines which actors need to be instantiated, as in:
 
 ```yaml
   - id: request
