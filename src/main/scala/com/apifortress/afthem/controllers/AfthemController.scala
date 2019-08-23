@@ -17,7 +17,7 @@
 package com.apifortress.afthem.controllers
 
 
-import com.apifortress.afthem.{Metric, ReqResUtil}
+import com.apifortress.afthem.{Main, Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{Backends, Flows}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
@@ -37,6 +37,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter
   */
 object AfthemController {
   val metricsLog : Logger = LoggerFactory.getLogger("_metrics.AfthemController")
+  val log = LoggerFactory.getLogger(classOf[Main])
 }
 
 /**
@@ -71,6 +72,7 @@ class AfthemController {
     }catch {
       // Generic exception. Something went wrong
       case e: Exception =>
+        AfthemController.log.error("Error in controller",e)
         deferredResult.setData(new GenericException("controller"),500, ReqResUtil.extractAccept(request))
 
     }
