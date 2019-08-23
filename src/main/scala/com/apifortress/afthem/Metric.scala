@@ -24,8 +24,10 @@ package com.apifortress.afthem
   */
 class Metric(val start: Long = System.nanoTime()) {
 
+  def time() : Double = (System.nanoTime()-start)/1000000.0f
+
   override def toString() : String = {
-    val c = (System.nanoTime()-start)/1000000.0f
+    val c = time()/1000000.0f
     return f"$c%1.3f"+"ms"
   }
 }

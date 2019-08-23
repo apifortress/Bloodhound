@@ -17,8 +17,6 @@
 
 package com.apifortress.afthem
 
-import java.nio.charset.Charset
-
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 
 import scala.collection.mutable
@@ -44,7 +42,7 @@ object AfthemResponseSerializer {
     val obj = mutable.HashMap.empty[String,Any]
     obj.put("client_ip",message.request.remoteIP)
     obj.put("started_at",message.date.getTime)
-
+    obj.put("download_time",message.meta.get("__download_time"))
     val request = mutable.HashMap.empty[String,Any]
     request.put("body",if(ReqResUtil.isTextPayload(message.request))
                           ReqResUtil.byteArrayToString(message.request)

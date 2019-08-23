@@ -81,6 +81,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
 
             val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
             metricsLog.info("Download time: "+m.toString())
+            message.meta.put("__download_time",m.time())
             forward(message)
           }
 
