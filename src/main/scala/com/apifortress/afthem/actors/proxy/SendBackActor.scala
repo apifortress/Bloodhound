@@ -40,6 +40,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
           * Tomcat will replace it with the correct length once it sends the response
           */
         msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
+        msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_ENCODING)
 
         msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
         metricsLog.debug(m.toString())
