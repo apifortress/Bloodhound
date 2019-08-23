@@ -1,3 +1,19 @@
+ /*
+  * Copyright 2019 API Fortress
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  * @author Simone Pezzano
+  */
 package com.apifortress.afthem.actors
 
 import akka.actor.SupervisorStrategy.{Restart, Resume}
@@ -16,10 +32,16 @@ import scala.concurrent.duration._
   */
 class GenericSupervisorActor(val id : String) extends Actor {
 
+  /**
+    * The logger
+    */
   val log : Logger = LoggerFactory.getLogger(classOf[GenericSupervisorActor])
 
   log.info("Initializing supervisor "+self.path.toStringWithoutAddress+" - "+context.dispatcher)
 
+  /**
+    * The supervisor. Known caught exceptions (AFthemFlowException) cause a "Resume", unknown cause a Restart
+    */
   override val supervisorStrategy : SupervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
       case exception : AfthemFlowException =>

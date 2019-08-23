@@ -24,6 +24,10 @@ import com.apifortress.afthem.config._
 
 import scala.io.Source
 
+/**
+  * Default config loader. Loads configuration from the file system, YAML files
+  * @param params any configuration parameters. This load needs none
+  */
 class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
 
   def loadAfthemRootConf() : RootConfigConf = {

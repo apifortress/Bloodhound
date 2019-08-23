@@ -33,12 +33,15 @@ import org.springframework.web.bind.annotation._
 import org.springframework.web.filter.HiddenHttpMethodFilter
 
 /**
-  * The main controller
+  * The companion object fo the main controller
   */
-
 object AfthemController {
   val metricsLog : Logger = LoggerFactory.getLogger("_metrics.AfthemController")
 }
+
+/**
+  * The main controller
+  */
 @Controller
 class AfthemController {
 

@@ -50,5 +50,11 @@ case class Implementer(id : String, @JsonProperty("class") className : String,
                        @JsonProperty("type") actorType : String, instances: Int = 1,
                       @JsonProperty("thread_pool") threadPool : String)
 
+/**
+  * The thread pool definition class
+  * @param min the minimum number of threads
+  * @param max the maximum number of threads
+  * @param factor the CPU factors
+  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class ThreadPool(min: Int, max: Int, factor: Int)
