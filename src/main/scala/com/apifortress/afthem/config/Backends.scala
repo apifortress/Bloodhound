@@ -80,6 +80,8 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
         }
         return backend
     }
+
+    def list() : List[Backend] = return backends
 }
 
 /**

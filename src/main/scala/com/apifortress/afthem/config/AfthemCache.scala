@@ -19,6 +19,7 @@ package com.apifortress.afthem.config
 
 import java.io.File
 
+import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import org.ehcache.{Cache, CacheManager}
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.xml.XmlConfiguration
@@ -32,7 +33,7 @@ object AfthemCache {
   /**
     * The EHCache manager
     */
-  val cacheManager : CacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(new File("etc/ehcache.xml").getAbsoluteFile.toURI.toURL))
+  val cacheManager : CacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(new File(YamlConfigLoader.SUBPATH+File.separator+"ehcache.xml").getAbsoluteFile.toURI.toURL))
   cacheManager.init()
 
   /**

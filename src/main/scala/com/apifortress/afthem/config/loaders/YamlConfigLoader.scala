@@ -25,6 +25,17 @@ import com.apifortress.afthem.config._
 import scala.io.Source
 
 /**
+  * YamlConfigLoader companion object
+  */
+object YamlConfigLoader {
+
+  /**
+    * The subpath to the configuration files. This is alterable for testing purposes.
+    */
+  var SUBPATH = "etc"
+}
+
+/**
   * Default config loader. Loads configuration from the file system, YAML files
   * @param params any configuration parameters. This load needs none
   */
@@ -62,7 +73,7 @@ class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
     * @return the parsed configuration file
     */
   private def parse[T](filename : String, theClass : Class[T]): T = {
-    val reader = Source.fromFile("etc"+File.separator+filename).reader()
+    val reader = Source.fromFile(YamlConfigLoader.SUBPATH+File.separator+filename).reader()
     val resp : T = Parsers.parseYaml[T](reader, theClass)
     reader.close()
     return resp

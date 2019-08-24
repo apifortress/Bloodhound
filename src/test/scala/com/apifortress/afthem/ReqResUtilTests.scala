@@ -39,10 +39,6 @@ class ReqResUtilTests {
     assertEquals("text/xml",ReqResUtil.extractContentType(wrapper))
   }
 
-  def testExtractHost() = {
-    assertEquals("www.google.com",ReqResUtil.extractHost("http://www.google.com"))
-  }
-
   @Test
   def testDetermineMimeFromContentType() = {
     assertEquals("application/json",ReqResUtil.determineMimeFromContentType("application/json"))
@@ -58,4 +54,5 @@ class ReqResUtilTests {
                           "GET", List.empty[Header],data,null,"UTF-8")
     assertEquals("Foobar",ReqResUtil.byteArrayToString(wrapper))
   }
+
 }
