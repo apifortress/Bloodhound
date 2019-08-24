@@ -34,6 +34,9 @@ import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
 import org.apache.http.util.EntityUtils
 
+/**
+  * Companion object for the Upstream Http Actor
+  */
 object UpstreamHttpActor {
 
   val ioReactor = new DefaultConnectingIOReactor()
@@ -58,7 +61,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         upstream = msg.meta.get("__replace_upstream").getOrElse(upstream).asInstanceOf[String]
         if(upstream!=null) {
           msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
-          msg.request.setHeader("host", ReqResUtil.extractHost(msg.request.getURL()))
+          msg.request.setHeader("host", msg.request.uriComponents.getHost)
         }
         val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))

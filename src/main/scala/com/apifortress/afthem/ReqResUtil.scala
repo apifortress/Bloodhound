@@ -148,13 +148,6 @@ object ReqResUtil {
   }
 
   /**
-    * Given a URL in the form of a string, it extracts the host part and returns it
-    * @param url a URL in the form of a string
-    * @return the host
-    */
-  def extractHost(url : String) : String = new URL(url).getHost
-
-  /**
     * Extracts the "accept" header from an HttpServletRequest
     * @param request the request
     * @param default the default value, in case no "accept" header is present
