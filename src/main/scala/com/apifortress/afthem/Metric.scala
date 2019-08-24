@@ -31,7 +31,7 @@ class Metric(val start: Long = System.nanoTime()) {
   def time() : Double = (System.nanoTime()-start)/1000000.0f
 
   override def toString() : String = {
-    val c = time()/1000000.0f
+    val c = time()
     return f"$c%1.3f"+"ms"
   }
 }
