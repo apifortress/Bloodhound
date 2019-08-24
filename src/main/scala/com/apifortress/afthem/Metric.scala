@@ -24,6 +24,10 @@ package com.apifortress.afthem
   */
 class Metric(val start: Long = System.nanoTime()) {
 
+  /**
+    * Calculates the difference between the moment the object was created and now, in milliseconds
+    * @return the difference between th emoment the object was created and now
+    */
   def time() : Double = (System.nanoTime()-start)/1000000.0f
 
   override def toString() : String = {

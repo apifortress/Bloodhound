@@ -4,6 +4,10 @@ import com.apifortress.afthem.{Metric, SpelEvaluator}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.WebParsedRequestMessage
 
+/**
+  * Replaces the upstream URL if a certain condition happens
+  * @param phaseId the phaseId the phase ID
+  */
 class ReplaceUpstreamActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
