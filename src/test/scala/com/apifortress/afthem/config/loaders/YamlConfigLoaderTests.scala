@@ -36,4 +36,10 @@ class YamlConfigLoaderTests {
       assertTrue(flow.size()>0)
     }
   }
+
+  @Test
+  def testLoadImplementers() = {
+    val implementers = new YamlConfigLoader().loadImplementers()
+    assertTrue(implementers.implementers.size>0)
+  }
 }
