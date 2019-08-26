@@ -21,7 +21,6 @@ import java.io.{File, FileOutputStream}
 import java.nio.charset.StandardCharsets
 
 import com.apifortress.afthem.{AfthemResponseSerializer, Metric}
-import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 
 import scala.collection.mutable
@@ -30,7 +29,7 @@ import scala.collection.mutable
   * Actor that serializes a full HTTP conversation to file
   * @param phaseId the ID of the phase
   */
-class FileAppenderSerializerActor(phaseId : String) extends AbstractAfthemActor(phaseId : String)  {
+class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerActor(phaseId : String)  {
 
   /**
     * We retain all output streams we write to
@@ -40,8 +39,11 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractAfthemActor(
   override def receive: Receive = {
     case msg : WebParsedResponseMessage =>
       val m = new Metric
-      val filename = getPhase(msg).getConfigString("filename")
-      getOutputStream(filename).write((AfthemResponseSerializer.serialize(msg)+"\n").getBytes(StandardCharsets.UTF_8))
+      val phase = getPhase(msg)
+      loadConfig(phase)
+      val filename = phase.getConfigString("filename")
+      if(shouldCapture(msg))
+        getOutputStream(filename).write((AfthemResponseSerializer.serialize(msg)+"\n").getBytes(StandardCharsets.UTF_8))
       metricsLog.debug(m.toString())
   }
 
