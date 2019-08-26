@@ -50,7 +50,7 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
       go = msg.request.getHeader(enableOnHeader)!=null
     if(go && disableOnHeader != null)
       go = msg.request.getHeader(disableOnHeader)==null
-    if(go && allowContentTypes != null){
+    if(go && allowContentTypes.size>0){
       val ct = msg.response.getHeader("content-type")
       if(ct != null)
         go = allowContentTypes.find( it=> ct.contains(it)).isDefined
