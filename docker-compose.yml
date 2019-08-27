@@ -1,0 +1,11 @@
+version: '2'
+services:
+   afthem:
+      image: apifortress/afthem:latest
+      volumes:
+      - ./etc:/opt/afthem/etc
+      - ./docker_log:/opt/afthem/log
+      ports:
+      - 8080:8080/tcp
+      environment:
+      - memorySettings=-Xms1024m -Xmx1024m
