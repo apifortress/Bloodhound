@@ -19,7 +19,9 @@ Each step has a set of fixed instructions and extra fields.
 * The key is a combination of the type and the ID, declared in the `implementers.yml` file
 * `next` determines what's the next step in the flow
 * `sidecars` (not always applicable) are the IDs of actors that will receive a copy of the message in parallel but do
-   not alter the main message
+   not alter the main message. Mind that sidecars can have different behaviors based on where they're placed in the
+   flow. For example, access loggers log inbound calls when placed before the SendBack, and outbound calls when placed
+   after the SendBack
 * `config` other implementation-specific configuration keys  
 
 If a certain step is referenced either as `next` or in `sidecars`, it **must** to be present in the flow.
