@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils
   * Basic API Key filter loading keys from a YAML file
   * @param phaseId the phaseId the phase ID
   */
-class ApiKeyFilter(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
+class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
