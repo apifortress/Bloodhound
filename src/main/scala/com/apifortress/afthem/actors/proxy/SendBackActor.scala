@@ -42,6 +42,13 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
         msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
         msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_ENCODING)
 
+        /**
+          * If, by any chance, the upstream server returned no content-type, we set the content-type to
+          * application/octet-stream as described in the rfc2616
+          */
+        if(!msg.response.containsHeader("content-type"))
+          msg.response.setHeader("content-type","application/octet-stream")
+
         msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
         metricsLog.debug(m.toString())
         logProcessingTime(msg)

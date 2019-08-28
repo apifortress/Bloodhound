@@ -72,6 +72,10 @@ class HttpWrapper(private var url: String = null,
       return null
   }
 
+  def containsHeader(name : String) : Boolean = {
+    return headers.count(item => item.key.toLowerCase == name.toLowerCase()) > 0
+  }
+
   override def clone(): HttpWrapper = {
     new HttpWrapper(url,status,method,headers,payload,remoteIP,characterEncoding)
   }

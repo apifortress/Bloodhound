@@ -236,7 +236,10 @@ object ReqResUtil {
     * @return the detected charset
     */
   def getCharsetFromResponse(httpResponse: HttpResponse, default : String = "UTF-8") : String = {
-    val charset = ContentType.get(httpResponse.getEntity).getCharset
+    val contentType = ContentType.get(httpResponse.getEntity)
+    if(contentType == null)
+      return default
+    val charset = contentType.getCharset
     if(charset == null)
       return default
     return charset.name()
