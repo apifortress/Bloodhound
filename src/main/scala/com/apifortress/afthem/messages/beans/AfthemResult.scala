@@ -17,24 +17,38 @@
 
 package com.apifortress.afthem.messages.beans
 
-import com.apifortress.afthem.{ReqResUtil, ResponseEntityUtil}
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult
 
+
+object AfthemResult {
+  val metricsLog : Logger = LoggerFactory.getLogger("_metrics.AfthemResult")
+}
 /**
   * Our implementation of the deferred result.
   * @param data an HttpWrapper representing the response
   */
 class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEntity[Array[Byte]]] {
 
-  if(data != null)
-    setData(data)
+  var m : Metric = null
+  var message: BaseMessage = null
 
+  onCompletion(() => {
+       AfthemResult.metricsLog.debug("Upload time: "+m)
+       if(message != null)
+        AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get("__start").get.asInstanceOf[Long]).toString())
+    }
+  )
   /**
     * Sets the data to be sent back
     * @param data the data to be sent back
     */
-  def setData(data : HttpWrapper) : Unit = {
+  def setData(data : HttpWrapper, message : WebParsedResponseMessage) : Unit = {
+    m = new Metric()
+    this.message = message
     setResult(ResponseEntityUtil.createEntity(data))
   }
 
@@ -44,7 +58,9 @@ class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEnt
     * @param status the status code to be used
     * @param contentType the content type, typically the value of the accept header
     */
-  def setData(exception : Exception, status : Int, contentType : String) : Unit = {
+  def setData(exception : Exception, status : Int, contentType : String, message : BaseMessage = null) : Unit = {
+    m = new Metric()
+    this.message = message
     /*
      * Setting the result. Notice how the content type (which could be potentially anything coming from the
      * request header) gets sanitized to become a content type

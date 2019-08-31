@@ -18,7 +18,8 @@ package com.apifortress.afthem.actors.proxy
 
 import java.io.InputStream
 
-import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.actors.{AbstractAfthemActor, AppContext}
+import com.apifortress.afthem.config.ApplicationConf
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
@@ -31,7 +32,7 @@ import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
+import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorConfig}
 import org.apache.http.util.EntityUtils
 
 /**
@@ -39,7 +40,9 @@ import org.apache.http.util.EntityUtils
   */
 object UpstreamHttpActor {
 
-  val ioReactor = new DefaultConnectingIOReactor()
+  val reactorConfig = IOReactorConfig.custom()
+    .setIoThreadCount(AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads).build()
+  val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
   val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
   val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement().setConnectionManager(connectionManager).build()
   httpClient.start()

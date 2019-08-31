@@ -20,6 +20,7 @@ import akka.actor.{ActorSystem, Props}
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
+import org.springframework.context.ApplicationContext
 
 /**
   * Application context. Initializes actors on load and provides useful methods to play with them
@@ -57,7 +58,8 @@ object AppContext {
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
-  def init() : Unit = {}
+  var springApplicationContext : ApplicationContext = null
 
+  def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
 
 }

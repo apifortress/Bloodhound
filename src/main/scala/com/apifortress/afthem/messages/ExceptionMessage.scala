@@ -33,7 +33,7 @@ class ExceptionMessage(val exception: Exception,
     */
   def respond(contentType : String = "application/json"): Unit = {
     if(message.deferredResult != null)
-      deferredResult.setData(exception,status, contentType)
+      deferredResult.setData(exception,status, contentType, message)
   }
 }
 

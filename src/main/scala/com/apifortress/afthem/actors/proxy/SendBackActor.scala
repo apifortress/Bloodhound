@@ -49,7 +49,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
         if(!msg.response.containsHeader("content-type"))
           msg.response.setHeader("content-type","application/octet-stream")
 
-        msg.deferredResult.setResult(ResponseEntityUtil.createEntity(msg.response))
+        msg.deferredResult.setData(msg.response,msg)
         metricsLog.debug(m.toString())
         logProcessingTime(msg)
       }catch {
@@ -63,7 +63,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
     * @param msg a WebParsedResponseMessage
     */
   private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {
-    metricsLog.info("Roundtrip: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
+    metricsLog.info("Time to Upload: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
   }
 
 }
