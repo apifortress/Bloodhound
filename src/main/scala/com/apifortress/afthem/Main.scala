@@ -39,8 +39,7 @@ object Main {
         AppContext.actorSystem.terminate()
       }
     })
-    SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args)
-    AppContext.init()
+    AppContext.init(SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args))
   }
 
 

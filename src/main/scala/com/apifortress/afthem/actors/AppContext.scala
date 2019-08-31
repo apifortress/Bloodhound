@@ -20,13 +20,18 @@ import akka.actor.{ActorSystem, Props}
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
+import org.springframework.context.ApplicationContext
 
 /**
   * Application context. Initializes actors on load and provides useful methods to play with them
   */
 object AppContext {
 
-  var cfg : StringBuffer = new StringBuffer()
+
+  /**
+    * Akka textual configuration
+    */
+  private val cfg : StringBuffer = new StringBuffer()
   Implementers.instance.threadPools.foreach { pool =>
       cfg.append(s"${pool._1} {\n")
       cfg.append("\ttype = \"Dispatcher\"\n")
@@ -57,7 +62,17 @@ object AppContext {
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
-  def init() : Unit = {}
+  /**
+    * Spring application context
+    */
+  var springApplicationContext : ApplicationContext = null
+
+  /**
+    * Inits the AppContext with the Spring application context
+    * @param springApplicationContext a Spring application context
+    */
+  def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
+
 
 
 }
