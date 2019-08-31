@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afthem
+  labels:
+    app: afthem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: afthem
+  template:
+    metadata:
+      labels:
+        app: afthem
+    spec:
+      containers:
+        - name: afthem
+          image: apifortress/afthem:latest
+          env:
+            - name: memorySettings
+              value: "-Xms1024m -Xmx2048m"
+          resources:
+            limits:
+              memory: 4Gi
+              cpu: 3
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: afthem
+              mountPath: /opt/afthem/etc
+            - name: afthem-flows
+              mountPath: /opt/afthem/etc/flows
+      volumes:
+        - name: afthem
+          configMap:
+            name: afthem
+        - name: afthem-flows
+          configMap:
+            name: afthem-flows
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: afthem
+spec:
+  type: LoadBalancer
+  selector:
+    app: afthem
+  ports:
+    - port: 8080
+  loadBalancerIP: '[cluster_ip]'
+  sessionAffinity: ClientIP
+---
