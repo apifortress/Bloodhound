@@ -45,6 +45,7 @@ class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEnt
   /**
     * Sets the data to be sent back
     * @param data the data to be sent back
+    * @param message the message, when available. We need metrics info stored in there
     */
   def setData(data : HttpWrapper, message : WebParsedResponseMessage) : Unit = {
     m = new Metric()
@@ -57,6 +58,7 @@ class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEnt
     * @param exception the exception
     * @param status the status code to be used
     * @param contentType the content type, typically the value of the accept header
+    * @param message the message, when available. Useful to compute metrics information
     */
   def setData(exception : Exception, status : Int, contentType : String, message : BaseMessage = null) : Unit = {
     m = new Metric()

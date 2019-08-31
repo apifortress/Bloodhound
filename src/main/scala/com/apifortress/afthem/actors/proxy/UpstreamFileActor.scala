@@ -38,7 +38,8 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     case msg: WebParsedRequestMessage =>
       try {
         val m = new Metric
-        metricsLog.debug("Time to Request: " + new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
+        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         val fis = new FileInputStream(new File(getPhase(msg).getConfigString("basepath")+File.separator+UriUtil.determineUpstreamPart(msg.request.uriComponents, msg.backend)))
         val data = IOUtils.toByteArray(fis)
         fis.close()
