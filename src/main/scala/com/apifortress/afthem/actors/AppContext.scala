@@ -27,7 +27,11 @@ import org.springframework.context.ApplicationContext
   */
 object AppContext {
 
-  var cfg : StringBuffer = new StringBuffer()
+
+  /**
+    * Akka textual configuration
+    */
+  private val cfg : StringBuffer = new StringBuffer()
   Implementers.instance.threadPools.foreach { pool =>
       cfg.append(s"${pool._1} {\n")
       cfg.append("\ttype = \"Dispatcher\"\n")
@@ -58,8 +62,17 @@ object AppContext {
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
+  /**
+    * Spring application context
+    */
   var springApplicationContext : ApplicationContext = null
 
+  /**
+    * Inits the AppContext with the Spring application context
+    * @param springApplicationContext a Spring application context
+    */
   def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
+
+
 
 }
