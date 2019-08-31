@@ -50,6 +50,6 @@ spec:
     app: afthem
   ports:
     - port: 8080
-  loadBalancerIP: '[cluster_ip]'
+  loadBalancerIP: '[balancer_ip]'
   sessionAffinity: ClientIP
 ---
