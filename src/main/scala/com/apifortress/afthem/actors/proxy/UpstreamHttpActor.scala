@@ -40,6 +40,8 @@ import org.apache.http.util.EntityUtils
   */
 object UpstreamHttpActor {
 
+  val DROP_HEADERS : List[String] = List("content-length")
+
   val reactorConfig = IOReactorConfig.custom()
     .setIoThreadCount(AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads).build()
   val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
@@ -144,7 +146,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
     wrapper.headers.foreach(header =>
-      if(!discardHeaders.contains(header.key.toLowerCase))
+      if(!discardHeaders.contains(header.key.toLowerCase) && !UpstreamHttpActor.DROP_HEADERS.contains(header.key.toLowerCase))
         request.setHeader(header.key,header.value)
     )
 
