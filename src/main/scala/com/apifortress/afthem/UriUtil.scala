@@ -47,9 +47,8 @@ object UriUtil {
     * @return the part of the path belonging to the upstream
     */
   def determineUpstreamPart(uriComponents: UriComponents, backend: Backend): String = {
-    val sanitizedUrl = uriComponents.getScheme+"://"+uriComponents.getHost+uriComponents.getPath+(if (uriComponents.getQuery != null) "?"+uriComponents.getQuery else "")
-    var subPath = sanitizedUrl.substring(sanitizedUrl.indexOf(backend.prefix)+backend.prefix.length)
-    return subPath
+    val sanitizedUrl = uriComponents.getHost+uriComponents.getPath+(if (uriComponents.getQuery != null) "?"+uriComponents.getQuery else "")
+    return sanitizedUrl.replaceFirst(backend.prefix,"")
   }
 
   /**

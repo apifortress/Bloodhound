@@ -43,7 +43,7 @@ class FileAppenderSerializerActor(phaseId : String) extends AbstractSerializerAc
       loadConfig(phase)
       val filename = phase.getConfigString("filename")
       if(shouldCapture(msg))
-        getOutputStream(filename).write((AfthemResponseSerializer.serialize(msg)+"\n").getBytes(StandardCharsets.UTF_8))
+        getOutputStream(filename).write((AfthemResponseSerializer.serialize(msg,discardRequestHeaders,discardResponseHeaders)+"\n").getBytes(StandardCharsets.UTF_8))
       metricsLog.debug(m.toString())
   }
 

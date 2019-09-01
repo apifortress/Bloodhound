@@ -68,7 +68,7 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
         val signature = UriUtil.getSignature(request.getRequestURL.toString)
         val backend = backends.find { backend =>
             var found = true
-            if(signature.startsWith(backend.prefix)) {
+            if(signature.matches(backend.prefix+".*")) {
                 if(backend.headers != null)
                     for ((k, v) <- backend.headers)
                         if (v != request.getHeader(k))
