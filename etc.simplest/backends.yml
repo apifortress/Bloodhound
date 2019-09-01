@@ -1,13 +1,33 @@
 backends:
-- prefix: '127.0.0.1/any'
+
+# This will respond to any domain due to the regex
+- prefix: '[^/]*/any'
   upstream: 'https://httpbin.org/anything'
   flow_id: default
+
+# This will respond only to 127.0.0.1
 - prefix: '127.0.0.1/transform/headers'
   upstream: 'https://httpbin.org/anything'
   flow_id: transform_headers
-- prefix: '127.0.0.1/filtered'
+
+# This will only respond to localhost
+- prefix: 'localhost/filtered'
   upstream: 'https://httpbin.org/anything'
   flow_id: filtered
-- prefix: '127.0.0.1/serialize'
+
+- prefix: '[^/]*/serialize'
   upstream: 'https://httpbin.org/anything'
   flow_id: serialize
+
+# The following two have identical prefixes, so the decision will be taken based on the provided header
+- prefix: '[^/]*/only/with/header'
+  headers:
+    x-my-header: anything
+  upstream: 'https://httpbin.org/anything'
+  flow_id: default
+
+- prefix: '[^/]*/only/with/header'
+  headers:
+    x-my-header: mastiff
+  upstream: 'https://mastiff.apifortress.com/app/api/rest/relay'
+  flow_id: default
