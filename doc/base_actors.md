@@ -92,6 +92,12 @@ Serializes a full API conversation to JSON and appends it to a file.
 **config:**
 
 * `filename`: name of the file
+* `disable_on_header`: if the provided header is present in the request, then the conversation will skip serialization
+* `enable_on_header`: if the provided header is present in the request, then the conversation will be serialized
+* `discard_request_headers`: list of request headers that should not appear in the serialized conversation
+* `discard_response_headers`: list of response headers that should not appear in the serialized conversation
+* `allow_content_types`: full or partial response content types which make the request eligible for serialization. If
+the list is null or empty, all content types will be accepted
 
 ***
 
