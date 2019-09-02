@@ -106,6 +106,8 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     selector ! message
   }
 
+  def getLog : Logger = return log
+
   override def postStop(): Unit = {
     super.postStop()
     log.info(self.path+" stopped")
