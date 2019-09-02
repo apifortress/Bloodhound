@@ -18,21 +18,17 @@ package com.apifortress.afthem.actors.proxy
 
 import java.io.InputStream
 
-import com.apifortress.afthem.actors.{AbstractAfthemActor, AppContext}
-import com.apifortress.afthem.config.ApplicationConf
+import com.apifortress.afthem._
+import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.GzipDecompressingEntity
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
-import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
-import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorConfig}
 import org.apache.http.util.EntityUtils
 
 /**
@@ -41,13 +37,6 @@ import org.apache.http.util.EntityUtils
 object UpstreamHttpActor {
 
   val DROP_HEADERS : List[String] = List("content-length")
-
-  val reactorConfig = IOReactorConfig.custom()
-    .setIoThreadCount(AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads).build()
-  val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
-  val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
-  val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement().setConnectionManager(connectionManager).build()
-  httpClient.start()
 
 }
 
@@ -71,7 +60,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         val httpReq: HttpUriRequest = createRequest(msg)
         metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
         metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-        UpstreamHttpActor.httpClient.execute(httpReq, new FutureCallback[HttpResponse] {
+        AfthemHttpClient.execute(httpReq, new FutureCallback[HttpResponse] {
           override def completed(response: HttpResponse): Unit = {
             try {
                 /*
@@ -93,11 +82,14 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
                 message.meta.put("__download_time", m.time())
                 forward(message)
             }catch {
-              case e: Exception => new ExceptionMessage(e, 502, msg).respond()
+              case e: Exception =>
+                getLog.debug("Error at upstream download", e)
+                new ExceptionMessage(e, 502, msg).respond()
             }
           }
 
           override def failed(e: Exception): Unit = {
+            getLog.debug("Error during upstream download",e)
             new ExceptionMessage(e,502,msg).respond()
           }
 
@@ -105,7 +97,9 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         })
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          getLog.error("Error while making the upstream call", e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
 
 
