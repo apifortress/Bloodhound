@@ -17,7 +17,7 @@
 package com.apifortress.afthem.actors.sidecars
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.exceptions.RejectedRequestException
+import com.apifortress.afthem.exceptions.{RejectedRequestException, UnauthorizedException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.slf4j.LoggerFactory
 
@@ -42,6 +42,10 @@ class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       // If the exception is the result of a request rejection
       val exception = msg.exception.asInstanceOf[RejectedRequestException]
       accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [REJECTED]")
+    case msg: ExceptionMessage if(msg.exception.isInstanceOf[UnauthorizedException]) =>
+      // If the exception is the result of a request rejection
+      val exception = msg.exception.asInstanceOf[UnauthorizedException]
+      accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [UNAUTHORIZED]")
     // Logging a request to the gateway
     case msg: WebParsedRequestMessage =>
       accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.getURL())
