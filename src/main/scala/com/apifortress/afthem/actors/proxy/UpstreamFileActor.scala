@@ -47,7 +47,9 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
                                 200,
                               "GET",
                                       List.empty[Header],
-                                      data)
+                                      data,
+                            null,
+                                      "UTF-8")
         forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
         metricsLog.debug(m.toString())
       }catch {
