@@ -53,7 +53,9 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the file upstream operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 }

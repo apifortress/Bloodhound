@@ -53,7 +53,9 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
         metricsLog.debug(m.toString())
         logProcessingTime(msg)
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the sendBack operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 

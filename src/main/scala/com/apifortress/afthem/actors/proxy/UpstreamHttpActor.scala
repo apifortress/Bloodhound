@@ -98,7 +98,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         metricsLog.debug(m.toString())
       }catch {
         case e : Exception =>
-          getLog.error("Error while making the upstream call", e)
+          log.error("Error while making the upstream call", e)
           throw new AfthemFlowException(msg,e.getMessage)
       }
 

@@ -55,7 +55,9 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
         forward(message)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the request operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 
