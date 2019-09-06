@@ -216,7 +216,7 @@ object ReqResUtil {
     */
   def isText(contentType : String) : Boolean = {
     if(contentType==null)
-      return true
+      return false
     return ConfigLoader.rootConfig.mime.textContentTypeContain.find( pattern => contentType.contains(pattern)).isDefined
   }
 
