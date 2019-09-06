@@ -36,7 +36,9 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the beautify payload operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
 
     case msg : WebParsedResponseMessage =>
@@ -47,7 +49,9 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the beautify payload operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
 
   }

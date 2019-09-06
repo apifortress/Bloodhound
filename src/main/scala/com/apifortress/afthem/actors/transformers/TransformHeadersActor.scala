@@ -39,7 +39,9 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the transform headers operation",e  )
+          throw new AfthemFlowException(msg,e.getMessage)
       }
 
     case msg : WebParsedResponseMessage =>
@@ -49,6 +51,7 @@ class TransformHeadersActor(phaseId : String) extends AbstractAfthemActor(phaseI
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
+        log.error("Exception during the transform headers operation",e)
         case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
       }
   }

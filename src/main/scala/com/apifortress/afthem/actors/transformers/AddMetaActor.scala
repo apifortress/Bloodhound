@@ -45,7 +45,9 @@ class AddMetaActor(id: String) extends AbstractAfthemActor(id: String) {
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the add meta operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 }

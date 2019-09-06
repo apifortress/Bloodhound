@@ -48,7 +48,9 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         forward(msg)
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Exception during the deserializer operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 
