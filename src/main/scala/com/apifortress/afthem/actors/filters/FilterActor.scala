@@ -66,7 +66,9 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
         }
         metricsLog.debug(m.toString())
       }catch {
-        case e : Exception => throw new AfthemFlowException(msg,e.getMessage)
+        case e : Exception =>
+          log.error("Error during filtering",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
   }
 }
