@@ -19,6 +19,7 @@ package com.apifortress.afthem.actors.transformers
 import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.Phase
+import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.messages.beans.HttpWrapper
 
@@ -30,11 +31,23 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
 
   override def receive: Receive = {
     case msg: WebParsedRequestMessage =>
-      transform(getPhase(msg),msg.request)
-      forward(msg)
+      try {
+        transform(getPhase(msg), msg.request)
+        forward(msg)
+      }catch {
+        case e : Exception =>
+          log.error("Error during transform payload",e)
+          throw new AfthemFlowException(msg,e.getMessage)
+      }
     case msg: WebParsedResponseMessage =>
-      transform(getPhase(msg),msg.response)
-      forward(msg)
+      try{
+        transform(getPhase(msg),msg.response)
+        forward(msg)
+      }catch {
+        case e : Exception =>
+          log.error("Error during transform payload",e)
+          throw new AfthemFlowException(msg,e.getMessage)
+      }
   }
 
   /**
@@ -42,9 +55,9 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
     * @param phase the phase
     * @param wrapper the HttpWrapper to transform
     */
-  def transform(phase : Phase, wrapper: HttpWrapper) = {
+  def transform(phase :   Phase, wrapper: HttpWrapper) = {
     val m = new Metric()
-    if(ReqResUtil.isTextPayload(wrapper)) {
+    if (ReqResUtil.isTextPayload(wrapper)) {
       if (phase.getConfig().contains("set")) {
         val setValue = phase.getConfigString("set")
         wrapper.payload = setValue.getBytes
@@ -52,7 +65,7 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
         val replace = phase.getConfigMap("replace")
         val regex = replace.get("regex").get.asInstanceOf[String]
         val value = replace.get("value").get.asInstanceOf[String]
-        if(ReqResUtil.isTextPayload(wrapper)) {
+        if (ReqResUtil.isTextPayload(wrapper)) {
           val text = ReqResUtil.byteArrayToString(wrapper)
           val t2 = text.replaceAll(regex, value)
           wrapper.payload = t2.getBytes
