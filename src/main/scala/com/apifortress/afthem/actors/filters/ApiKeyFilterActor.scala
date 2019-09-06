@@ -20,7 +20,7 @@ import java.io.{File, FileInputStream}
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.{AfthemCache, ApiKey, ApiKeys, Phase}
-import com.apifortress.afthem.exceptions.UnauthorizedException
+import com.apifortress.afthem.exceptions.{AfthemFlowException, UnauthorizedException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
 import com.apifortress.afthem.{Metric, Parsers, ReqResUtil}
 import org.apache.commons.io.IOUtils
@@ -33,22 +33,28 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
-      val m = new Metric()
-      val phase = getPhase(msg)
-      val foundKey = determineKey(phase.getConfigString("in"),phase.getConfigString("name"),msg)
-      val key = findKey(foundKey, phase)
-      if(key.isDefined && key.get.enabled){
-        msg.meta.put("key",key.get)
-        tellNextActor(msg)
-      } else {
-        log.debug("Message rejected")
-        val exceptionMessage = new ExceptionMessage(new UnauthorizedException(msg),401,msg)
-        // Respond to the controller
-        exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg,"application/json"))
-        // and let sidecars know about the rejection
-        tellSidecars(exceptionMessage)
+      try {
+        val m = new Metric()
+        val phase = getPhase(msg)
+        val foundKey = determineKey(phase.getConfigString("in"), phase.getConfigString("name"), msg)
+        val key = findKey(foundKey, phase)
+        if(key.isDefined && key.get.enabled){
+          msg.meta.put("key",key.get)
+          tellNextActor(msg)
+        } else {
+          log.debug("Message rejected")
+          val exceptionMessage = new ExceptionMessage(new UnauthorizedException(msg), 401, msg)
+          // Respond to the controller
+          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
+          // and let sidecars know about the rejection
+          tellSidecars(exceptionMessage)
+        }
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception =>
+          log.error("Error during API-key filtering",e)
+          throw new AfthemFlowException(msg,e.getMessage)
       }
-      metricsLog.debug(m.toString())
 
   }
 
