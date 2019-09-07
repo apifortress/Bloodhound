@@ -20,11 +20,36 @@ package com.apifortress.afthem.actors.proxy
 import java.io.{File, FileInputStream}
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.config.Backend
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, UriUtil}
 import org.apache.commons.io.IOUtils
+import org.springframework.web.util.UriComponents
+
+/**
+  * Companion object for the UpstreamFileActor
+  */
+object UpstreamFileActor {
+
+  /**
+    * Loads a file based on a basepath and uriComponents and safely closes the streams
+    * @param basepath the basepath
+    * @param uriComponents the uriComponents, coming from the request
+    * @param backend the backend configuration
+    * @return an Array of bytes representing the content of the file
+    */
+  def loadFile(basepath : String, uriComponents: UriComponents, backend: Backend) : Array[Byte] = {
+    val fis = new FileInputStream(new File(basepath+File.separator+UriUtil.determineUpstreamPart(uriComponents, backend)))
+    try {
+      val data = IOUtils.toByteArray(fis)
+      return data
+    } finally {
+      fis.close()
+    }
+  }
+}
 
 /**
   * In case you want to use a local file as the upstream service, this actor does it
@@ -40,9 +65,8 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         val m = new Metric
         metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
         metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-        val fis = new FileInputStream(new File(getPhase(msg).getConfigString("basepath")+File.separator+UriUtil.determineUpstreamPart(msg.request.uriComponents, msg.backend)))
-        val data = IOUtils.toByteArray(fis)
-        fis.close()
+        val data = UpstreamFileActor.loadFile(getPhase(msg).getConfigString("basepath"),
+                                              msg.request.uriComponents,msg.backend)
         val wrapper = new HttpWrapper("http://origin",
                                 200,
                               "GET",
