@@ -30,7 +30,6 @@ class SendBackActorTests {
   def testActor() : Unit = {
     implicit val system = ActorSystem()
     val probe = TestProbe()
-    //probe.expectMsg(30 seconds, classOf[WebParsedRequestMessage])
     val actor = system.actorOf(Props(new SendBackActor("abc") {
       override def sendBack(msg: WebParsedResponseMessage): Unit = {
         probe.ref ! msg
