@@ -4,6 +4,9 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
 import org.slf4j.LoggerFactory
 
+/**
+  * Companion object for NetworkMetricsLoggerActor
+  */
 object NetworkMetricsLoggerActor {
 
   private val TYPE_DOWNLOAD : String = "Download"
@@ -15,6 +18,11 @@ object NetworkMetricsLoggerActor {
   }
 
 }
+
+/**
+  * Actor to log network metrics
+  * @param phaseId the phaseId
+  */
 class NetworkMetricsLoggerActor(phaseId : String) extends AbstractAfthemActor(phaseId : String) {
 
   override def receive: Receive = {

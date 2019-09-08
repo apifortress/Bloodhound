@@ -20,9 +20,20 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 
-
+/**
+  * Companion object for AbstractSerializerActor.
+  */
 object AbstractSerializerActor {
 
+  /**
+    * Static version of shouldCapture.
+    * Decides whether a message should be captured based on the configuration and the message
+    * @param msg the message
+    * @param enableOnHeader a request header that enables serialization
+    * @param disableOnHeader a request header that disables serialization
+    * @param allowContentTypes response content types that should enable serialization
+    * @return true if the conversation needs to be serialized
+    */
   def shouldCapture(msg : WebParsedResponseMessage, enableOnHeader : String,
                     disableOnHeader : String, allowContentTypes : List[String]) : Boolean = {
     var go : Boolean = true

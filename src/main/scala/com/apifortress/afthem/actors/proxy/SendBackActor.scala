@@ -73,6 +73,10 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
       }
   }
 
+  /**
+    * Sets the data in the deferredResult
+    * @param msg the message
+    */
   def sendBack(msg : WebParsedResponseMessage) : Unit = {
     msg.deferredResult.setData(msg.response,msg)
   }

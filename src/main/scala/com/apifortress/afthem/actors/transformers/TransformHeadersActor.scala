@@ -25,6 +25,9 @@ import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 
 
+/**
+  * Companion object for TransformHeadersActor
+  */
 object TransformHeadersActor {
   /**
     * Adds a list of headers to an HttpWrapper
