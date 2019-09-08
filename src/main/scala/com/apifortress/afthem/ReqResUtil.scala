@@ -265,6 +265,12 @@ object ReqResUtil {
     * @param wrapper the HttpWrapper
     * @return the string
     */
-  def byteArrayToString(wrapper : HttpWrapper) : String = new String(wrapper.payload,Charset.forName(wrapper.characterEncoding))
+  def byteArrayToString(wrapper : HttpWrapper) : String = {
+    val characterEncoding = if (wrapper.characterEncoding!=null)
+                            wrapper.characterEncoding
+                          else
+                            "utf-8"
+    new String(wrapper.payload,Charset.forName(characterEncoding))
+  }
 
 }
