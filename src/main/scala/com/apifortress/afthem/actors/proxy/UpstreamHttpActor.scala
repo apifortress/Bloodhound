@@ -128,8 +128,7 @@ object UpstreamHttpActor {
     * @param msg the message
     * @return the upstream
     */
-  def extractUpstream(msg : BaseMessage) : String = msg.meta.get("__replace_upstream")
-                                                              .getOrElse(msg.backend.upstream).asInstanceOf[String]
+  def extractUpstream(msg : BaseMessage) : String = msg.meta.getOrElse("__replace_upstream",msg.backend.upstream).asInstanceOf[String]
 }
 
 /**
