@@ -2,8 +2,12 @@ package com.apifortress.afthem.actors.proxy
 
 import java.util.Date
 
+import akka.actor.Actor.Receive
+import akka.actor.{ActorSystem, Props}
+import akka.testkit.TestProbe
+import com.apifortress.afthem.Metric
 import com.apifortress.afthem.config.{Backend, Phase}
-import com.apifortress.afthem.messages.WebParsedRequestMessage
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import org.apache.commons.io.IOUtils
 import org.apache.http.client.entity.GzipDecompressingEntity
@@ -14,6 +18,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.mockito.Mockito._
 
+import scala.concurrent.duration._
 import scala.collection.mutable
 
 class UpstreamHttpActorTests {
@@ -65,4 +70,32 @@ class UpstreamHttpActorTests {
     val res = IOUtils.toString(apacheRequest.asInstanceOf[HttpPost].getEntity.getContent,"UTF-8")
     assertEquals("FOOBAR",res)
   }
+
+  @Test
+  def testActor() : Unit = {
+    implicit val system = ActorSystem()
+    val probe = TestProbe()
+    //probe.expectMsg(30 seconds, classOf[WebParsedRequestMessage])
+    val actor = system.actorOf(Props(new UpstreamHttpActor("abc") {
+      override def forward(msg: BaseMessage): Unit = {
+        probe.ref ! msg
+      }
+
+      override def getPhase(message: BaseMessage): Phase = {
+        new Phase("abc","next")
+      }
+    }))
+    val request = new HttpWrapper("https://foo.com",-1,"GET")
+    val backend = new Backend(null,"foo.com",Map.empty[String,String],"https://www.google.com")
+    val message = new WebParsedRequestMessage(request,backend,null,null)
+    message.meta.put("__process_start",new Metric().time().toLong)
+    message.meta.put("__start",new Metric().time().toLong)
+    actor ! message
+    val response = probe.expectMsgClass(classOf[WebParsedResponseMessage])
+    assertTrue(response.response.getHeader("content-type").contains("html"))
+    Thread.sleep(500)
+    system.terminate()
+
+  }
+
 }

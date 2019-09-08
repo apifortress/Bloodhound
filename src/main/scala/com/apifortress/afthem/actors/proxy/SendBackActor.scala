@@ -63,7 +63,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
 
         SendBackActor.adjustResponseHeaders(msg.response)
 
-        msg.deferredResult.setData(msg.response,msg)
+        sendBack(msg)
         metricsLog.debug(m.toString())
         logProcessingTime(msg)
       }catch {
@@ -71,6 +71,10 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
           log.error("Exception during the sendBack operation",e)
           throw new AfthemFlowException(msg,e.getMessage)
       }
+  }
+
+  def sendBack(msg : WebParsedResponseMessage) : Unit = {
+    msg.deferredResult.setData(msg.response,msg)
   }
 
   /**
