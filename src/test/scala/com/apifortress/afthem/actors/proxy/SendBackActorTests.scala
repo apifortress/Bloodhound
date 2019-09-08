@@ -2,23 +2,18 @@ package com.apifortress.afthem.actors.proxy
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.apifortress.afthem.{Metric, ReqResUtil}
+import com.apifortress.afthem.{Metric, TestData}
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import org.junit.Assert._
 import org.junit.Test
 
 class SendBackActorTests {
 
-  def createWrapper() : HttpWrapper =
-     new HttpWrapper("http://foo.com",200,"GET",
-      List[Header](new Header(ReqResUtil.HEADER_CONTENT_LENGTH,"123"),
-        new Header(ReqResUtil.HEADER_CONTENT_ENCODING,"gzip"),
-        new Header("x-key","ABC123")))
+
   @Test
   def testAdjustResponseHeaders() : Unit = {
-    val httpWrapper = createWrapper()
+    val httpWrapper = TestData.createWrapper()
 
     SendBackActor.adjustResponseHeaders(httpWrapper)
     assertEquals(2,httpWrapper.headers.size)
@@ -44,7 +39,7 @@ class SendBackActorTests {
         new Phase("abc","next")
       }
     }))
-    val message = new WebParsedResponseMessage(createWrapper(),null,null,null,null)
+    val message = new WebParsedResponseMessage(TestData.createWrapper(),null,null,null,null)
     message.meta.put("__process_start",new Metric().time().toLong)
     message.meta.put("__start",new Metric().time().toLong)
     actor ! message

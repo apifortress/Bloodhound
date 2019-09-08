@@ -2,23 +2,21 @@ package com.apifortress.afthem.actors.proxy
 
 import java.util.Date
 
-import akka.actor.Actor.Receive
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
 import com.apifortress.afthem.Metric
 import com.apifortress.afthem.config.{Backend, Phase}
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.apache.commons.io.IOUtils
 import org.apache.http.client.entity.GzipDecompressingEntity
-import org.apache.http.client.methods.{HttpPost, HttpUriRequest}
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.message.BasicHeader
 import org.apache.http.{Header, HttpEntity}
 import org.junit.Assert._
 import org.junit.Test
 import org.mockito.Mockito._
 
-import scala.concurrent.duration._
 import scala.collection.mutable
 
 class UpstreamHttpActorTests {
