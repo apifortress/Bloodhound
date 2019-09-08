@@ -48,6 +48,8 @@ class HttpWrapperTests {
     val wrapper = new HttpWrapper("http://example.com/foobar?a=b")
     wrapper.setHeader("foo", "bar")
     assertEquals("bar", wrapper.getHeader("foo"))
+    wrapper.setHeader("foo","dog")
+    assertEquals("dog", wrapper.getHeader("foo"))
   }
 
   @Test
@@ -61,5 +63,20 @@ class HttpWrapperTests {
     assertEquals(1,wrapper.headers.size)
     wrapper.removeHeader("content-type")
     assertEquals(0,wrapper.headers.size)
+  }
+
+  @Test
+  def testSetUrl() : Unit = {
+    val wrapper = new HttpWrapper("http://example.com/foobar?a=b")
+    wrapper.setURL("http://foo.com")
+    assertEquals("foo.com",wrapper.uriComponents.getHost)
+  }
+
+  @Test
+  def testClone() : Unit = {
+    val wrapper = new HttpWrapper("http://example.com/foobar?a=b")
+    val wrapper2 = wrapper.clone()
+    wrapper2.setURL("http://foo.com")
+    assertNotEquals(wrapper.getURL(),wrapper2.getURL())
   }
 }

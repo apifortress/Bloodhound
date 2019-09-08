@@ -11,8 +11,12 @@ import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorCo
 
 object AfthemHttpClient {
 
-  val reactorConfig = IOReactorConfig.custom()
-    .setIoThreadCount(AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads).build()
+  private val maxThreads : Int = if(AppContext.springApplicationContext!=null)
+                                AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads
+                            else
+                                1
+
+  val reactorConfig = IOReactorConfig.custom().setIoThreadCount(maxThreads).build()
   val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
   val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
   val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement().setConnectionManager(connectionManager).build()

@@ -37,8 +37,7 @@ object SendBackActor {
       * transformation or simply unzipping, the response body will break so we have to remove it.
       * Tomcat will replace it with the correct length once it sends the response
       */
-    wrapper.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
-    wrapper.removeHeader(ReqResUtil.HEADER_CONTENT_ENCODING)
+    wrapper.removeHeaders(List(ReqResUtil.HEADER_CONTENT_LENGTH,ReqResUtil.HEADER_CONTENT_ENCODING))
 
     /**
       * Content-Type is an essential element of the HTTP protocol. By the RFC, the absence of a Content-Type header

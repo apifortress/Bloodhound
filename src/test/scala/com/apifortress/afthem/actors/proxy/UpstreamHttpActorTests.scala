@@ -1,12 +1,17 @@
 package com.apifortress.afthem.actors.proxy
 
-import com.apifortress.afthem.config.Backend
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage}
+import java.util.Date
+
+import com.apifortress.afthem.config.{Backend, Phase}
+import com.apifortress.afthem.messages.WebParsedRequestMessage
+import com.apifortress.afthem.messages.beans.HttpWrapper
+import org.apache.commons.io.IOUtils
 import org.apache.http.client.entity.GzipDecompressingEntity
+import org.apache.http.client.methods.{HttpPost, HttpUriRequest}
 import org.apache.http.message.BasicHeader
 import org.apache.http.{Header, HttpEntity}
-import org.junit.Test
 import org.junit.Assert._
+import org.junit.Test
 import org.mockito.Mockito._
 
 import scala.collection.mutable
@@ -42,5 +47,22 @@ class UpstreamHttpActorTests {
     when(entity.getContentEncoding).thenReturn(new BasicHeader("content-encoding","identity"))
     val entity3 = UpstreamHttpActor.wrapGzipEntityIfNeeded(entity)
     assertTrue(entity3.isInstanceOf[HttpEntity])
+  }
+
+  @Test
+  def testCreateRequest() : Unit = {
+    val backend = mock(classOf[Backend])
+    val phase = new Phase("foo","bar")
+    when(backend.upstream).thenReturn("http://foo.com/bar")
+    val request = new HttpWrapper("http://foo.com",-1,"POST",
+                                  List[com.apifortress.afthem.messages.beans.Header](new com.apifortress.afthem.messages.beans.Header("foo","bar"))
+                                  ,"FOOBAR".getBytes())
+    val msg = new WebParsedRequestMessage(request, backend,null,null, new Date(), null)
+    val apacheRequest = UpstreamHttpActor.createRequest(msg,phase)
+    assertEquals("POST",apacheRequest.getMethod)
+    assertEquals("http://foo.com",apacheRequest.getURI.toString)
+    assertTrue(apacheRequest.getAllHeaders.find(it => it.getName == "foo").isDefined)
+    val res = IOUtils.toString(apacheRequest.asInstanceOf[HttpPost].getEntity.getContent,"UTF-8")
+    assertEquals("FOOBAR",res)
   }
 }
