@@ -55,7 +55,7 @@ class TransformPayloadActor(phaseId: String) extends AbstractAfthemActor(phaseId
     * @param phase the phase
     * @param wrapper the HttpWrapper to transform
     */
-  def transform(phase :   Phase, wrapper: HttpWrapper) = {
+  def transform(phase: Phase, wrapper: HttpWrapper) = {
     val m = new Metric()
     if (ReqResUtil.isTextPayload(wrapper)) {
       if (phase.getConfig().contains("set")) {
