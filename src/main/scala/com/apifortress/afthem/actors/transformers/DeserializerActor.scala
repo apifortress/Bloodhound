@@ -22,38 +22,7 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.messages.BaseMessage
 import org.springframework.expression.spel.support.StandardEvaluationContext
 
-/**
-  * Actor that deserializes XML and JSON and puts the result into the metas of the message
-  * @param phaseId the phaseId the ID of the phase
-  */
-class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
-
-  override def receive: Receive = {
-    case msg : BaseMessage =>
-      try{
-        val m = new Metric
-        val phase = getPhase(msg)
-
-        val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
-
-        val meta = phase.getConfigString("meta")
-        val contentType  = phase.getConfigString("contentType")
-
-        val ctx = new StandardEvaluationContext()
-        ctx.setVariable("msg",msg)
-        val output = deserialize(parsedExpression.getValue(ctx),contentType)
-
-        msg.meta.put(meta,output)
-
-        forward(msg)
-        metricsLog.debug(m.toString())
-      }catch {
-        case e : Exception =>
-          log.error("Exception during the deserializer operation",e)
-          throw new AfthemFlowException(msg,e.getMessage)
-      }
-  }
-
+object DeserializerActor {
   /**
     * Deserializes data
     * @param data the data to be deserialized
@@ -76,5 +45,40 @@ class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     }
     return output
   }
+}
+
+/**
+  * Actor that deserializes XML and JSON and puts the result into the metas of the message
+  * @param phaseId the phaseId the ID of the phase
+  */
+class DeserializerActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+
+  override def receive: Receive = {
+    case msg : BaseMessage =>
+      try{
+        val m = new Metric
+        val phase = getPhase(msg)
+
+        val parsedExpression = SpelEvaluator.parse(phase.getConfigString("expression"))
+
+        val meta = phase.getConfigString("meta")
+        val contentType  = phase.getConfigString("contentType")
+
+        val ctx = new StandardEvaluationContext()
+        ctx.setVariable("msg",msg)
+        val output = DeserializerActor.deserialize(parsedExpression.getValue(ctx),contentType)
+
+        msg.meta.put(meta,output)
+
+        forward(msg)
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception =>
+          log.error("Exception during the deserializer operation",e)
+          throw new AfthemFlowException(msg,e.getMessage)
+      }
+  }
+
+
 }
 
