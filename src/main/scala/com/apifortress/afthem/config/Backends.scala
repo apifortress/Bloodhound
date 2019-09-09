@@ -50,16 +50,6 @@ object Backends  {
 class Backends(backends: List[Backend]) extends ICacheableConfig {
 
     /**
-      * Given an inbound request URL, find the Backend definition matching it
-      * @param url the inbound request URL
-      * @return an instance of Option[Backend]
-      */
-    def findByUrl(url : String) : Option[Backend] = {
-        val signature = UriUtil.getSignature(url)
-        return backends.find(bec => signature.startsWith(bec.prefix))
-    }
-
-    /**
       * Given an inbound request, find the Backend definition matching it
       * @param request the inbound request
       * @return an instance of Option[Backend]
