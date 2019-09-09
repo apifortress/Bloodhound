@@ -7,6 +7,14 @@ import org.junit.Assert._
 
 class ResponseEntityUtilTests {
 
+  @Test
+  def testCreateEntity() :  Unit = {
+    val wrapper = TestData.createWrapper()
+    wrapper.payload = "{\"foo\":\"bar\"}".getBytes
+    val entity = ResponseEntityUtil.createEntity(wrapper)
+    assertEquals(200,entity.getStatusCodeValue)
+    assertEquals(123,entity.getHeaders.getContentLength)
+  }
 
   @Test
   def testCreateEntityForException() : Unit = {
