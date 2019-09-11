@@ -6,6 +6,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
 import com.apifortress.afthem.TestData
 import com.apifortress.afthem.config.Phase
+import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import com.apifortress.afthem.messages.beans.{AfthemResult, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.apache.commons.io.IOUtils
@@ -17,6 +18,7 @@ class ApiKeyFilterActorTests {
 
   @Test
   def testActor() : Unit = {
+    YamlConfigLoader.SUBPATH="etc.test"
     val file = File.createTempFile("afthem","test")
     val fileWriter = new FileWriter(file)
     IOUtils.write("api_keys:\n- api_key: ABC123\n  app_id: John Doe\n  enabled: true",fileWriter)
