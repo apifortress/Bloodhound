@@ -1,0 +1,56 @@
+implementers:
+# PROXY
+  - id: request
+    class: com.apifortress.afthem.actors.proxy.RequestActor
+    type: proxy
+  - id: upstream_http
+    class: com.apifortress.afthem.actors.proxy.UpstreamHttpActor
+    type: proxy
+  - id: send_back
+    class: com.apifortress.afthem.actors.proxy.SendBackActor
+    type: proxy
+  - id: upstream_file
+    class: com.apifortress.afthem.actors.proxy.UpstreamFileActor
+    type: proxy
+
+# TRANSFORMERS
+  - id: transform_headers
+    class: com.apifortress.afthem.actors.transformers.TransformHeadersActor
+    type: transformer
+    instances: 2
+    thread_pool: computational
+
+# FILTERS
+  - id: header_filter
+    class: com.apifortress.afthem.actors.filters.FilterActor
+    type: filter
+    instances: 2
+    thread_pool: computational
+
+# SIDECARS
+  - id: access_logger
+    class: com.apifortress.afthem.actors.sidecars.AccessLoggerActor
+    type: sidecar
+    thread_pool: secondary
+  - id: file_serializer
+    class: com.apifortress.afthem.actors.sidecars.serializers.FileAppenderSerializerActor
+    type: sidecar
+    thread_pool: secondary
+  - id: network_metrics_logger
+    class: com.apifortress.afthem.actors.sidecars.NetworkMetricsLoggerActor
+    type: sidecar
+    thread_pool: secondary
+
+thread_pools:
+  default:
+    min: 1
+    max: 2
+    factor: 1
+  computational:
+    min: 2
+    max: 2
+    factor: 2
+  secondary:
+    min: 1
+    max: 1
+    factor: 1
