@@ -40,7 +40,7 @@ object UpstreamHttpActor {
   /**
     * Request headers that need to be dropped before the request is performed
     */
-  val DROP_HEADERS : List[String] = List("content-length")
+  val DROP_HEADERS : List[String] = List("content-length","host")
 
   /**
     * If the entity declares itself as a GZIP entity, it gets wrapped into a GzipDecompressingEntity
