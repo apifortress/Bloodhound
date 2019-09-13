@@ -112,4 +112,7 @@
     <logger name="network" level="DEBUG" additivity="false">
         <appender-ref ref="NETWORK_LOGGER" />
     </logger>
+    <logger name="org.apache.http" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 </configuration>
