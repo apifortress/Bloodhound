@@ -167,17 +167,17 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     */
   class AfthemHttpCallback(msg : WebParsedRequestMessage, m : Metric) extends FutureCallback[HttpResponse] {
     override def completed(response: HttpResponse): Unit = {
+      var inputStream : InputStream = null
       try {
         /*
          * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
          * the appropriate header and handle it manually.
          */
-        var entity = UpstreamHttpActor.wrapGzipEntityIfNeeded(response.getEntity)
+        val  entity = UpstreamHttpActor.wrapGzipEntityIfNeeded(response.getEntity)
 
-        val inputStream = entity.getContent
+        inputStream = entity.getContent
         val wrapper = UpstreamHttpActor.createResponseWrapper(msg.request, response, inputStream)
         EntityUtils.consumeQuietly(entity)
-        inputStream.close()
 
         val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
         metricsLog.info("Download time: " + m.toString())
@@ -187,6 +187,9 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         case e: Exception =>
           getLog.debug("Error at upstream download", e)
           new ExceptionMessage(e, 502, msg).respond()
+      } finally {
+        if (inputStream != null)
+          inputStream.close()
       }
     }
 
