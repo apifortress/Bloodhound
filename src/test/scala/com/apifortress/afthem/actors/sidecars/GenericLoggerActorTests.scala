@@ -1,11 +1,9 @@
 package com.apifortress.afthem.actors.sidecars
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.TestProbe
 import com.apifortress.afthem.TestData
 import com.apifortress.afthem.config.Phase
-import com.apifortress.afthem.exceptions.{RejectedRequestException, UnauthorizedException}
-import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage}
 import org.junit.Test
 
 class GenericLoggerActorTests {
