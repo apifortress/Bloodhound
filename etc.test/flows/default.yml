@@ -1,0 +1,18 @@
+proxy/request:
+  next: proxy/upstream_http
+  sidecars:
+    - sidecar/access_logger
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+    - sidecar/network_metrics_logger
+
+sidecar/access_logger:
+  config: {}
+
+sidecar/network_metrics_logger:
+  config: {}

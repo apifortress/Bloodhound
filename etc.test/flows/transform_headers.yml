@@ -1,0 +1,25 @@
+proxy/request:
+  next: transformer/transform_headers
+  sidecars:
+    - sidecar/access_logger
+
+transformer/transform_headers:
+  next: proxy/upstream_http
+  config:
+    add:
+      - name: x-original-remoteIP
+        value: "#msg.request().remoteIP()"
+        evaluated: true
+    set:
+      - name: user-agent
+        value: "Afthem"
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+
+sidecar/access_logger:
+  config: {}

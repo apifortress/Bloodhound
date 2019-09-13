@@ -26,7 +26,12 @@ class FilterActorTests {
         probe.ref ! message
       }
       override def getPhase(message: BaseMessage): Phase = {
-        new Phase("abc","next",List.empty[String],Map("accept"->List(Map("evaluate"->true,"value"->"#msg.request().getHeader('x-key')!=null"))))
+        new Phase("abc","next",List.empty[String],Map("accept"->
+                                                                  List(Map("evaluate"->true,
+                                                                        "value"->"#msg.request().getHeader('x-key')!=null")),
+                                                                  "reject"->
+                                                                   List(Map("evaluate"->true,
+                                                                          "value"->"#msg.request().getHeader('banana')!=null"))))
       }
     }))
     val message = new WebParsedRequestMessage(TestData.createWrapper(),null,null,result)

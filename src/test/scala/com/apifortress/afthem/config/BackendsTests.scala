@@ -3,6 +3,7 @@ package com.apifortress.afthem.config
 import java.io.{File, FileReader}
 
 import com.apifortress.afthem.Parsers
+import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import javax.servlet.http.HttpServletRequest
 import org.mockito.Mockito._
 import org.junit.Assert._
@@ -30,5 +31,12 @@ class BackendsTests {
     when(request.getHeader("x-my-header")).thenReturn("mastiff")
     val found = backends.findByRequest(request).get
     assertEquals("[^/]*/only/with/header",found.prefix)
+  }
+
+  @Test
+  def testBackends() : Unit = {
+    YamlConfigLoader.SUBPATH = "etc.test"
+    val backends = Backends.instance()
+    assertEquals(6,backends.list().size)
   }
 }
