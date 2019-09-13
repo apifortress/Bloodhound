@@ -47,4 +47,12 @@ class UriUtilTests {
     val uri2 = UriUtil.toUriComponents("http://example.com:8080/foo/bar?a=b")
     assertEquals("/bar?a=b",UriUtil.determineUpstreamPart(uri1,backend))
   }
+
+  @Test
+  def testComposeUriAndQuery() : Unit = {
+    assertEquals("http://foo.com/bar",UriUtil.composeUriAndQuery("http://foo.com/bar",null))
+    assertEquals("http://foo.com/bar",UriUtil.composeUriAndQuery("http://foo.com/bar", ""))
+    assertEquals("http://foo.com/bar?foo=bar",
+                  UriUtil.composeUriAndQuery("http://foo.com/bar","foo=bar"))
+  }
 }
