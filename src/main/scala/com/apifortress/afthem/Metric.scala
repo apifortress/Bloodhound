@@ -25,13 +25,11 @@ package com.apifortress.afthem
 class Metric(val start: Long = System.nanoTime()) {
 
   /**
-    * Calculates the difference between the moment the object was created and now, in milliseconds
-    * @return the difference between th emoment the object was created and now
+    * Calculates the difference between the moment the object was created and now, in milliseconds,
+    * rounded to the second decimal digit
+    * @return the difference between the moment the object was created and now
     */
-  def time() : Double = (System.nanoTime()-start)/1000000.0f
+  def time() : Double = BigDecimal((System.nanoTime()-start)/1000000.0f).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
 
-  override def toString() : String = {
-    val c = time()
-    return f"$c%1.3f"+"ms"
-  }
+  override def toString() : String = return time()+"ms"
 }

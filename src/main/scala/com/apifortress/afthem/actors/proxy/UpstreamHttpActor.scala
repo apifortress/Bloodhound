@@ -20,10 +20,11 @@ import java.io.InputStream
 
 import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
-import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
-import org.apache.http.HttpResponse
+import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
+import org.apache.http.{HttpEntity, HttpResponse}
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.GzipDecompressingEntity
 import org.apache.http.client.methods._
@@ -36,85 +37,31 @@ import org.apache.http.util.EntityUtils
   */
 object UpstreamHttpActor {
 
-  val DROP_HEADERS : List[String] = List("content-length")
+  /**
+    * Request headers that need to be dropped before the request is performed
+    */
+  val DROP_HEADERS : List[String] = List("content-length","host")
 
-}
-
-/**
-  * The actor taking care of retrieving the resource from the origin
-  * @param phaseId the phase ID
-  */
-class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
-
-
-  override def receive: Receive = {
-    case msg : WebParsedRequestMessage =>
-      try {
-        val m = new Metric
-        var upstream = msg.backend.upstream
-        upstream = msg.meta.get("__replace_upstream").getOrElse(upstream).asInstanceOf[String]
-        if(upstream!=null) {
-          msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
-          msg.request.setHeader("host", msg.request.uriComponents.getHost)
-        }
-        val httpReq: HttpUriRequest = createRequest(msg)
-        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
-        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
-        AfthemHttpClient.execute(httpReq, new FutureCallback[HttpResponse] {
-          override def completed(response: HttpResponse): Unit = {
-            try {
-                /*
-                 * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
-                 * the appropriate header and handle it manually.
-                 */
-                var entity = response.getEntity
-                if (entity.getContentEncoding != null && entity.getContentEncoding.getValue.toLowerCase.contains("gzip"))
-                  entity = new GzipDecompressingEntity(entity)
-                val inputStream = entity.getContent
-
-                val wrapper = createResponseWrapper(msg.request, response, inputStream)
-
-                EntityUtils.consumeQuietly(entity)
-                inputStream.close()
-
-                val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
-                metricsLog.info("Download time: " + m.toString())
-                message.meta.put("__download_time", m.time())
-                forward(message)
-            }catch {
-              case e: Exception =>
-                getLog.debug("Error at upstream download", e)
-                new ExceptionMessage(e, 502, msg).respond()
-            }
-          }
-
-          override def failed(e: Exception): Unit = {
-            getLog.debug("Error during upstream download",e)
-            new ExceptionMessage(e,502,msg).respond()
-          }
-
-          override def cancelled(): Unit = {}
-        })
-        metricsLog.debug(m.toString())
-      }catch {
-        case e : Exception =>
-          log.error("Error while making the upstream call", e)
-          throw new AfthemFlowException(msg,e.getMessage)
-      }
-
-
+  /**
+    * If the entity declares itself as a GZIP entity, it gets wrapped into a GzipDecompressingEntity
+    * @param entity an HttpEntity
+    * @return a GzipDecompressingEntity, if the inbound entity declares itself as GZIP
+    */
+  def wrapGzipEntityIfNeeded(entity : HttpEntity) : HttpEntity = {
+    if (entity.getContentEncoding != null && entity.getContentEncoding.getValue.toLowerCase.contains("gzip"))
+      return new GzipDecompressingEntity(entity)
+    return entity
   }
 
   /**
     * Creates an HTTP client request with the provided data
     * @param msg a WebParsedRequestMessage
+    * @param phase the phase
     * @return an HttpUriRequest, ready to be executed
     */
-  private def createRequest(msg: WebParsedRequestMessage): HttpUriRequest = {
+  def createRequest(msg: WebParsedRequestMessage, phase : Phase): HttpUriRequest = {
 
     val wrapper = msg.request
-
-    val phase = getPhase(msg)
 
     val discardHeaders = phase.getConfigList("discard_headers")
 
@@ -139,12 +86,22 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     if(wrapper.payload != null && request.isInstanceOf[HttpEntityEnclosingRequestBase])
       request.asInstanceOf[HttpEntityEnclosingRequestBase].setEntity(new ByteArrayEntity(wrapper.payload))
 
-    wrapper.headers.foreach(header =>
-      if(!discardHeaders.contains(header.key.toLowerCase) && !UpstreamHttpActor.DROP_HEADERS.contains(header.key.toLowerCase))
-        request.setHeader(header.key,header.value)
-    )
+    copyHeadersToRequest(wrapper,discardHeaders,request)
 
     request
+  }
+
+  /**
+    * Copies the headers from the wrapper to the HttpRequest and discards headers meant to be discarded
+    * @param wrapper the wrapper
+    * @param discardHeaders the headers meant to be discarded
+    * @param httpRequest the HttpRequest
+    */
+  def copyHeadersToRequest(wrapper: HttpWrapper, discardHeaders : List[String], httpRequest: HttpRequestBase) : Unit = {
+    wrapper.headers.foreach(header =>
+      if(!discardHeaders.contains(header.key.toLowerCase) && !UpstreamHttpActor.DROP_HEADERS.contains(header.key.toLowerCase))
+        httpRequest.setHeader(header.key,header.value)
+    )
   }
 
   /**
@@ -155,7 +112,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     * @param inputStream the stream connected to the response body
     * @return the response HttpWrapper
     */
-  private def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
+  def createResponseWrapper(requestWrapper: HttpWrapper, response : HttpResponse, inputStream: InputStream): HttpWrapper = {
     val headersInfo = ReqResUtil.parseHeaders(response)
     new HttpWrapper(requestWrapper.getURL(),
       response.getStatusLine.getStatusCode,
@@ -164,5 +121,80 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       ReqResUtil.readPayload(inputStream,headersInfo._2.get(ReqResUtil.HEADER_CONTENT_LENGTH)),
       null,
       ReqResUtil.getCharsetFromResponse(response))
+  }
+
+  /**
+    * Extracts the upstream url, based on the presence (or absence) of a __replace_upstream meta
+    * @param msg the message
+    * @return the upstream
+    */
+  def extractUpstream(msg : BaseMessage) : String = msg.meta.getOrElse("__replace_upstream",msg.backend.upstream).asInstanceOf[String]
+}
+
+/**
+  * The actor taking care of retrieving the resource from the origin
+  * @param phaseId the phase ID
+  */
+class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+
+  override def receive: Receive = {
+    case msg : WebParsedRequestMessage =>
+      try {
+        val m = new Metric
+        val upstream = UpstreamHttpActor.extractUpstream(msg)
+
+        if(upstream!=null) {
+          msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
+          msg.request.setHeader("host", msg.request.uriComponents.getHost)
+        }
+        val httpReq: HttpUriRequest = UpstreamHttpActor.createRequest(msg,getPhase(msg))
+
+        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
+        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        AfthemHttpClient.execute(httpReq, new AfthemHttpCallback(msg,m))
+        metricsLog.debug(m.toString())
+      }catch {
+        case e : Exception =>
+          log.error("Error while making the upstream call", e)
+          throw new AfthemFlowException(msg,e.getMessage)
+      }
+  }
+
+  /**
+    * The HTTP that gets called when the response content is ready
+    * @param msg the request message
+    * @param m the metric started at the beginning of the actor
+    */
+  class AfthemHttpCallback(msg : WebParsedRequestMessage, m : Metric) extends FutureCallback[HttpResponse] {
+    override def completed(response: HttpResponse): Unit = {
+      try {
+        /*
+         * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
+         * the appropriate header and handle it manually.
+         */
+        var entity = UpstreamHttpActor.wrapGzipEntityIfNeeded(response.getEntity)
+
+        val inputStream = entity.getContent
+        val wrapper = UpstreamHttpActor.createResponseWrapper(msg.request, response, inputStream)
+        EntityUtils.consumeQuietly(entity)
+        inputStream.close()
+
+        val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
+        metricsLog.info("Download time: " + m.toString())
+        message.meta.put("__download_time", m.time())
+        forward(message)
+      }catch {
+        case e: Exception =>
+          getLog.debug("Error at upstream download", e)
+          new ExceptionMessage(e, 502, msg).respond()
+      }
+    }
+
+    override def failed(e: Exception): Unit = {
+      getLog.debug("Error during upstream download",e)
+      new ExceptionMessage(e,502,msg).respond()
+    }
+
+    override def cancelled(): Unit = {}
   }
 }

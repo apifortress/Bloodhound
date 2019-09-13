@@ -21,6 +21,36 @@ import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.WebParsedResponseMessage
 
 /**
+  * Companion object for AbstractSerializerActor.
+  */
+object AbstractSerializerActor {
+
+  /**
+    * Static version of shouldCapture.
+    * Decides whether a message should be captured based on the configuration and the message
+    * @param msg the message
+    * @param enableOnHeader a request header that enables serialization
+    * @param disableOnHeader a request header that disables serialization
+    * @param allowContentTypes response content types that should enable serialization
+    * @return true if the conversation needs to be serialized
+    */
+  def shouldCapture(msg : WebParsedResponseMessage, enableOnHeader : String,
+                    disableOnHeader : String, allowContentTypes : List[String]) : Boolean = {
+    var go : Boolean = true
+    if(enableOnHeader != null)
+      go = msg.request.getHeader(enableOnHeader)!=null
+    if(go && disableOnHeader != null)
+      go = msg.request.getHeader(disableOnHeader)==null
+    if(go && allowContentTypes.size>0){
+      val ct = msg.response.getHeader("content-type")
+      if(ct != null)
+        go = allowContentTypes.exists( it=> ct.contains(it))
+    }
+    return go
+  }
+
+}
+/**
   * Any actor that is going to serialize the API conversation should inherit from this class
   * @param phaseId the phaseId the phase ID
   */
@@ -69,19 +99,7 @@ abstract class AbstractSerializerActor(phaseId : String) extends AbstractAfthemA
     * @param msg the message
     * @return true if the message should be captured
     */
-  def shouldCapture(msg : WebParsedResponseMessage) : Boolean = {
-    var go : Boolean = true
-    if(enableOnHeader != null)
-      go = msg.request.getHeader(enableOnHeader)!=null
-    if(go && disableOnHeader != null)
-      go = msg.request.getHeader(disableOnHeader)==null
-    if(go && allowContentTypes.size>0){
-      val ct = msg.response.getHeader("content-type")
-      if(ct != null)
-        go = allowContentTypes.find( it=> ct.contains(it)).isDefined
-    }
-    return go
-  }
-
+  def shouldCapture(msg : WebParsedResponseMessage) : Boolean =
+    AbstractSerializerActor.shouldCapture(msg,enableOnHeader,disableOnHeader,allowContentTypes)
 
 }

@@ -75,6 +75,12 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     return keys
   }
 
+  /**
+    * Finds a key, if any. Implementation dependent
+    * @param key the key to look for
+    * @param phase the phase
+    * @return an optional ApiKey object
+    */
   def findKey(key : String, phase : Phase) : Option[ApiKey] = {
     return loadKeys(phase.getConfigString("filename","apikeys.yml")).getApiKey(key)
   }

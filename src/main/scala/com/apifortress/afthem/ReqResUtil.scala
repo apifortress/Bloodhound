@@ -130,16 +130,18 @@ object ReqResUtil {
     * @return a byte array
     */
   def readPayload(inputStream: InputStream, contentLength: Option[Any]) : Array[Byte] = {
+    if(inputStream == null)
+      return Array.empty[Byte]
     val boundedInputStream = new BoundedInputStream(inputStream)
-    var data :Array[Byte] = null
+    var data: Array[Byte] = null
     try {
       if (contentLength.isDefined)
-        // If content-length is defined, then we conform to it
+      // If content-length is defined, then we conform to it
         data = IOUtils.readFully(boundedInputStream, contentLength.get.asInstanceOf[Int])
       else
-        // Otherwise we read to EOF
+      // Otherwise we read to EOF
         data = IOUtils.toByteArray(boundedInputStream)
-    }finally {
+    } finally {
       // We want to make sure we're closing the streams
       boundedInputStream.close()
       inputStream.close()
@@ -263,6 +265,12 @@ object ReqResUtil {
     * @param wrapper the HttpWrapper
     * @return the string
     */
-  def byteArrayToString(wrapper : HttpWrapper) : String = new String(wrapper.payload,Charset.forName(wrapper.characterEncoding))
+  def byteArrayToString(wrapper : HttpWrapper) : String = {
+    val characterEncoding = if (wrapper.characterEncoding!=null)
+                            wrapper.characterEncoding
+                          else
+                            "utf-8"
+    new String(wrapper.payload,Charset.forName(characterEncoding))
+  }
 
 }

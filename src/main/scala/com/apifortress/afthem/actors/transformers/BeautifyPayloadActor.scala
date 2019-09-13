@@ -20,7 +20,31 @@ import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, Parsers, ReqResUtil}
+import org.slf4j.Logger
 
+
+/**
+  * Companion object for BeautifyPayloadACtor
+  */
+object BeautifyPayloadActor {
+  /**
+    * The actual beautification functionality
+    * @param data the data
+    * @param mode the mode (must contain either 'json' or 'xml')
+    * @return the beautificated content
+    */
+  def beautify(data : Array[Byte], mode : String, log : Logger) : Array[Byte] = {
+    try {
+      if (mode.contains("json"))
+        return Parsers.beautifyJSON(data)
+      if (mode.contains("xml"))
+        return Parsers.beautifyXML(data)
+    }catch {
+      case e : Exception => log.warn("Invalid format")
+    }
+    return data
+  }
+}
 /**
   * Actor that beautifies a request or response payload
   * @param phaseId the phase ID
@@ -31,7 +55,10 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
     case msg : WebParsedRequestMessage =>
       try {
         val m = new Metric
-        msg.request.payload = beautify(msg.request.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
+        val phase = getPhase(msg)
+        msg.request.payload = BeautifyPayloadActor.beautify(msg.request.payload,
+                                                            phase.config.getOrElse("mode","json").asInstanceOf[String],
+                                                            log)
         msg.request.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
         forward(msg)
         metricsLog.debug(m.toString())
@@ -44,7 +71,10 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
     case msg : WebParsedResponseMessage =>
       try{
         val m = new Metric
-        msg.response.payload = beautify(msg.response.payload,getPhase(msg).config.getOrElse("mode","json").asInstanceOf[String])
+        val phase = getPhase(msg)
+        msg.response.payload = BeautifyPayloadActor.beautify(msg.response.payload,
+                                                             phase.config.getOrElse("mode","json").asInstanceOf[String],
+                                                             log)
         msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
         forward(msg)
         metricsLog.debug(m.toString())
@@ -56,21 +86,5 @@ class BeautifyPayloadActor(phaseId : String) extends AbstractAfthemActor(phaseId
 
   }
 
-  /**
-    * The actual beautification functionality
-    * @param data the data
-    * @param mode the mode (must contain either 'json' or 'xml')
-    * @return the beautificated content
-    */
-  def beautify(data : Array[Byte], mode : String) : Array[Byte] = {
-    try {
-      if (mode.contains("json"))
-        return Parsers.beautifyJSON(data)
-      if (mode.contains("xml"))
-        return Parsers.beautifyXML(data)
-    }catch {
-      case e : Exception => log.warn("Invalid format")
-    }
-    return data
-  }
+
 }

@@ -21,6 +21,21 @@ import com.apifortress.afthem.messages.BaseMessage
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 
+
+object AbstractAfthemActor {
+  /**
+    * Determines what the next actor in the chain is
+    * @param message a message
+    * @return an actorSelection representing the next actor in the chain
+    */
+  def selectNextActor(message : BaseMessage, phaseId : String): ActorSelection = {
+    val nextId = message.flow.getNextPhase(phaseId).id
+    if(nextId.startsWith("akka://"))
+      return AppContext.actorSystem.actorSelection(nextId)
+    else
+      return AppContext.actorSystem.actorSelection("/user/" + nextId)
+  }
+}
 /**
   * The base of all actors used in Afthem
   * @param phaseId the phaseId
@@ -45,18 +60,6 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     */
   def getPhase(message : BaseMessage) : Phase = message.flow.getPhase(getPhaseId())
 
-  /**
-    * Determines what the next actor in the chain is
-    * @param message a message
-    * @return an actorSelection representing the next actor in the chain
-    */
-  def selectNextActor(message : BaseMessage): ActorSelection = {
-    val nextId = message.flow.getNextPhase(getPhaseId()).id
-    if(nextId.startsWith("akka://"))
-      return AppContext.actorSystem.actorSelection(nextId)
-    else
-      return AppContext.actorSystem.actorSelection("/user/" + nextId)
-  }
 
   /**
     * Determines which sidecars need to be informed of the message
@@ -102,7 +105,7 @@ abstract class AbstractAfthemActor(phaseId: String) extends Actor {
     * @param message the message
     */
   protected def tellNextActor(message: BaseMessage) : Unit = {
-    val selector = selectNextActor(message)
+    val selector = AbstractAfthemActor.selectNextActor(message,getPhaseId())
     selector ! message
   }
 

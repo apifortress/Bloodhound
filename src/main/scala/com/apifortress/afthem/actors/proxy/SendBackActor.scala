@@ -19,8 +19,35 @@ package com.apifortress.afthem.actors.proxy
 import com.apifortress.afthem.actors.AbstractAfthemActor
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.WebParsedResponseMessage
+import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
 
+/**
+  * Companion object for the SendBackActor
+  */
+object SendBackActor {
+
+  /**
+    * Removes response headers that should be passed forward
+    * @param wrapper a wrapper representing the response
+    */
+  def adjustResponseHeaders(wrapper : HttpWrapper) : Unit = {
+    /**
+      * Content-Length is a sensitive header. If something in the flow changed the length of the response by
+      * transformation or simply unzipping, the response body will break so we have to remove it.
+      * Tomcat will replace it with the correct length once it sends the response
+      */
+    wrapper.removeHeaders(List(ReqResUtil.HEADER_CONTENT_LENGTH,ReqResUtil.HEADER_CONTENT_ENCODING))
+
+    /**
+      * Content-Type is an essential element of the HTTP protocol. By the RFC, the absence of a Content-Type header
+      * should be handled as octet-stream.
+      */
+    if(!wrapper.containsHeader("content-type"))
+      wrapper.setHeader("content-type","application/octet-stream")
+  }
+
+}
 /**
   * The actor taking care of sending the response back to the requesting controller
   *
@@ -34,22 +61,9 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
         val m = new Metric
         tellSidecars(msg.shallowClone(true))
 
-        /**
-          * Content-Length is a sensitive header. If something in the flow changed the length of the response by
-          * transformation or simply unzipping, the response body will break so we have to remove it.
-          * Tomcat will replace it with the correct length once it sends the response
-          */
-        msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_LENGTH)
-        msg.response.removeHeader(ReqResUtil.HEADER_CONTENT_ENCODING)
+        SendBackActor.adjustResponseHeaders(msg.response)
 
-        /**
-          * If, by any chance, the upstream server returned no content-type, we set the content-type to
-          * application/octet-stream as described in the rfc2616
-          */
-        if(!msg.response.containsHeader("content-type"))
-          msg.response.setHeader("content-type","application/octet-stream")
-
-        msg.deferredResult.setData(msg.response,msg)
+        sendBack(msg)
         metricsLog.debug(m.toString())
         logProcessingTime(msg)
       }catch {
@@ -60,12 +74,20 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
   }
 
   /**
+    * Sets the data in the deferredResult
+    * @param msg the message
+    */
+  def sendBack(msg : WebParsedResponseMessage) : Unit = {
+    msg.deferredResult.setData(msg.response,msg)
+  }
+
+  /**
     * Given a WebParsedResponseMessage, it retrieves the start metadata to calculate the roundtrip time and log it
     *
     * @param msg a WebParsedResponseMessage
     */
   private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {
-    metricsLog.info("Time to Upload: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString())
+    metricsLog.info(s"Time to Upload: ${new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString()}")
   }
 
 }

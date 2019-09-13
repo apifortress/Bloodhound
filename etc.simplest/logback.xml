@@ -57,6 +57,15 @@
         </encoder>
     </appender>
 
+    <appender name="NETWORK_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/network.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%date{ISO8601}	%msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="ACCESS_LOGGER" class="ch.qos.logback.core.FileAppender">
         <file>log/access.log</file>
         <append>true</append>
@@ -99,5 +108,8 @@
     </logger>
     <logger name="_metrics" level="DEBUG" additivity="false">
         <appender-ref ref="METRICS_LOGGER" />
+    </logger>
+    <logger name="network" level="DEBUG" additivity="false">
+        <appender-ref ref="NETWORK_LOGGER" />
     </logger>
 </configuration>
