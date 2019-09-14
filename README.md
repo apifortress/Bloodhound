@@ -36,9 +36,9 @@ afthem.jar
 bin/
 ```
 
-**Note:** we provide various *etc* configurations to test, named after the pattern `etc.whatever`. Copy (or `ln -s`) that directory
-as `etc` and you're set to go.
-**Note:** each `etc.whatever` directory contains a README.md file with description and example calls.
+**Note:** we provide multiple *etc* configurations to test, named after the pattern `etc.something`. Copy (or link `ln -s`)
+that directory as `etc` and you're set to go. The `etc.simplest` directory contains some very basic examples, while
+`etc.test` is used by unit tests.
 
 ## Run!
 
