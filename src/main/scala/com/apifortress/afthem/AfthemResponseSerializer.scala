@@ -43,11 +43,18 @@ object AfthemResponseSerializer {
     obj.put("client_ip",message.request.remoteIP)
     obj.put("started_at",message.date.getTime)
     obj.put("download_time",message.meta.get("__download_time"))
+
     val request = mutable.HashMap.empty[String,Any]
-    request.put("body",if(ReqResUtil.isTextPayload(message.request))
-                          ReqResUtil.byteArrayToString(message.request)
-                            else "---BINARY---")
-    request.put("size",message.request.payload.length)
+
+    // Working on request body
+    if(message.request.getPayloadSize() == 0)
+      request.put("body","")
+    else
+      request.put("body",if(ReqResUtil.isTextPayload(message.request))
+                            ReqResUtil.byteArrayToString(message.request)
+                              else "---BINARY---")
+    request.put("size",message.request.getPayloadSize())
+
     request.put("uri",UriUtil.toSerializerUri(message.request.uriComponents))
     request.put("request_uri",message.request.getURL())
     request.put("querystring",message.request.uriComponents.getQueryParams.toSingleValueMap)
@@ -61,10 +68,16 @@ object AfthemResponseSerializer {
     obj.put("request",request)
 
     val response = mutable.HashMap.empty[String,Any]
-    response.put("body",if(ReqResUtil.isTextPayload(message.response))
-                            ReqResUtil.byteArrayToString(message.response)
-                              else "---BINARY---")
-    response.put("size",message.response.payload.length)
+
+    // Working on response body
+    if(message.response.getPayloadSize() == 0)
+      response.put("body","")
+    else
+      response.put("body",if(ReqResUtil.isTextPayload(message.response))
+                              ReqResUtil.byteArrayToString(message.response)
+                                else "---BINARY---")
+    response.put("size",message.response.getPayloadSize())
+
     response.put("status",message.response.status)
     val responseHeaders = mutable.HashMap.empty[String,String]
     message.response.headers.foreach{ header =>

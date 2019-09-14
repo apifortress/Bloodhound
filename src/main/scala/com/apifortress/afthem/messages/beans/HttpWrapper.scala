@@ -107,4 +107,10 @@ class HttpWrapper(private var url: String = null,
       removeHeader(key)
     headers = headers:+new Header(key,value)
   }
+
+  def getPayloadSize() : Long = {
+    if (payload == null)
+      return 0
+    return payload.size
+  }
 }
