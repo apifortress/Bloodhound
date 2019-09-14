@@ -13,7 +13,8 @@
  *   limitations under the License.
  *   @author Simone Pezzano
  *
- */package com.apifortress.afthem.exceptions
+ */
+package com.apifortress.afthem.exceptions
 
 import com.apifortress.afthem.messages.WebParsedRequestMessage
 
