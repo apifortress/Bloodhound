@@ -30,4 +30,8 @@ class ApplicationConf {
     */
   @Value("${httpclient.max_threads:4}") var httpClientMaxThreads : Integer = null
 
+  @Value("${httpclient.max_connections:100}") var httpClientMaxConnections : Integer = null
+
+  @Value("${httpclient.idle_timeout_seconds:5}") var httpClientIdleTimeoutSeconds : Integer = null
+
 }

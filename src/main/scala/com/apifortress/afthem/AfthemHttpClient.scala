@@ -16,9 +16,11 @@
   */
 package com.apifortress.afthem
 
+import java.util.concurrent.TimeUnit
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.ApplicationConf
 import org.apache.http.HttpResponse
+import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
@@ -30,15 +32,35 @@ import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorCo
   */
 object AfthemHttpClient {
 
+  private val applicationConf = AppContext.springApplicationContext.getBean(classOf[ApplicationConf])
   private val maxThreads : Int = if(AppContext.springApplicationContext!=null)
-                                AppContext.springApplicationContext.getBean(classOf[ApplicationConf]).httpClientMaxThreads
-                            else
-                                1
+                                    applicationConf.httpClientMaxThreads
+                                  else
+                                      1
+  private val maxConnections : Int = if(AppContext.springApplicationContext!=null)
+                                          applicationConf.httpClientMaxConnections
+                                        else
+                                          100
+  private val idleTimeoutSeconds : Int = if(AppContext.springApplicationContext!=null)
+                                          applicationConf.httpClientIdleTimeoutSeconds
+                                        else
+                                           5
 
-  val reactorConfig = IOReactorConfig.custom().setIoThreadCount(maxThreads).build()
-  val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
-  val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
-  val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement().setConnectionManager(connectionManager).build()
+  private val reactorConfig = IOReactorConfig.custom().setIoThreadCount(maxThreads).build()
+  private val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
+  private val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
+
+  connectionManager.setMaxTotal(maxConnections)
+
+  private val requestConfig = RequestConfig.custom().setConnectTimeout(5000)
+                                        .setSocketTimeout(10000)
+                                        .setRedirectsEnabled(true)
+                                        .setMaxRedirects(5).build()
+
+  val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement()
+                                                .setConnectionManager(connectionManager)
+                                                .setDefaultRequestConfig(requestConfig).build()
+
   httpClient.start()
 
   /**
@@ -48,5 +70,10 @@ object AfthemHttpClient {
     */
   def execute(request : HttpUriRequest, callback : FutureCallback[HttpResponse]): Unit ={
     httpClient.execute(request,callback)
+  }
+
+  def closeStaleConnections() : Unit = {
+    connectionManager.closeExpiredConnections()
+    connectionManager.closeIdleConnections(5, TimeUnit.SECONDS)
   }
 }

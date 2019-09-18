@@ -17,10 +17,13 @@
 package com.apifortress.afthem.actors
 
 import akka.actor.{ActorSystem, Props}
+import com.apifortress.afthem.AfthemHttpClient
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
 import org.springframework.context.ApplicationContext
+
+import scala.concurrent.duration._
 
 /**
   * Application context. Initializes actors on load and provides useful methods to play with them
@@ -52,6 +55,7 @@ object AppContext {
     * The actor system
     */
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
+  implicit val executionContext = actorSystem.dispatcher
 
    /*
     * For each implementer, we create an actor.
@@ -73,6 +77,11 @@ object AppContext {
     */
   def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
 
+
+
+  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
+    AfthemHttpClient.closeStaleConnections()
+  } )
 
 
 }
