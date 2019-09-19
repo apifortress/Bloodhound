@@ -40,9 +40,6 @@ implementers:
     class: com.apifortress.afthem.actors.sidecars.NetworkMetricsLoggerActor
     type: sidecar
     thread_pool: secondary
-  - id: fortress_forwarder
-    class: com.apifortress.afthem.modules.fortressforwarders.actors.sidecars.serializers.FortressForwarderSerializerActor
-    type: sidecar
 
 thread_pools:
   default:
