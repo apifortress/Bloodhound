@@ -32,16 +32,19 @@ import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorCo
   */
 object AfthemHttpClient {
 
-  private val applicationConf = AppContext.springApplicationContext.getBean(classOf[ApplicationConf])
-  private val maxThreads : Int = if(AppContext.springApplicationContext!=null)
+  private val applicationConf =  if(AppContext.springApplicationContext != null)
+                                    AppContext.springApplicationContext.getBean(classOf[ApplicationConf])
+                                  else
+                                    null
+  private val maxThreads : Int = if(applicationConf!=null)
                                     applicationConf.httpClientMaxThreads
                                   else
                                       1
-  private val maxConnections : Int = if(AppContext.springApplicationContext!=null)
+  private val maxConnections : Int = if(applicationConf!=null)
                                           applicationConf.httpClientMaxConnections
                                         else
                                           100
-  private val idleTimeoutSeconds : Int = if(AppContext.springApplicationContext!=null)
+  private val idleTimeoutSeconds : Int = if(applicationConf!=null)
                                           applicationConf.httpClientIdleTimeoutSeconds
                                         else
                                            5
