@@ -10,9 +10,22 @@ proxy/send_back:
   sidecars:
     - sidecar/access_logger
     - sidecar/network_metrics_logger
+    - sidecar/fortress_forwarder
 
 sidecar/access_logger:
   config: {}
 
 sidecar/network_metrics_logger:
   config: {}
+
+sidecar/fortress_forwarder:
+  config:
+    url: https://load2.apifortress.com/app/api/rest/v3/1/liveLogs/push/raw
+    allow_content_types:
+      - application/json
+    discard_response_headers:
+      - date
+      - etag
+    headers:
+      x-api-key: 5b7fd7d530c49e000187dec447e680cf
+      x-secret: 6667f5450bdf36dc43e54c231de33347461bb7a5

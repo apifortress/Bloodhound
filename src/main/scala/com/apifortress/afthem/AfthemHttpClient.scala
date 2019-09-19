@@ -77,6 +77,6 @@ object AfthemHttpClient {
 
   def closeStaleConnections() : Unit = {
     connectionManager.closeExpiredConnections()
-    connectionManager.closeIdleConnections(5, TimeUnit.SECONDS)
+    connectionManager.closeIdleConnections(idleTimeoutSeconds, TimeUnit.SECONDS)
   }
 }
