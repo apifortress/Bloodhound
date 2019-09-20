@@ -76,8 +76,12 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
 
 /**
   * The single backend configuration
+  * @param flowId the ID of the flow
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
+  * @param meta meta information to be added to the message meta
+  *
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], val upstream: String)
+case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String],
+                   val upstream: String, meta : Map[String,Any] = Map.empty[String,Any])
