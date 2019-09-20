@@ -49,9 +49,8 @@ class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String)
         wrapper.removeHeaders(phase.getConfigList("discard_headers"))
 
         val message = new WebParsedRequestMessage(wrapper, msg.backend,
-          msg.flow, msg.deferredResult,
-          msg.date, msg.meta)
-
+                                                  msg.flow, msg.deferredResult,
+                                                  msg.date, msg.meta)
         forward(message)
         metricsLog.debug(m.toString())
       }catch {
