@@ -24,6 +24,7 @@ import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.routing.UpstreamsHttpRouters
 import org.apache.http.{HttpEntity, HttpResponse}
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.GzipDecompressingEntity
@@ -128,7 +129,10 @@ object UpstreamHttpActor {
     * @param msg the message
     * @return the upstream
     */
-  def extractUpstream(msg : BaseMessage) : String = msg.meta.getOrElse("__replace_upstream",msg.backend.upstream).asInstanceOf[String]
+  def extractUpstream(msg : BaseMessage) : String = {
+    msg.meta.getOrElse("__replace_upstream",
+                        UpstreamsHttpRouters.getUrl(msg.backend)).asInstanceOf[String]
+  }
 }
 
 /**

@@ -84,4 +84,6 @@ class Backends(val backends: List[Backend]) extends ICacheableConfig {
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, val headers : Map[String,String],
-                   val upstream: String, val meta : Map[String,Any] = Map.empty[String,Any])
+                   val upstream: String, val upstreams : Upstreams = null, val meta : Map[String,Any] = Map.empty[String,Any])
+
+case class Upstreams(val urls : List[String])
