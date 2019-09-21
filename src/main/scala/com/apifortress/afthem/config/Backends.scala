@@ -47,7 +47,7 @@ object Backends  {
   * Data structure representing the configuration of backends
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Backends(backends: List[Backend]) extends ICacheableConfig {
+class Backends(val backends: List[Backend]) extends ICacheableConfig {
 
     /**
       * Given an inbound request, find the Backend definition matching it
@@ -83,5 +83,5 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
   *
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String],
-                   val upstream: String, meta : Map[String,Any] = Map.empty[String,Any])
+case class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, val headers : Map[String,String],
+                   val upstream: String, val meta : Map[String,Any] = Map.empty[String,Any])

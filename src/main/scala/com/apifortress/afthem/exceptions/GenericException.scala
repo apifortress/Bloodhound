@@ -21,4 +21,4 @@ package com.apifortress.afthem.exceptions
   * Generic exception
   * @param context a message
   */
-class GenericException(context : String) extends Exception("Generic exception during : "+context)
+class GenericException(val context : String) extends Exception("Generic exception during : "+context)

@@ -40,7 +40,7 @@ object AbstractAfthemActor {
   * The base of all actors used in Afthem
   * @param phaseId the phaseId
   */
-abstract class AbstractAfthemActor(phaseId: String) extends Actor {
+abstract class AbstractAfthemActor(val phaseId: String) extends Actor {
 
   protected val log : Logger = LoggerFactory.getLogger(this.getClass)
 

@@ -22,17 +22,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
   * The root configuration.
   * @param configLoader the configuration loader definition
   */
-case class RootConfigConf(@JsonProperty("config_loader") configLoader : ConfigLoaderConf, mime: Mime)
+case class RootConfigConf(@JsonProperty("config_loader") val configLoader : ConfigLoaderConf, val mime : Mime)
 
 /**
   * The configuration loader definition
   * @param className the class of the configuration loader
   * @param params params that the configuration loader may require
   */
-case class ConfigLoaderConf(@JsonProperty("class") className : String, params: Map[String,Any])
+case class ConfigLoaderConf(@JsonProperty("class") val className : String, val params : Map[String,Any])
 
 /**
   * Configuration for mime types
   * @param textContentTypeContain a content type should contain one of these substrings if it's representing text
   */
-case class Mime(@JsonProperty("text_content_types_contain") textContentTypeContain: List[String])
+case class Mime(@JsonProperty("text_content_types_contain") val textContentTypeContain: List[String])

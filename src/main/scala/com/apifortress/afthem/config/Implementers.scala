@@ -36,8 +36,8 @@ object Implementers {
   * @param implementers the list of implementers
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Implementers(implementers: List[Implementer],
-                        @JsonProperty("thread_pools") threadPools : Map[String,ThreadPool])
+case class Implementers(val implementers: List[Implementer],
+                        @JsonProperty("thread_pools") val threadPools : Map[String,ThreadPool])
 
 /**
   * The single implementer class
@@ -46,9 +46,9 @@ case class Implementers(implementers: List[Implementer],
   * @param threadPool the threadPool assigned to the implementer, if any
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Implementer(id : String, @JsonProperty("class") className : String,
-                       @JsonProperty("type") actorType : String, instances: Int = 1,
-                      @JsonProperty("thread_pool") threadPool : String)
+case class Implementer(val id : String, @JsonProperty("class") val className : String,
+                       @JsonProperty("type") val actorType : String, val instances : Int = 1,
+                      @JsonProperty("thread_pool") val threadPool : String)
 
 /**
   * The thread pool definition class
@@ -57,4 +57,4 @@ case class Implementer(id : String, @JsonProperty("class") className : String,
   * @param factor the CPU factors
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class ThreadPool(min: Int, max: Int, factor: Int)
+case class ThreadPool(val min: Int, val max: Int, val factor: Int)
