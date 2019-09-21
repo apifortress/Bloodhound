@@ -20,6 +20,7 @@ package com.apifortress.afthem.config
 import java.io.File
 
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
+import com.apifortress.afthem.routing.{TUpstreamHttpRouter, UpstreamsRoundRobinHttpRouter}
 import org.ehcache.{Cache, CacheManager}
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.xml.XmlConfiguration
@@ -50,5 +51,10 @@ object AfthemCache {
     * Cache dedicated to parsed expressions
     */
   val expressionsCache : Cache[String,Expression] = cacheManager.getCache("expressions",classOf[String],classOf[Expression])
+
+  /**
+    * Cache for routers
+    */
+  val routersCache : Cache[Integer,TUpstreamHttpRouter] = cacheManager.getCache("http_routers",classOf[Integer],classOf[TUpstreamHttpRouter])
 
 }

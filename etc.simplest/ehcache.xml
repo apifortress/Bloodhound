@@ -27,7 +27,7 @@
         <expiry>
             <ttl>600</ttl>
         </expiry>
-        <heap>3</heap>
+        <heap>10</heap>
     </cache>
 
     <cache alias="expressions">
@@ -44,6 +44,15 @@
         <value-type>com.apifortress.afthem.config.ApiKeys</value-type>
         <expiry>
             <ttl>200</ttl>
+        </expiry>
+        <heap>10</heap>
+    </cache>
+
+    <cache alias="http_routers">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.apifortress.afthem.routing.TUpstreamHttpRouter</value-type>
+        <expiry>
+            <tti>200</tti>
         </expiry>
         <heap>10</heap>
     </cache>

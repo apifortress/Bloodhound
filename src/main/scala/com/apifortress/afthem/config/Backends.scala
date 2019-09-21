@@ -16,6 +16,7 @@
   */
 package com.apifortress.afthem.config
 
+import java.util.Objects
 import com.apifortress.afthem.UriUtil
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
@@ -79,11 +80,25 @@ class Backends(val backends: List[Backend]) extends ICacheableConfig {
   * @param flowId the ID of the flow
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
+  * @param upstreams in case multiple upstreams are described in this backend. An instance of the Upstreams objects
   * @param meta meta information to be added to the message meta
   *
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, val headers : Map[String,String],
-                   val upstream: String, val upstreams : Upstreams = null, val meta : Map[String,Any] = Map.empty[String,Any])
+class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, val headers : Map[String,String],
+                   val upstream: String, val upstreams : Upstreams = null, val meta : Map[String,Any] = Map.empty[String,Any]){
 
-case class Upstreams(val urls : List[String])
+    override def hashCode : Int = {
+        return Objects.hash(flowId,prefix,headers,upstream,upstreams)
+    }
+}
+
+/**
+  * An object representing multiple upstreams
+  * @param urls a list of upstream URLs
+  */
+class Upstreams(val urls : List[String]) {
+    override def hashCode : Int = {
+        return Objects.hash(urls)
+    }
+}
