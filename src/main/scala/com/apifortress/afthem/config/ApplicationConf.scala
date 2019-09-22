@@ -30,8 +30,14 @@ class ApplicationConf {
     */
   @Value("${httpclient.max_threads:4}") var httpClientMaxThreads : Integer = null
 
+  /**
+    * Maximum number of connections that could be alive at the same time in the connection manager
+    */
   @Value("${httpclient.max_connections:100}") var httpClientMaxConnections : Integer = null
 
+  /**
+    * How long an idle connection has to be considered to be evicted
+    */
   @Value("${httpclient.idle_timeout_seconds:5}") var httpClientIdleTimeoutSeconds : Integer = null
 
 }

@@ -32,15 +32,26 @@ object UpstreamsHttpRouters {
     * @return a router
     */
   def getRouter(backend : Backend) : TUpstreamHttpRouter = {
+    /*
+     * We look for an existing router based on the backend signature. The signature only includes
+     * the inbound filters, such as the prefix and the headers.
+     */
     val routerOption = AfthemCache.routersCache.get(backend.getSignature())
     if(routerOption != null) {
       log.debug("Router in cache")
+      /*
+       * If the hashcode of the backend is different from the hashcode stored in the router, it means
+       * that something meaningful has changed in the backend.
+       */
       if (routerOption.getBackendHashCode() != backend.hashCode) {
         log.debug("Existing router has updated upstreams. Updating")
         routerOption.update(backend)
       }
       return routerOption
     }
+    /*
+     * Creating a new router serving the provided backend
+     */
     log.debug("Creating new router")
     val router = new UpstreamsRoundRobinHttpRouter(backend)
     AfthemCache.routersCache.put(backend.getSignature(),router)
@@ -54,8 +65,14 @@ object UpstreamsHttpRouters {
     * @return an upstream URL
     */
   def getUrl(backend : Backend) : String = {
+    /*
+     * If upstream is present, it means no routing is necessary and we can return that
+     */
     if(backend.upstream != null)
       return backend.upstream
+    /*
+     * Otherwise, we ask the routing system which upstream needs to be used
+     */
     if(backend.upstreams == null || backend.upstreams.urls.size == 0)
       return null
     return getRouter(backend).getNextUrl()

@@ -95,8 +95,13 @@ class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, v
         return Objects.hash(flowId,prefix,headers,upstream,upstreams)
     }
 
+    /**
+      * A signature is a hash working as an ID of the backend. It hashes the prefix and the headers which are the
+      * inbound filters. Ideally they should be unique within Backends.
+      * @return the hash
+      */
     def getSignature() : Int = {
-        return Objects.hash(flowId,prefix,headers)
+        return Objects.hash(prefix,headers)
     }
 }
 

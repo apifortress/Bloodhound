@@ -33,7 +33,11 @@ class UpstreamsRoundRobinHttpRouter(val backend : Backend) extends TUpstreamHttp
     * The upstream URLs
     */
   private var urls = backend.upstreams.urls
-
+  /**
+    * The hash of the Backend. If, in subsequent uses of the router, it is found out that the
+    * CURRENT hash is different from the one stored here, it means that the backend changed and it may
+    * be necessary to update the router
+    */
   private var backendHash = backend.hashCode
 
   private val probe = backend.upstreams.probe

@@ -29,7 +29,15 @@ trait TUpstreamHttpRouter {
     */
   def getNextUrl() : String
 
+  /**
+    * Returns the hashcode of the backend that this router serves
+    * @return the hashcode of the backend
+    */
   def getBackendHashCode() : Int
 
+  /**
+    * Updates the router based on the provided backend
+    * @param backend a Backend instance
+    */
   def update(backend: Backend) : Unit
 }
