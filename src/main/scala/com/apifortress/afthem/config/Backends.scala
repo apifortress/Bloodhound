@@ -17,10 +17,13 @@
 package com.apifortress.afthem.config
 
 import java.util.Objects
+
 import com.apifortress.afthem.UriUtil
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
 import org.slf4j.{Logger, LoggerFactory}
+
+import scala.concurrent.duration.Duration
 
 /**
   * Companion object to load backends from file as a singleton
@@ -91,14 +94,30 @@ class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, v
     override def hashCode : Int = {
         return Objects.hash(flowId,prefix,headers,upstream,upstreams)
     }
+
+    def getSignature() : Int = {
+        return Objects.hash(flowId,prefix,headers)
+    }
 }
 
 /**
   * An object representing multiple upstreams
   * @param urls a list of upstream URLs
   */
-class Upstreams(val urls : List[String]) {
+class Upstreams(val urls : List[String], val probe : Probe = null) {
+
     override def hashCode : Int = {
         return Objects.hash(urls)
     }
+
+}
+
+class Probe(val path : String, val status: Int, private val timeout: String, private val interval : String,
+            @JsonProperty("count_down") val countDown : Int, @JsonProperty("count_up") val countUp : Int){
+
+    val timeoutDuration = Duration.create(timeout)
+
+    val intervalDuration = Duration(interval)
+
+
 }

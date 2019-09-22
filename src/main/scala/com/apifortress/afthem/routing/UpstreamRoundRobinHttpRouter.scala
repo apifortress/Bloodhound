@@ -32,11 +32,26 @@ class UpstreamsRoundRobinHttpRouter(val backend : Backend) extends TUpstreamHttp
   /**
     * The upstream URLs
     */
-  private val urls = backend.upstreams.urls
+  private var urls = backend.upstreams.urls
+
+  private var backendHash = backend.hashCode
+
+  private val probe = backend.upstreams.probe
+
+  if(probe != null){
+
+  }
 
   def getNextUrl() : String = synchronized {
     index = ((index+1) % urls.size)
     return urls(index)
+  }
+
+  override def getBackendHashCode(): Int = backendHash
+
+  def update(backend: Backend) : Unit = {
+    this.urls = backend.upstreams.urls
+    this.backendHash = backend.hashCode
   }
 
 }

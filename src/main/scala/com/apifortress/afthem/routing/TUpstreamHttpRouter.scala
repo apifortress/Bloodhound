@@ -16,6 +16,8 @@
   */
 package com.apifortress.afthem.routing
 
+import com.apifortress.afthem.config.Backend
+
 /**
   * A trait for all the upstream http routers
   */
@@ -26,4 +28,8 @@ trait TUpstreamHttpRouter {
     * @return the next upstream url that needs to be used
     */
   def getNextUrl() : String
+
+  def getBackendHashCode() : Int
+
+  def update(backend: Backend) : Unit
 }

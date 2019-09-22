@@ -17,11 +17,14 @@
 package com.apifortress.afthem.routing
 
 import com.apifortress.afthem.config.{AfthemCache, Backend}
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * The object dealing with the Upstreams HTTP routers
   */
 object UpstreamsHttpRouters {
+
+  private def log : Logger = LoggerFactory.getLogger(UpstreamsHttpRouters.getClass)
 
   /**
     * Given a Backend instance, it either returns a previously cached router, or creates a new one for it
@@ -29,11 +32,18 @@ object UpstreamsHttpRouters {
     * @return a router
     */
   def getRouter(backend : Backend) : TUpstreamHttpRouter = {
-    val routerOption = AfthemCache.routersCache.get(backend.hashCode)
-    if(routerOption != null)
+    val routerOption = AfthemCache.routersCache.get(backend.getSignature())
+    if(routerOption != null) {
+      log.debug("Router in cache")
+      if (routerOption.getBackendHashCode() != backend.hashCode) {
+        log.debug("Existing router has updated upstreams. Updating")
+        routerOption.update(backend)
+      }
       return routerOption
+    }
+    log.debug("Creating new router")
     val router = new UpstreamsRoundRobinHttpRouter(backend)
-    AfthemCache.routersCache.put(backend.hashCode,router)
+    AfthemCache.routersCache.put(backend.getSignature(),router)
     return router
   }
 
