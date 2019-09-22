@@ -68,14 +68,7 @@ object UpstreamHttpActor {
 
     val url = wrapper.getURL()
 
-    val request = wrapper.method match {
-      case "GET" =>  new HttpGet(url)
-      case "POST" => new HttpPost(url)
-      case "PUT" =>  new HttpPut(url)
-      case "DELETE" => new HttpDelete(url)
-      case "PATCH" =>  new HttpPatch(url)
-      case _ =>  null
-    }
+    val request = AfthemHttpClient.createBaseRequest(wrapper.method,url)
 
     val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
       .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))

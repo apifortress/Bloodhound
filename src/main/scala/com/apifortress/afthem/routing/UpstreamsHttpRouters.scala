@@ -43,7 +43,7 @@ object UpstreamsHttpRouters {
        * If the hashcode of the backend is different from the hashcode stored in the router, it means
        * that something meaningful has changed in the backend.
        */
-      if (routerOption.getBackendHashCode() != backend.hashCode) {
+      if (routerOption.backendHashCode != backend.hashCode) {
         log.debug("Existing router has updated upstreams. Updating")
         routerOption.update(backend)
       }

@@ -117,8 +117,9 @@ class Upstreams(val urls : List[String], val probe : Probe = null) {
 
 }
 
-class Probe(val path : String, val status: Int, private val timeout: String, private val interval : String,
-            @JsonProperty("count_down") val countDown : Int, @JsonProperty("count_up") val countUp : Int){
+class Probe(val path : String, val status: Int, val method : String, private val timeout: String,
+            private val interval : String, @JsonProperty("count_down") val countDown : Int,
+            @JsonProperty("count_up") val countUp : Int) {
 
     val timeoutDuration = Duration.create(timeout)
 

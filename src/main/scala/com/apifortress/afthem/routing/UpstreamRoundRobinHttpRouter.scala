@@ -32,30 +32,22 @@ class UpstreamsRoundRobinHttpRouter(val backend : Backend) extends TUpstreamHttp
   /**
     * The upstream URLs
     */
-  private var urls = backend.upstreams.urls
+  urls = backend.upstreams.urls
   /**
     * The hash of the Backend. If, in subsequent uses of the router, it is found out that the
     * CURRENT hash is different from the one stored here, it means that the backend changed and it may
     * be necessary to update the router
     */
-  private var backendHash = backend.hashCode
-
-  private val probe = backend.upstreams.probe
-
-  if(probe != null){
-
-  }
+  backendHashCode = backend.hashCode
 
   def getNextUrl() : String = synchronized {
     index = ((index+1) % urls.size)
     return urls(index)
   }
 
-  override def getBackendHashCode(): Int = backendHash
-
   def update(backend: Backend) : Unit = {
     this.urls = backend.upstreams.urls
-    this.backendHash = backend.hashCode
+    this.backendHashCode = backend.hashCode
   }
 
 }

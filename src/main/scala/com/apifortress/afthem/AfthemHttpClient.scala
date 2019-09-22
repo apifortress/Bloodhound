@@ -17,11 +17,12 @@
 package com.apifortress.afthem
 
 import java.util.concurrent.TimeUnit
+
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.ApplicationConf
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
-import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
@@ -91,6 +92,17 @@ object AfthemHttpClient {
     */
   def execute(request : HttpUriRequest, callback : FutureCallback[HttpResponse]): Unit ={
     httpClient.execute(request,callback)
+  }
+
+  def createBaseRequest(method : String, url : String) : HttpRequestBase = {
+   return method match {
+      case "GET" =>  new HttpGet(url)
+      case "POST" => new HttpPost(url)
+      case "PUT" =>  new HttpPut(url)
+      case "DELETE" => new HttpDelete(url)
+      case "PATCH" =>  new HttpPatch(url)
+      case _ =>  null
+    }
   }
 
   /**
