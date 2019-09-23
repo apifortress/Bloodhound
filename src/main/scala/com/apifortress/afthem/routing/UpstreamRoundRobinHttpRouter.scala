@@ -17,6 +17,7 @@
 package com.apifortress.afthem.routing
 
 import com.apifortress.afthem.config.Backend
+import com.apifortress.afthem.exceptions.NoWorkingUpstreamsException
 
 /**
   * A round robin upstream http router
@@ -32,22 +33,17 @@ class UpstreamsRoundRobinHttpRouter(val backend : Backend) extends TUpstreamHttp
   /**
     * The upstream URLs
     */
-  urls = backend.upstreams.urls
-  /**
-    * The hash of the Backend. If, in subsequent uses of the router, it is found out that the
-    * CURRENT hash is different from the one stored here, it means that the backend changed and it may
-    * be necessary to update the router
-    */
-  backendHashCode = backend.hashCode
+  update(backend)
 
-  def getNextUrl() : String = synchronized {
+  def getNextUrl(loop: Int = 0) : String = synchronized {
     index = ((index+1) % urls.size)
-    return urls(index)
-  }
-
-  def update(backend: Backend) : Unit = {
-    this.urls = backend.upstreams.urls
-    this.backendHashCode = backend.hashCode
+    if(urls(index).isUp())
+      return urls(index).url
+    else {
+      if(loop > urls.size)
+        throw new NoWorkingUpstreamsException()
+      getNextUrl(loop + 1)
+    }
   }
 
 }

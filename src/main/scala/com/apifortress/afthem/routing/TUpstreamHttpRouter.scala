@@ -23,20 +23,29 @@ import com.apifortress.afthem.config.Backend
   */
 trait TUpstreamHttpRouter {
 
+  /**
+    * The hash of the backend that generated this router
+    */
   var backendHashCode : Int = -1
 
-  var urls : List[String] = null
+  /**
+    * A list of RoutedUrl. Each represent an upstream URL plus everything that is needed to validate it's vitality
+    */
+  var urls : List[RoutedUrl] = null
 
   /**
     * Computes and returns the next upstream url that needs to be used
     * @return the next upstream url that needs to be used
     */
-  def getNextUrl() : String
+  def getNextUrl(loop: Int = 0) : String
 
   /**
     * Updates the router based on the provided backend
     * @param backend a Backend instance
     */
-  def update(backend: Backend) : Unit
+  def update(backend: Backend) : Unit = {
+    this.backendHashCode = backend.hashCode
+    urls = backend.upstreams.urls.map(it => new RoutedUrl(it))
+  }
 
 }
