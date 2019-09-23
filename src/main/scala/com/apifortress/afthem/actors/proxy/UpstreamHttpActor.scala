@@ -79,7 +79,7 @@ object UpstreamHttpActor {
 
     val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
       .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))
-      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(true))
+      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
       .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
 
     request.setConfig(requestConfig)
