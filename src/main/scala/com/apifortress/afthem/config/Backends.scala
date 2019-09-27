@@ -112,18 +112,18 @@ class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, v
 class Upstreams(val urls : List[String], val probe : Probe = null) {
 
     override def hashCode : Int = {
-        return Objects.hash(urls)
+        return Objects.hash(urls,probe)
     }
 
 }
 
-class Probe(val path : String, val status: Int, val method : String, private val timeout: String,
-            private val interval : String, @JsonProperty("count_down") val countDown : Int,
+class Probe(val path : String, val status: Int, val method : String, val timeout: String,
+            val interval : String, @JsonProperty("count_down") val countDown : Int,
             @JsonProperty("count_up") val countUp : Int) {
 
-    val timeoutDuration = Duration.create(timeout)
-
-    val intervalDuration = Duration(interval)
+    override def hashCode(): Int = {
+        return Objects.hash(path,status.toString,method,timeout,interval,countDown.toString,countUp.toString)
+    }
 
 
 }

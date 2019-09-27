@@ -20,10 +20,12 @@ package com.apifortress.afthem.config
 import java.io.File
 
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
-import com.apifortress.afthem.routing.{TUpstreamHttpRouter, UpstreamsRoundRobinHttpRouter}
-import org.ehcache.{Cache, CacheManager}
+import com.apifortress.afthem.routing.TUpstreamHttpRouter
 import org.ehcache.config.builders.CacheManagerBuilder
+import org.ehcache.event._
 import org.ehcache.xml.XmlConfiguration
+import org.ehcache.{Cache, CacheManager}
+import org.slf4j.LoggerFactory
 import org.springframework.expression.Expression
 
 /**
@@ -32,9 +34,15 @@ import org.springframework.expression.Expression
 object AfthemCache {
 
   /**
+    * Logger
+    */
+  val log = LoggerFactory.getLogger(AfthemCache.getClass)
+
+  /**
     * The EHCache manager
     */
   val cacheManager : CacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(new File(YamlConfigLoader.SUBPATH+File.separator+"ehcache.xml").getAbsoluteFile.toURI.toURL))
+
   cacheManager.init()
 
   /**
@@ -56,5 +64,17 @@ object AfthemCache {
     * Cache for routers
     */
   val routersCache : Cache[Integer,TUpstreamHttpRouter] = cacheManager.getCache("http_routers",classOf[Integer],classOf[TUpstreamHttpRouter])
+  // We want to trigger an action when a cache is discovered as expired
+  routersCache.getRuntimeConfiguration.registerCacheEventListener(new RoutersCacheListener(),EventOrdering.ORDERED, EventFiring.SYNCHRONOUS, EventType.EXPIRED)
 
+}
+
+/**
+  * Listener for expired items. We to cancel probes when a router has expired
+  */
+class RoutersCacheListener extends CacheEventListener[Integer,TUpstreamHttpRouter] {
+  override def onEvent(cacheEvent: CacheEvent[_ <: Integer, _ <: TUpstreamHttpRouter]): Unit = {
+    AfthemCache.log.debug("Cancelling probe due to Router cache expiry")
+    cacheEvent.getOldValue.cancelProbe()
+  }
 }

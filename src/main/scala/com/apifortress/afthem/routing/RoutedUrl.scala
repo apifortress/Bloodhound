@@ -1,25 +1,55 @@
 package com.apifortress.afthem.routing
 
-class RoutedUrl(val url: String, val countDown: Int = -1, val countUp: Int = -1) {
+import java.util.Objects
 
-  var counterDown: Int = 0
-  var counterUp: Int = countUp
+import com.apifortress.afthem.config.Probe
+import org.slf4j.LoggerFactory
 
-  def isUp() : Boolean = if (countUp == -1) true else (counterUp == countUp && counterDown < countDown)
+import scala.collection.mutable
 
-  def isDown() : Boolean = if (countDown == -1) false else (counterUp < countUp && counterDown == countDown)
 
-  def up() : Unit = {
-    if(counterUp < countUp)
-      counterUp+=1
-    if(counterUp == countUp)
-      counterDown = 0
+object RoutedUrl {
+
+  val log = LoggerFactory.getLogger(classOf[RoutedUrl])
+
+}
+
+class RoutedUrl(val url: String, val probe : Probe) {
+
+  private var probingQueue : mutable.ListBuffer[Boolean] = new mutable.ListBuffer[Boolean]()
+
+  var upStatus : Boolean = true
+
+
+  def addStatus(up: Boolean) : Unit = {
+    probingQueue.insert(0,up)
+    val limit = Math.max(probe.countUp,probe.countDown)
+
+    if(probingQueue.size > limit)
+      probingQueue = probingQueue.slice(0,limit)
+    if(upStatus){
+      var countFalse = 0
+      for(i <- 0 until Math.min(probe.countDown,probingQueue.size))
+        if(probingQueue(i) == false)
+          countFalse+=1
+      if(countFalse == probe.countDown) {
+        RoutedUrl.log.info(url+" is failing. Stepping down")
+        upStatus = false
+      }
+    } else {
+      var countTrue = 0
+      for(i <- 0 until Math.min(probe.countUp,probingQueue.size))
+        if(probingQueue(i) == true)
+          countTrue+=1
+      if(countTrue == probe.countUp) {
+        RoutedUrl.log.info(url+" is back operational. Stepping up")
+        upStatus = true
+      }
+    }
   }
-  def down() : Unit = {
-    if(counterDown > countDown)
-      counterDown+=1
-    if(counterDown == countDown)
-      counterUp = 0
+
+  override def hashCode(): Int = {
+    return Objects.hash(url,probe)
   }
 
 }

@@ -16,8 +16,9 @@
   */
 package com.apifortress.afthem.actors
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.apifortress.afthem.AfthemHttpClient
+import com.apifortress.afthem.actors.probing.ProbeHttpActor
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
@@ -60,11 +61,17 @@ object AppContext {
    /*
     * For each implementer, we create an actor.
     */
-  val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
+  private val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
   types.foreach { actorType =>
     val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
+
+  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
+    AfthemHttpClient.closeStaleConnections()
+  })
+
+  val probeHttpActor : ActorRef = actorSystem.actorOf(Props[ProbeHttpActor],"probeHttpActor")
 
   /**
     * Spring application context
@@ -77,11 +84,6 @@ object AppContext {
     */
   def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
 
-
-
-  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
-    AfthemHttpClient.closeStaleConnections()
-  } )
 
 
 }

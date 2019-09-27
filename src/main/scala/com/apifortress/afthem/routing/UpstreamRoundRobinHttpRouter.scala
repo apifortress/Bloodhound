@@ -18,7 +18,13 @@ package com.apifortress.afthem.routing
 
 import com.apifortress.afthem.config.Backend
 import com.apifortress.afthem.exceptions.NoWorkingUpstreamsException
+import org.slf4j.LoggerFactory
 
+
+object UpstreamsRoundRobinHttpRouter {
+
+  val log = LoggerFactory.getLogger(classOf[UpstreamsRoundRobinHttpRouter])
+}
 /**
   * A round robin upstream http router
   * @param backend a Backend instance
@@ -37,7 +43,7 @@ class UpstreamsRoundRobinHttpRouter(val backend : Backend) extends TUpstreamHttp
 
   def getNextUrl(loop: Int = 0) : String = synchronized {
     index = ((index+1) % urls.size)
-    if(urls(index).isUp())
+    if(urls(index).upStatus)
       return urls(index).url
     else {
       if(loop > urls.size)
