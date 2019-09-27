@@ -16,7 +16,7 @@
   */
 package com.apifortress.afthem.actors.proxy
 
-import java.io.InputStream
+import java.io.{ByteArrayInputStream, InputStream}
 
 import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AbstractAfthemActor
@@ -25,13 +25,13 @@ import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.routing.UpstreamsHttpRouters
-import org.apache.http.{HttpEntity, HttpResponse}
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.GzipDecompressingEntity
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.util.EntityUtils
+import org.apache.http.{HttpEntity, HttpResponse}
 
 /**
   * Companion object for the Upstream Http Actor
@@ -72,7 +72,7 @@ object UpstreamHttpActor {
 
     val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
       .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))
-      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(true))
+      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
       .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
 
     request.setConfig(requestConfig)
@@ -166,15 +166,27 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
     override def completed(response: HttpResponse): Unit = {
       var inputStream : InputStream = null
       try {
-        /*
-         * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
-         * the appropriate header and handle it manually.
-         */
-        val  entity = UpstreamHttpActor.wrapGzipEntityIfNeeded(response.getEntity)
+        /**
+          * Sometimes responses will contain no body. Empty bodies come in two flavors: empty or absent.
+          * Absent means there's literally nothing in there, and in that case no entity exists at all.
+          * Therefore we need to check whether an entity exists or not.
+          */
+        val wrapper = if(response.getEntity != null) {
+          /*
+           * Async HTTP Client does not support automatic gunzip of the content, therefore we need to read
+           * the appropriate header and handle it manually.
+           */
+          val entity = UpstreamHttpActor.wrapGzipEntityIfNeeded(response.getEntity)
 
-        inputStream = entity.getContent
-        val wrapper = UpstreamHttpActor.createResponseWrapper(msg.request, response, inputStream)
-        EntityUtils.consumeQuietly(entity)
+          inputStream = entity.getContent
+          val wrapper = UpstreamHttpActor.createResponseWrapper(msg.request, response, inputStream)
+          EntityUtils.consumeQuietly(entity)
+          wrapper
+        } else
+        /**
+          * Case where no entity is present, so entity will no be handled at all
+          */
+          UpstreamHttpActor.createResponseWrapper(msg.request, response, new ByteArrayInputStream(Array[Byte]()))
 
         val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
         metricsLog.info("Download time: " + m.toString())
