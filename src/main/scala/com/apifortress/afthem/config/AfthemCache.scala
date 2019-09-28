@@ -64,6 +64,7 @@ object AfthemCache {
     * Cache for routers
     */
   val routersCache : Cache[Integer,TUpstreamHttpRouter] = cacheManager.getCache("http_routers",classOf[Integer],classOf[TUpstreamHttpRouter])
+
   // We want to trigger an action when a cache is discovered as expired
   routersCache.getRuntimeConfiguration.registerCacheEventListener(new RoutersCacheListener(),EventOrdering.ORDERED, EventFiring.SYNCHRONOUS, EventType.EXPIRED)
 

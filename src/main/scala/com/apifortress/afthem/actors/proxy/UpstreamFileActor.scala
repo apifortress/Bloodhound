@@ -24,7 +24,7 @@ import com.apifortress.afthem.config.Backend
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{Metric, UriUtil}
+import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 import org.apache.commons.io.IOUtils
 import org.springframework.web.util.UriComponents
 
@@ -73,7 +73,7 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
                                       List.empty[Header],
                                       data,
                             null,
-                                      "UTF-8")
+                                       ReqResUtil.CHARSET_UTF8)
         forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
         metricsLog.debug(m.toString())
       }catch {

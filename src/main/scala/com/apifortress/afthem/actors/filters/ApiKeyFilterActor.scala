@@ -68,7 +68,7 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     if(cachedItem != null)
       return cachedItem
     val fis = new FileInputStream(new File(filename))
-    val data = IOUtils.toString(fis,"UTF-8")
+    val data = IOUtils.toString(fis,ReqResUtil.CHARSET_UTF8)
     fis.close()
     val keys = Parsers.parseYaml(data,classOf[ApiKeys])
     AfthemCache.apiKeysCache.put(filename,keys)

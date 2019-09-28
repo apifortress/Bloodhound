@@ -140,6 +140,10 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         val m = new Metric
         val upstream = UpstreamHttpActor.extractUpstream(msg)
 
+        /**
+          * Upstream == null is a possibility. An null upstream is useful when you want to use AFtheM as a bypass with
+          * the help of an actual forward proxy. In this case, the original request URL is used.
+          */
         if(upstream!=null) {
           msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
           msg.request.setHeader("host", msg.request.uriComponents.getHost)

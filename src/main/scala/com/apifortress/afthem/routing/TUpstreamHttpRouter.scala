@@ -42,8 +42,14 @@ trait TUpstreamHttpRouter {
     */
   var urls : List[RoutedUrl] = null
 
+  /**
+    * A probe configuration
+    */
   var probe : Probe = null
 
+  /**
+    * A scheduled probe task
+    */
   var cancellableProbeTask : Cancellable = null
 
   /**
@@ -59,27 +65,43 @@ trait TUpstreamHttpRouter {
   def update(backend: Backend) : Unit = {
     this.backendHashCode = backend.hashCode
 
-    updateProbe(backend.upstreams.probe)
-
     urls = backend.upstreams.urls.map(it => new RoutedUrl(it, backend.upstreams.probe))
 
-    startProbe()
+    updateProbe(backend.upstreams.probe)
+
+
   }
 
+  /**
+    * Updates the probe configuration if necessary. If the probe configuration required an update
+    * follow up actions to the schedule are applied
+    * @param probe a new probe configuration
+    */
   private def updateProbe(probe : Probe) : Unit = {
-    if(this.probe != null && probe != null) {
-      if(this.probe.hashCode() != probe.hashCode()) {
+    val oldProbe = this.probe
+    this.probe = probe
+    // An existing probe exists
+    if(oldProbe != null && probe != null) {
+      // And the new probe and the old probe are not equivalent
+      if(oldProbe.hashCode() != probe.hashCode()) {
         TUpstreamHttpRouter.log.debug("Cancelling previous probe due to update")
-        cancelProbe()
+        restartProbe()
       }
     }
-    else if(this.probe != null && probe == null) {
+    // An existing probe exists, and the new configuration has no probe
+    else if(oldProbe != null && probe == null) {
       TUpstreamHttpRouter.log.debug("Cancelling previous probe as probe got removed from configuration")
       cancelProbe()
+    // There's no current probe and the new configuration has a probe
+    } else if(oldProbe == null && probe != null){
+      TUpstreamHttpRouter.log.debug("Starting a probe that wasn't running before")
+      startProbe()
     }
-    this.probe = probe
   }
 
+  /**
+    * If a probe is running, cancel it
+    */
   def cancelProbe() : Unit = {
     if(cancellableProbeTask != null) {
       TUpstreamHttpRouter.log.debug("Cancelling probe")
@@ -87,15 +109,30 @@ trait TUpstreamHttpRouter {
     }
   }
 
+  /**
+    * Starts a probe, if a probe configuration is present
+    */
   def startProbe() : Unit = {
     if(probe != null) {
       TUpstreamHttpRouter.log.debug("Starting probe")
       val duration = Duration(probe.interval).asInstanceOf[FiniteDuration]
-      implicit val executor = AppContext.actorSystem.dispatcher
+      implicit val executor = if(AppContext.actorSystem.dispatchers.hasDispatcher(AppContext.DISPATCHER_PROBE))
+                                      AppContext.actorSystem.dispatchers.lookup(AppContext.DISPATCHER_PROBE)
+                              else
+                                  AppContext.actorSystem.dispatchers.lookup(AppContext.DISPATCHER_DEFAULT)
+
       implicit val sender : ActorRef = null
       cancellableProbeTask = AppContext.actorSystem.scheduler.schedule(duration, duration,
                                                                         AppContext.probeHttpActor, this)
     }
+  }
+
+  /**
+    * Restart a probe
+    */
+  def restartProbe() : Unit = {
+    cancelProbe()
+    startProbe()
   }
 
 }

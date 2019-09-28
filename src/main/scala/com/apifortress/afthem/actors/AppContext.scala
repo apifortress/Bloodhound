@@ -32,6 +32,9 @@ import scala.concurrent.duration._
 object AppContext {
 
 
+  val DISPATCHER_DEFAULT = "default"
+  val DISPATCHER_PROBE = "probe"
+
   /**
     * Akka textual configuration
     */
@@ -47,6 +50,7 @@ object AppContext {
       cfg.append("\t}\n")
       cfg.append("}\n")
   }
+
   /**
     *
     * The Akka configuration
@@ -56,7 +60,8 @@ object AppContext {
     * The actor system
     */
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
-  implicit val executionContext = actorSystem.dispatcher
+
+  implicit val executor = actorSystem.dispatchers.lookup(DISPATCHER_DEFAULT)
 
    /*
     * For each implementer, we create an actor.
@@ -67,11 +72,20 @@ object AppContext {
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
 
+  /* Stale connections are a problem with the Upstream HTTP Client. This is why we need a recurring task that will
+   * check if connections need to be evicted.
+   */
   actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
     AfthemHttpClient.closeStaleConnections()
   })
 
-  val probeHttpActor : ActorRef = actorSystem.actorOf(Props[ProbeHttpActor],"probeHttpActor")
+  val probeExecutorId = if (actorSystem.dispatchers.hasDispatcher(DISPATCHER_PROBE)) DISPATCHER_PROBE
+                        else DISPATCHER_DEFAULT
+
+  /**
+    * The actor that runs the probes for multiple upstreams
+    */
+  val probeHttpActor : ActorRef = actorSystem.actorOf(Props[ProbeHttpActor].withDispatcher(probeExecutorId),"probeHttpActor")
 
   /**
     * Spring application context

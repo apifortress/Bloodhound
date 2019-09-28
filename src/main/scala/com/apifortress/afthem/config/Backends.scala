@@ -23,8 +23,6 @@ import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.duration.Duration
-
 /**
   * Companion object to load backends from file as a singleton
   */
@@ -75,6 +73,10 @@ class Backends(val backends: List[Backend]) extends ICacheableConfig {
         return backend
     }
 
+    /**
+      * Returns the List of backends
+      * @return the backends collection
+      */
     def list() : List[Backend] = return backends
 }
 
@@ -117,6 +119,17 @@ class Upstreams(val urls : List[String], val probe : Probe = null) {
 
 }
 
+/**
+  * The Probe configuration. Describes how a backend with multiple Upstreams should test the availability of
+  * each upstream
+  * @param path an extra path fragment to append to the upstream URL for probing. If empty, the upstream URL will be used
+  * @param status the expected status code
+  * @param method the method to use to perform the request
+  * @param timeout how long to wait for the reply before calling it a failure
+  * @param interval how frequently should the probe execute
+  * @param countDown how many times a probe should fail before the upstream is to be considered down
+  * @param countUp how many times a probe should succeed before the upstream is to be considered up
+  */
 class Probe(val path : String, val status: Int, val method : String, val timeout: String,
             val interval : String, @JsonProperty("count_down") val countDown : Int,
             @JsonProperty("count_up") val countUp : Int) {

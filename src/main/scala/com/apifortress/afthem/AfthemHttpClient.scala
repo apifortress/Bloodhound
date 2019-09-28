@@ -94,6 +94,12 @@ object AfthemHttpClient {
     httpClient.execute(request,callback)
   }
 
+  /**
+    * Creates a base request
+    * @param method the method of the request
+    * @param url the URL
+    * @return the base request
+    */
   def createBaseRequest(method : String, url : String) : HttpRequestBase = {
    return method match {
       case "GET" =>  new HttpGet(url)

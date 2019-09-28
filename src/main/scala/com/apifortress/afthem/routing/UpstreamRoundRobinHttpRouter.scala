@@ -21,8 +21,14 @@ import com.apifortress.afthem.exceptions.NoWorkingUpstreamsException
 import org.slf4j.LoggerFactory
 
 
+/**
+  * Companion object for the UpstreamsRoundRobinHttpRouter class
+  */
 object UpstreamsRoundRobinHttpRouter {
 
+  /**
+    * The logger
+    */
   val log = LoggerFactory.getLogger(classOf[UpstreamsRoundRobinHttpRouter])
 }
 /**

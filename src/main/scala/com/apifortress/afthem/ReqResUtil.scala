@@ -77,6 +77,11 @@ object ReqResUtil {
   val MIME_PLAIN_TEXT = "text/plain"
 
   /**
+    * UTF-8 charset
+    */
+  val CHARSET_UTF8 = "UTF-8"
+
+  /**
     * Parses servlet headers into a list of tuples and collects a map of interesting headers
     * @param request an HttpServletRequest to parse the headers from
     * @return a tuple made up of (list of headers, interesting headers)
@@ -237,7 +242,7 @@ object ReqResUtil {
     * @param default a default value in case charset information is not present
     * @return the detected charset
     */
-  def getCharsetFromResponse(httpResponse: HttpResponse, default : String = "UTF-8") : String = {
+  def getCharsetFromResponse(httpResponse: HttpResponse, default : String = ReqResUtil.CHARSET_UTF8) : String = {
     val contentType = ContentType.get(httpResponse.getEntity)
     if(contentType == null)
       return default
@@ -253,7 +258,7 @@ object ReqResUtil {
     * @param default the default value in case charset information is not present
     * @return the detected charset
     */
-  def getCharsetFromRequest(httpServletRequest: HttpServletRequest, default : String = "UTF-8") : String = {
+  def getCharsetFromRequest(httpServletRequest: HttpServletRequest, default : String = ReqResUtil.CHARSET_UTF8) : String = {
     val headerValue = httpServletRequest.getCharacterEncoding
     if(headerValue == null)
       return default
@@ -269,7 +274,7 @@ object ReqResUtil {
     val characterEncoding = if (wrapper.characterEncoding!=null)
                             wrapper.characterEncoding
                           else
-                            "utf-8"
+                            ReqResUtil.CHARSET_UTF8
     new String(wrapper.payload,Charset.forName(characterEncoding))
   }
 
