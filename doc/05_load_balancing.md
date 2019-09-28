@@ -1,7 +1,7 @@
 # AFtheM - Backends - Load balancing
 
 AFtheM has a simple load balancing capability we are going to discuss now. Before moving forward, make sure you have
-read the [basic configuration guide](basic_configuration.md).
+read the [basic configuration guide](01_basic_configuration.md).
 
 The backends in the `backends.yml` can alternatively be expressed as follows:
 
@@ -40,4 +40,4 @@ omitted, AFtheM will always considers URLs as functional.
 ## Notes
 
 The system will look for a `probe` thread pool in the `implementers.yml` file. If no `probe` thread pool is defined,
-default will be used. Please refer to the [fine tuning guide](fine_tuning.md) to learn more.
+default will be used. Please refer to the [fine tuning guide](06_fine_tuning.md) to learn more.

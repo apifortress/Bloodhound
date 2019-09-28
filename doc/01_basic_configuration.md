@@ -120,8 +120,8 @@ Optionally, a `headers` filter can also be applied. For example:
 If the `x-my-header` header is present and is equal to `anything`, the first configuration will be chosen.
 If the given header is equal to `mastiff`, the second configuration will be chosen.
 
-Furthermore, a load balancing functionality is available. Please refer to the [load balancing guide](load_balancing.md). 
+Furthermore, a load balancing functionality is available. Please refer to the [load balancing guide](05_load_balancing.md). 
 
 ## Flows
 
-Flows are discussed in a separate document: `flows.md`
+Flows are discussed in the [Flows guide](03_flows.md)
