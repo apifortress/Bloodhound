@@ -14,7 +14,23 @@ content types are meant to represent textual content.
   
 ### application.properties
 
-the `logging.config=etc/logback.xml` describes where the logging configuration file is located.
+`logging.config=etc/logback.xml` describes where the logging configuration file is located.
+
+`server.port` tells the AFtheM web server which port it should bind to (default is 8080)
+
+`server.compression.enabled` true if the web server needs to compress its output (default is false)
+
+`server.compression.mime-types` a comma-separated list of mime types that should undergo compression
+
+`server.compression.min-response-size` the smallest stream of that should trigger compression
+
+`server.ssl.key-store-type` to configure secure connections, the key-store type (default is PKCS12)
+
+`server.ssl.key-store` the location of the key-store in the file system
+
+`server.ssl.key-store-password` the password of the key-store 
+
+See [Fine tuning](06_fine_tuning.md) for more settings.
 
 ### ehcache.xml
 
@@ -26,6 +42,8 @@ times in a short period of time.
 `expressions` is a cache meant to store the interpreted version of Spring SpEL scripts.
 
 `api_keys` is a cache used by the default ApiKeysFilterActor to store API keys in memory.
+
+`http_routers` is a cache used by the load-balancing functionality
 
 New caches can be introduced to support other modules if necessary.
 
