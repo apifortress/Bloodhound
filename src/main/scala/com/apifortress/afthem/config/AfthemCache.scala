@@ -21,6 +21,7 @@ import java.io.File
 
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import com.apifortress.afthem.routing.TUpstreamHttpRouter
+import com.google.common.util.concurrent.RateLimiter
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.event._
 import org.ehcache.xml.XmlConfiguration
@@ -67,6 +68,9 @@ object AfthemCache {
 
   // We want to trigger an action when a cache is discovered as expired
   routersCache.getRuntimeConfiguration.registerCacheEventListener(new RoutersCacheListener(),EventOrdering.ORDERED, EventFiring.SYNCHRONOUS, EventType.EXPIRED)
+
+
+  val rateLimiterCache : Cache[String,RateLimiter] = cacheManager.getCache("rate_limiter",classOf[String],classOf[RateLimiter])
 
 }
 

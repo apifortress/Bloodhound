@@ -25,7 +25,7 @@
         <key-type>java.lang.String</key-type>
         <value-type>com.apifortress.afthem.config.ICacheableConfig</value-type>
         <expiry>
-            <ttl>600</ttl>
+            <ttl>200</ttl>
         </expiry>
         <heap>10</heap>
     </cache>
@@ -55,6 +55,15 @@
             <tti>200</tti>
         </expiry>
         <heap>10</heap>
+    </cache>
+
+    <cache alias="rate_limiter">
+        <key-type>java.lang.String</key-type>
+        <value-type>com.google.common.util.concurrent.RateLimiter</value-type>
+        <expiry>
+            <tti>60</tti>
+        </expiry>
+        <heap>1000</heap>
     </cache>
 
 </config>
