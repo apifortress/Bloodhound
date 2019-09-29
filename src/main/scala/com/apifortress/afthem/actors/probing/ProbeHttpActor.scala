@@ -52,8 +52,7 @@ class ProbeHttpActor extends Actor {
       val timeoutMillis = Duration(msg.probe.timeout).toMillis.toInt
       val requestConfig = RequestConfig.custom().setConnectTimeout(timeoutMillis)
                                                   .setSocketTimeout(timeoutMillis)
-                                                  .setRedirectsEnabled(true)
-                                                  .setMaxRedirects(5).build()
+                                                  .setRedirectsEnabled(false).build()
       baseRequest.setConfig(requestConfig)
       AfthemHttpClient.execute(baseRequest, new ProbeFutureCallback(msg))
     }
