@@ -96,7 +96,7 @@ not in use)
 `factor` is a multiplier that depends on the server AFtheM is operating on and it works like this
 `factor*cpu=n_of_threads`. A way to make the system more adaptive to the context.
 
-Check out `fine_tuning.md` for further readings on this topic.
+Check out the [Fine Tuning Guide](06_fine_tuning.md) for further readings on this topic.
 
 ### backends.yml
 

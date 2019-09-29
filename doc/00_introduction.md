@@ -38,5 +38,5 @@ The modules can be written in either Scala or Java.
 * **Probe**: a special object that is meant to verify whether a certain upstram is available or not, according to a
   number of preconditions
 * **Durations**: most configuration keys needing to express a certain duration in time can leverage the *duration notation*,
-  a human readable way to express time, as in *10 seconds*, *1 minute* *100 milliseconds*
+  a human readable way to express time, as in *10 seconds*, *1 minute*, *100 milliseconds*
  

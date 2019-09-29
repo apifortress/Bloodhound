@@ -1,6 +1,6 @@
 # AFtheM - base actors
 
-## Proxy
+## Type: Proxy
 
 ### RequestActor
 
@@ -53,7 +53,7 @@ An actor taking care of performing the final checks, packaging and sending back 
 
 ****
 
-## Sidecars
+## Type: Sidecar
 
 ### AccessLoggerActor
 
@@ -101,7 +101,7 @@ the list is null or empty, all content types will be accepted
 
 ***
 
-## Transformers
+## Type: Transformer
 
 ### TransformHeadersActor
 
@@ -170,7 +170,7 @@ Replaces the upstream base URL if a certain condition is verified.
 
 ***
 
-## Filters
+## Type: Filter
 
 ### FilterActor
 
