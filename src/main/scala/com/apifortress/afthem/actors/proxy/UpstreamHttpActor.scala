@@ -17,6 +17,7 @@
 package com.apifortress.afthem.actors.proxy
 
 import java.io.{ByteArrayInputStream, InputStream}
+import java.util.concurrent.TimeUnit
 
 import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AbstractAfthemActor
@@ -70,10 +71,10 @@ object UpstreamHttpActor {
 
     val request = AfthemHttpClient.createBaseRequest(wrapper.method,url)
 
-    val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
-      .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))
-      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
-      .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
+    val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigDurationAsMillis("connect_timeout",5000, TimeUnit.MILLISECONDS))
+                                                .setSocketTimeout(phase.getConfigDurationAsMillis("socket_timeout",10000, TimeUnit.MILLISECONDS))
+                                                .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
+                                                .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
 
     request.setConfig(requestConfig)
 
