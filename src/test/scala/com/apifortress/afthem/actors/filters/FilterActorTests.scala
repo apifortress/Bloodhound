@@ -21,9 +21,11 @@ import akka.testkit.TestProbe
 import com.apifortress.afthem.TestData
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.beans.AfthemResult
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage}
+import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage}
 import org.junit.Assert.assertEquals
 import org.junit.Test
+
+import scala.concurrent.duration._
 
 class FilterActorTests {
 
@@ -31,7 +33,7 @@ class FilterActorTests {
   def testActor() : Unit = {
     val result = new AfthemResult(){
       override def setData(exception: Exception, status: Int, contentType: String, message: BaseMessage): Unit = {
-        assertEquals(401,status)
+        assertEquals(400,status)
       }
     }
 
@@ -41,12 +43,15 @@ class FilterActorTests {
       override def tellNextActor(message: BaseMessage) : Unit = {
         probe.ref ! message
       }
+      override def tellSidecars(message: BaseMessage) : Unit = {
+        probe.ref ! message
+      }
       override def getPhase(message: BaseMessage): Phase = {
         new Phase("abc","next",List.empty[String],Map("accept"->
-                                                                  List(Map("evaluate"->true,
+                                                                  List(Map("evaluated"->true,
                                                                         "value"->"#msg.request().getHeader('x-key')!=null")),
                                                                   "reject"->
-                                                                   List(Map("evaluate"->true,
+                                                                   List(Map("evaluated"->true,
                                                                           "value"->"#msg.request().getHeader('banana')!=null"))))
       }
     }))
@@ -55,7 +60,12 @@ class FilterActorTests {
     val request = probe.expectMsgClass(classOf[WebParsedRequestMessage])
     assertEquals("ABC123",request.request.getHeader("x-key"))
     Thread.sleep(500)
-    system.terminate()
 
+    val wrapper = TestData.createWrapper()
+    wrapper.setHeader("banana","123")
+    val message2 = new WebParsedRequestMessage(wrapper,null,null,result)
+    actor ! message2
+    val request2 = probe.expectMsgClass(5 seconds,classOf[ExceptionMessage])
+    system.terminate()
   }
 }
