@@ -51,6 +51,9 @@ object ReqResUtil {
     */
   val HEADER_CONTENT_ENCODING : String = "content-encoding"
 
+
+  val HEADER_TRANSFER_ENCODING : String = "transfer-encoding"
+
   /**
     * The name of the host header
     */

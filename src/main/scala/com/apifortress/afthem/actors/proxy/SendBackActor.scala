@@ -27,6 +27,10 @@ import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
   */
 object SendBackActor {
 
+  val DROP_HEADERS = List(ReqResUtil.HEADER_CONTENT_LENGTH,
+                          ReqResUtil.HEADER_CONTENT_ENCODING,
+                          ReqResUtil.HEADER_TRANSFER_ENCODING)
+
   /**
     * Removes response headers that should be passed forward
     * @param wrapper a wrapper representing the response
@@ -37,7 +41,7 @@ object SendBackActor {
       * transformation or simply unzipping, the response body will break so we have to remove it.
       * Tomcat will replace it with the correct length once it sends the response
       */
-    wrapper.removeHeaders(List(ReqResUtil.HEADER_CONTENT_LENGTH,ReqResUtil.HEADER_CONTENT_ENCODING))
+    wrapper.removeHeaders(DROP_HEADERS)
 
     /**
       * Content-Type is an essential element of the HTTP protocol. By the RFC, the absence of a Content-Type header
