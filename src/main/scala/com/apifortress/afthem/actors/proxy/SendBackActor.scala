@@ -29,7 +29,8 @@ object SendBackActor {
 
   val DROP_HEADERS = List(ReqResUtil.HEADER_CONTENT_LENGTH,
                           ReqResUtil.HEADER_CONTENT_ENCODING,
-                          ReqResUtil.HEADER_TRANSFER_ENCODING)
+                          ReqResUtil.HEADER_TRANSFER_ENCODING,
+                          ReqResUtil.HEADER_CONNECTION)
 
   /**
     * Removes response headers that should be passed forward
