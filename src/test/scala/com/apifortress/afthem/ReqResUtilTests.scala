@@ -53,7 +53,7 @@ class ReqResUtilTests {
   def testByteArrayToString() = {
     val data = "Foobar".getBytes
     val wrapper = new HttpWrapper("http://example.com",-1,
-                          "GET", List.empty[Header],data,null,"UTF-8")
+                          "GET", List.empty[Header],data,null,ReqResUtil.CHARSET_UTF8)
     assertEquals("Foobar",ReqResUtil.byteArrayToString(wrapper))
   }
 

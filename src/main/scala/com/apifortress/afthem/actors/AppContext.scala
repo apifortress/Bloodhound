@@ -16,8 +16,9 @@
   */
 package com.apifortress.afthem.actors
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.apifortress.afthem.AfthemHttpClient
+import com.apifortress.afthem.actors.probing.ProbeHttpActor
 import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
@@ -30,6 +31,9 @@ import scala.concurrent.duration._
   */
 object AppContext {
 
+
+  val DISPATCHER_DEFAULT = "default"
+  val DISPATCHER_PROBE = "probe"
 
   /**
     * Akka textual configuration
@@ -46,6 +50,7 @@ object AppContext {
       cfg.append("\t}\n")
       cfg.append("}\n")
   }
+
   /**
     *
     * The Akka configuration
@@ -55,16 +60,32 @@ object AppContext {
     * The actor system
     */
   val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
-  implicit val executionContext = actorSystem.dispatcher
+
+  implicit val executor = actorSystem.dispatchers.lookup(DISPATCHER_DEFAULT)
 
    /*
     * For each implementer, we create an actor.
     */
-  val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
+  private val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
   types.foreach { actorType =>
     val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
     supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
   }
+
+  /* Stale connections are a problem with the Upstream HTTP Client. This is why we need a recurring task that will
+   * check if connections need to be evicted.
+   */
+  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
+    AfthemHttpClient.closeStaleConnections()
+  })
+
+  val probeExecutorId = if (actorSystem.dispatchers.hasDispatcher(DISPATCHER_PROBE)) DISPATCHER_PROBE
+                        else DISPATCHER_DEFAULT
+
+  /**
+    * The actor that runs the probes for multiple upstreams
+    */
+  val probeHttpActor : ActorRef = actorSystem.actorOf(Props[ProbeHttpActor].withDispatcher(probeExecutorId),"probeHttpActor")
 
   /**
     * Spring application context
@@ -77,11 +98,6 @@ object AppContext {
     */
   def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
 
-
-
-  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
-    AfthemHttpClient.closeStaleConnections()
-  } )
 
 
 }

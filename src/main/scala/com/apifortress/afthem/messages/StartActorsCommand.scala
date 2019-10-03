@@ -24,4 +24,4 @@ import com.typesafe.config.Config
   * @param implementers the implementers to created
   * @param config the Akka config
   */
-case class StartActorsCommand(implementers : List[Implementer], config : Config)
+case class StartActorsCommand(val implementers : List[Implementer], val config : Config)

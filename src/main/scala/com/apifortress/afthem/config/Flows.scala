@@ -16,10 +16,13 @@
   */
 package com.apifortress.afthem.config
 
+import java.util.concurrent.TimeUnit
+
 import com.apifortress.afthem.SpelEvaluator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import scala.collection.mutable
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 /**
   * Companion object to create a single instance of Flows
@@ -120,6 +123,32 @@ class Phase(var id: String, val next: String, val sidecars: List[String] = List.
     return if (config == null) return Map.empty[String,Any] else config
   }
 
+  /**
+    * Retrieves an untyped configuration item
+    * @param key th ekey of the configuration item
+    * @return the configuration item or null
+    */
+  def getConfigAny(key : String) : Any = {
+    return getConfig.getOrElse(key,null)
+  }
+
+  def getConfigDuration(key : String, default : Any, timeUnit : TimeUnit = TimeUnit.MILLISECONDS) : Duration = {
+    val value = if(getConfigAny(key) != null) getConfigAny(key) else default
+    value match {
+      case v: Integer => return new FiniteDuration(v.toLong,timeUnit)
+      case v: String => return Duration(v.asInstanceOf[String])
+    }
+  }
+
+  def getConfigDurationAsMillis(key : String, default : Any, timeUnit: TimeUnit = TimeUnit.MILLISECONDS) : Int = {
+    return getConfigDuration(key, default, timeUnit).toMillis.toInt
+  }
+
+  /**
+    * Retrieves a configuration item as Map
+    * @param key the key of the configuration item
+    * @return the configuration item as map or null
+    */
   def getConfigMap(key : String) : Map[String,Any] = {
     return getConfig.getOrElse(key,Map[String,Any]()).asInstanceOf[Map[String,Any]]
   }

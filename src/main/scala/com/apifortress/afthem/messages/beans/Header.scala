@@ -22,6 +22,6 @@ package com.apifortress.afthem.messages.beans
   * @param keyItem the header name
   * @param value the header value
   */
-class Header(keyItem : String, val value : String) {
+class Header(private val keyItem : String, val value : String) {
   val key : String = keyItem.toLowerCase
 }

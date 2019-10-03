@@ -68,7 +68,7 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     if(cachedItem != null)
       return cachedItem
     val fis = new FileInputStream(new File(filename))
-    val data = IOUtils.toString(fis,"UTF-8")
+    val data = IOUtils.toString(fis,ReqResUtil.CHARSET_UTF8)
     fis.close()
     val keys = Parsers.parseYaml(data,classOf[ApiKeys])
     AfthemCache.apiKeysCache.put(filename,keys)
@@ -81,7 +81,7 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     * @param phase the phase
     * @return an optional ApiKey object
     */
-  def findKey(key : String, phase : Phase) : Option[ApiKey] = {
+  protected def findKey(key : String, phase : Phase) : Option[ApiKey] = {
     return loadKeys(phase.getConfigString("filename","apikeys.yml")).getApiKey(key)
   }
 
@@ -92,7 +92,7 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     * @param msg the inbound message
     * @return the found key, if any
     */
-  def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
+  protected def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
     val found = in match {
       case "header" => msg.request.getHeader(name)
       case "query" => msg.request.uriComponents.getQueryParams.getFirst(name)

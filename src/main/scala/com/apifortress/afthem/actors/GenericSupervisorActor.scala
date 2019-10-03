@@ -52,7 +52,7 @@ class GenericSupervisorActor(val id : String) extends Actor {
   override def receive: Receive = {
     case cmd : StartActorsCommand =>
       cmd.implementers.foreach{ implementer =>
-        val tp = if (implementer.threadPool != null) implementer.threadPool else "default"
+        val tp = if (implementer.threadPool != null) implementer.threadPool else AppContext.DISPATCHER_DEFAULT
         val theClass = Class.forName(implementer.className)
         var ref = Props.create(theClass,id+"/"+implementer.id).withDispatcher(tp)
         if(implementer.instances > 1)

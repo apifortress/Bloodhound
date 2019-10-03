@@ -17,11 +17,12 @@
 package com.apifortress.afthem
 
 import java.util.concurrent.TimeUnit
+
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.ApplicationConf
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
-import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
@@ -32,18 +33,30 @@ import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorCo
   */
 object AfthemHttpClient {
 
+  /**
+    * The object storing the application.properties
+    */
   private val applicationConf =  if(AppContext.springApplicationContext != null)
                                     AppContext.springApplicationContext.getBean(classOf[ApplicationConf])
                                   else
                                     null
+  /**
+    * Max number of I/O threads HTTP Client is allowed to spawn
+    */
   private val maxThreads : Int = if(applicationConf!=null)
                                     applicationConf.httpClientMaxThreads
                                   else
                                       1
+  /**
+    * Max number of simultaneous connections the connection manager is allowed to handle
+    */
   private val maxConnections : Int = if(applicationConf!=null)
                                           applicationConf.httpClientMaxConnections
                                         else
                                           100
+  /**
+    * After how long an idle connection should be marked for eviction
+    */
   private val idleTimeoutSeconds : Int = if(applicationConf!=null)
                                           applicationConf.httpClientIdleTimeoutSeconds
                                         else
@@ -55,11 +68,17 @@ object AfthemHttpClient {
 
   connectionManager.setMaxTotal(maxConnections)
 
+  /**
+    * The default request configuration
+    */
   private val requestConfig = RequestConfig.custom().setConnectTimeout(5000)
                                         .setSocketTimeout(10000)
                                         .setRedirectsEnabled(true)
                                         .setMaxRedirects(5).build()
 
+  /**
+    * Finally, the HTTP Client
+    */
   val httpClient : CloseableHttpAsyncClient = HttpAsyncClients.custom().disableCookieManagement()
                                                 .setConnectionManager(connectionManager)
                                                 .setDefaultRequestConfig(requestConfig).build()
@@ -75,6 +94,26 @@ object AfthemHttpClient {
     httpClient.execute(request,callback)
   }
 
+  /**
+    * Creates a base request
+    * @param method the method of the request
+    * @param url the URL
+    * @return the base request
+    */
+  def createBaseRequest(method : String, url : String) : HttpRequestBase = {
+   return method match {
+      case "GET" =>  new HttpGet(url)
+      case "POST" => new HttpPost(url)
+      case "PUT" =>  new HttpPut(url)
+      case "DELETE" => new HttpDelete(url)
+      case "PATCH" =>  new HttpPatch(url)
+      case _ =>  null
+    }
+  }
+
+  /**
+    * Closes expired connection and any idle connection that has been idle for `idleTimeoutSeconds`
+    */
   def closeStaleConnections() : Unit = {
     connectionManager.closeExpiredConnections()
     connectionManager.closeIdleConnections(idleTimeoutSeconds, TimeUnit.SECONDS)

@@ -33,7 +33,7 @@ import scala.collection.mutable
   * @param date the date the message was created (defaults to new date)
   * @param meta generic metadata
   */
-case class WebRawRequestMessage(request: HttpServletRequest,
+case class WebRawRequestMessage(val request: HttpServletRequest,
                                 override val backend: Backend,
                                 override val  flow: Flow,
                                 override val deferredResult: AfthemResult,

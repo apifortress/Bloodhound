@@ -20,7 +20,7 @@ import java.io.{File, FileInputStream}
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.apifortress.afthem.{Parsers, TestData}
+import com.apifortress.afthem.{Parsers, ReqResUtil, TestData}
 import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
 import org.apache.commons.io.IOUtils
@@ -50,7 +50,7 @@ class FileAppenderSerializerActorTests {
     Thread.sleep(500)
     system.stop(actor)
     Thread.sleep(100)
-    val output = Parsers.parseJSON(IOUtils.toString(new FileInputStream(file),"UTF-8"),classOf[mutable.Map[String,Any]])
+    val output = Parsers.parseJSON(IOUtils.toString(new FileInputStream(file),ReqResUtil.CHARSET_UTF8),classOf[mutable.Map[String,Any]])
     val expected = Parsers.parseJSON("{\"request\":{\"querystring\":{},\"request_uri\":\"http://foo.com\",\"uri\":\"\",\"method\":\"GET\",\"size\":13,\"body\":\"{\\\"foo\\\":\\\"bar\\\"}\",\"headers\":{\"content-encoding\":\"gzip\",\"content-type\":\"application/json\",\"x-key\":\"ABC123\",\"content-length\":\"123\"}},\"download_time\":null,\"started_at\":1567958859486,\"response\":{\"size\":13,\"body\":\"{\\\"foo\\\":\\\"bar\\\"}\",\"status\":200,\"headers\":{\"content-encoding\":\"gzip\",\"content-type\":\"application/json\",\"x-key\":\"ABC123\",\"content-length\":\"123\"}},\"client_ip\":null}",classOf[mutable.Map[String,Any]])
     output.remove("started_at")
     expected.remove("started_at")

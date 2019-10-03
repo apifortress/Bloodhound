@@ -31,7 +31,7 @@ object AfthemResult {
   * Our implementation of the deferred result.
   * @param data an HttpWrapper representing the response
   */
-class AfthemResult(data : HttpWrapper = null) extends DeferredResult[ResponseEntity[Array[Byte]]] {
+class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
 
   var m : Metric = null
   var message: BaseMessage = null

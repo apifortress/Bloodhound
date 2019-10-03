@@ -31,3 +31,17 @@ backends:
     x-my-header: mastiff
   upstream: 'https://mastiff.apifortress.com/app/api/rest/relay'
   flow_id: default
+
+- prefix: '[^/]*/upstreams'
+  flow_id: default
+  upstreams:
+    urls:
+    - http://server1.example.com
+    - http://server2.example.com
+    probe:
+      path: /foo
+      timeout: 10 seconds
+      method: GET
+      count_up: 2
+      count_down: 2
+      interval: 1 hour

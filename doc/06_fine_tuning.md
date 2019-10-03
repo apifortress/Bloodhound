@@ -89,7 +89,22 @@ not in use)
 Thread pools can be assigned to a specific implementer or to multiple implementers. This is crucial because a good
 balance strongly reduces resource waste. In `etc.simplest`, for example, two instances of `header_filter` and two
 instances of `transform_headers` share a single pool with 2 threads max. This means that at most, 2 filter operations OR
-2 transformation operations OR 1 filter and 1 transformation operations can happen at the same time.  
+2 transformation operations OR 1 filter and 1 transformation operations can happen at the same time.
+
+## HTTP Client configuration
+
+The HTTP Client is the component that will perform the call from AFtheM to the upstreams. The client, one for the whole
+application, can be fine tuned based on your knowledge of your use case. The configuration of these aspects happen
+in the `application.properties` file.
+
+`httpclient.max_threads`: number of I/O dispatchers thread to be created and reserved to the HTTP Client;
+
+`httpclient.idle_timeout_seconds`: number of seconds before an idle open connection needs to be considered *stale* and
+candidate for removal;
+
+`httpclient.max_connections`: max number of open connections the system should be able to keep up, before it starts
+dropping some;
+   
 
 ## This is complicated!
 

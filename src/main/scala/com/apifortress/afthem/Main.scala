@@ -36,7 +36,8 @@ object Main {
     {
       override def run() : Unit =  {
         log.info("Afthem shutting down...")
-        AppContext.actorSystem.terminate()
+        if(AppContext.actorSystem != null)
+          AppContext.actorSystem.terminate()
       }
     })
     AppContext.init(SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args))

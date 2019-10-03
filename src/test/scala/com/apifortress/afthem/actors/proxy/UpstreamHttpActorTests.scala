@@ -20,7 +20,7 @@ import java.util.Date
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.apifortress.afthem.Metric
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.config.{Backend, Phase}
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
@@ -81,7 +81,7 @@ class UpstreamHttpActorTests {
     assertEquals("POST",apacheRequest.getMethod)
     assertEquals("http://foo.com",apacheRequest.getURI.toString)
     assertTrue(apacheRequest.getAllHeaders.find(it => it.getName == "foo").isDefined)
-    val res = IOUtils.toString(apacheRequest.asInstanceOf[HttpPost].getEntity.getContent,"UTF-8")
+    val res = IOUtils.toString(apacheRequest.asInstanceOf[HttpPost].getEntity.getContent,ReqResUtil.CHARSET_UTF8)
     assertEquals("FOOBAR",res)
   }
 

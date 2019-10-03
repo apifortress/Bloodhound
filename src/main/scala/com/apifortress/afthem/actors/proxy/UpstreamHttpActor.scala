@@ -16,7 +16,8 @@
   */
 package com.apifortress.afthem.actors.proxy
 
-import java.io.InputStream
+import java.io.{ByteArrayInputStream, InputStream}
+import java.util.concurrent.TimeUnit
 
 import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AbstractAfthemActor
@@ -24,14 +25,14 @@ import com.apifortress.afthem.config.Phase
 import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
-import org.apache.http.{HttpEntity, HttpResponse}
+import com.apifortress.afthem.routing.UpstreamsHttpRouters
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.GzipDecompressingEntity
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.util.EntityUtils
+import org.apache.http.{HttpEntity, HttpResponse}
 
 /**
   * Companion object for the Upstream Http Actor
@@ -68,19 +69,12 @@ object UpstreamHttpActor {
 
     val url = wrapper.getURL()
 
-    val request = wrapper.method match {
-      case "GET" =>  new HttpGet(url)
-      case "POST" => new HttpPost(url)
-      case "PUT" =>  new HttpPut(url)
-      case "DELETE" => new HttpDelete(url)
-      case "PATCH" =>  new HttpPatch(url)
-      case _ =>  null
-    }
+    val request = AfthemHttpClient.createBaseRequest(wrapper.method,url)
 
-    val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigInt("connect_timeout",5000))
-      .setSocketTimeout(phase.getConfigInt("socket_timeout",10000))
-      .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
-      .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
+    val requestConfig = RequestConfig.custom().setConnectTimeout(phase.getConfigDurationAsMillis("connect_timeout",5000, TimeUnit.MILLISECONDS))
+                                                .setSocketTimeout(phase.getConfigDurationAsMillis("socket_timeout",10000, TimeUnit.MILLISECONDS))
+                                                .setRedirectsEnabled(phase.getConfigBoolean("redirects_enabled").getOrElse(false))
+                                                .setMaxRedirects(phase.getConfigInt("max_redirects",5)).build()
 
     request.setConfig(requestConfig)
 
@@ -129,7 +123,10 @@ object UpstreamHttpActor {
     * @param msg the message
     * @return the upstream
     */
-  def extractUpstream(msg : BaseMessage) : String = msg.meta.getOrElse("__replace_upstream",msg.backend.upstream).asInstanceOf[String]
+  def extractUpstream(msg : BaseMessage) : String = {
+    msg.meta.getOrElse("__replace_upstream",
+                        UpstreamsHttpRouters.getUrl(msg.backend)).asInstanceOf[String]
+  }
 }
 
 /**
@@ -144,6 +141,10 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         val m = new Metric
         val upstream = UpstreamHttpActor.extractUpstream(msg)
 
+        /**
+          * Upstream == null is a possibility. An null upstream is useful when you want to use AFtheM as a bypass with
+          * the help of an actual forward proxy. In this case, the original request URL is used.
+          */
         if(upstream!=null) {
           msg.request.setURL(UriUtil.determineUpstreamUrl(msg.request.uriComponents, upstream, msg.backend))
           msg.request.setHeader("host", msg.request.uriComponents.getHost)
@@ -190,7 +191,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         /**
           * Case where no entity is present, so entity will no be handled at all
           */
-          UpstreamHttpActor.createResponseWrapper(msg.request, response, new ByteInputStream())
+          UpstreamHttpActor.createResponseWrapper(msg.request, response, new ByteArrayInputStream(Array[Byte]()))
 
         val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
         metricsLog.info("Download time: " + m.toString())

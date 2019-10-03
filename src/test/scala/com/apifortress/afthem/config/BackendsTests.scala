@@ -53,6 +53,15 @@ class BackendsTests {
   def testBackends() : Unit = {
     YamlConfigLoader.SUBPATH = "etc.test"
     val backends = Backends.instance()
-    assertEquals(6,backends.list().size)
+    assertEquals(7,backends.list().size)
+  }
+
+  @Test
+  def testUpstreams() : Unit = {
+    YamlConfigLoader.SUBPATH = "etc.test"
+    val backends = Backends.instance()
+    val backend = backends.list().find(p => p.prefix=="[^/]*/upstreams").get
+    assertNotNull(backend.upstreams)
+    assertEquals("10 seconds",backend.upstreams.probe.timeout)
   }
 }

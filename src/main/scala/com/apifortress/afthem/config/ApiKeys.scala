@@ -42,4 +42,5 @@ class ApiKeys(@JsonProperty("api_keys") val apiKeys : List[ApiKey]) {
   * @param appId  the application ID
   * @param enabled true if the key is enabled
   */
-case class ApiKey(@JsonProperty("api_key") apiKey: String, @JsonProperty("app_id") appId: String, enabled : Boolean)
+case class ApiKey(@JsonProperty("api_key") val apiKey: String, @JsonProperty("app_id") val appId: String,
+                                 val enabled : Boolean)

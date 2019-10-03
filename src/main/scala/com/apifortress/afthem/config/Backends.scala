@@ -16,6 +16,8 @@
   */
 package com.apifortress.afthem.config
 
+import java.util.Objects
+
 import com.apifortress.afthem.UriUtil
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
@@ -47,7 +49,7 @@ object Backends  {
   * Data structure representing the configuration of backends
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Backends(backends: List[Backend]) extends ICacheableConfig {
+class Backends(val backends: List[Backend]) extends ICacheableConfig {
 
     /**
       * Given an inbound request, find the Backend definition matching it
@@ -71,13 +73,70 @@ class Backends(backends: List[Backend]) extends ICacheableConfig {
         return backend
     }
 
+    /**
+      * Returns the List of backends
+      * @return the backends collection
+      */
     def list() : List[Backend] = return backends
 }
 
 /**
   * The single backend configuration
+  * @param flowId the ID of the flow
   * @param prefix the inbound URI prefix
   * @param upstream the upstream URI
+  * @param upstreams in case multiple upstreams are described in this backend. An instance of the Upstreams objects
+  * @param meta meta information to be added to the message meta
+  *
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
-case class Backend(@JsonProperty("flow_id") flowId: String, prefix: String, headers : Map[String,String], val upstream: String)
+class Backend(@JsonProperty("flow_id") val flowId: String, val prefix: String, val headers : Map[String,String],
+                   val upstream: String, val upstreams : Upstreams = null, val meta : Map[String,Any] = Map.empty[String,Any]){
+
+    override def hashCode : Int = {
+        return Objects.hash(flowId,prefix,headers,upstream,upstreams)
+    }
+
+    /**
+      * A signature is a hash working as an ID of the backend. It hashes the prefix and the headers which are the
+      * inbound filters. Ideally they should be unique within Backends.
+      * @return the hash
+      */
+    def getSignature() : Int = {
+        return Objects.hash(prefix,headers)
+    }
+}
+
+/**
+  * An object representing multiple upstreams
+  * @param urls a list of upstream URLs
+  */
+class Upstreams(val urls : List[String], val probe : Probe = null) {
+
+    override def hashCode : Int = {
+        return Objects.hash(urls,probe)
+    }
+
+}
+
+/**
+  * The Probe configuration. Describes how a backend with multiple Upstreams should test the availability of
+  * each upstream
+  * @param path an extra path fragment to append to the upstream URL for probing. If empty, the upstream URL will be used
+  * @param status the expected status code
+  * @param method the method to use to perform the request
+  * @param timeout how long to wait for the reply before calling it a failure
+  * @param interval how frequently should the probe execute
+  * @param countDown how many times a probe should fail before the upstream is to be considered down
+  * @param countUp how many times a probe should succeed before the upstream is to be considered up
+  */
+class Probe(val path : String, val status: Int, val method : String, val timeout: String,
+            val interval : String, @JsonProperty("count_down") val countDown : Int,
+            @JsonProperty("count_up") val countUp : Int) {
+
+    override def hashCode(): Int = {
+        return Objects.hash(path,status.toString,method,timeout,interval,countDown.toString,countUp.toString)
+    }
+
+
+}
