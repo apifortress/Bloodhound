@@ -37,13 +37,13 @@ class ProbeHttpActorTests {
     val actor = system.actorOf(Props(new ProbeHttpActor()))
     actor ! url
     actor ! url
-    Thread.sleep(3000)
+    Thread.sleep(5000)
     assertTrue(url.upStatus)
     val url2 = new RoutedUrl("https://google.com",
       new Probe("",200,"GET","5 seconds","5 minutes",2,2))
     actor ! url2
     actor ! url2
-    Thread.sleep(3000)
+    Thread.sleep(5000)
     assertFalse(url2.upStatus)
 
 
