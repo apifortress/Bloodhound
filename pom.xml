@@ -113,14 +113,14 @@
             <artifactId>mongodb</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.apifortress.afthem.modules</groupId>
             <artifactId>fortress-forwarder</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
 
     </dependencies>
