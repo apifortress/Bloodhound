@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration.Duration
 
-
+/**
+  * Companion object for the probe http actor
+  */
 object ProbeHttpActor {
   /**
     * The logger
