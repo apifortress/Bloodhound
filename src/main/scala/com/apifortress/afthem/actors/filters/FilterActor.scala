@@ -45,7 +45,6 @@ class FilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : String
         // REJECT cycle. If at least one condition is met, then the request is rejected
         val rejectConditions = getPhase(msg).getConfigListEvalNameValue("reject")
         var rejected = false
-        println(msg.request.getHeader("banana"))
         for (item <- rejectConditions)
           if (!rejected && item.evaluateIfNeeded(scope) == true)
             rejected = true
