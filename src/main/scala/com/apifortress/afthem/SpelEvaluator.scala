@@ -62,4 +62,30 @@ object SpelEvaluator {
     variables.foreach(item => ctx.setVariable(item._1,item._2))
     return parsedException.getValue(ctx)
   }
+
+  /**
+    * If the expression contains the substring #msg(), then it's most likely a SpEL expression, so we evaluate.
+    * Otherwise, the expression is returned
+    * @param expression a potential SpEL expression
+    * @param variables the scope
+    * @return the evaluated expression (or not)
+    */
+  def evaluateStringIfNeeded(expression : String, variables : Map[String,Any]) : String = {
+    if(expression.contains("#msg."))
+      return evaluate(expression,variables).asInstanceOf[String]
+    return expression
+  }
+
+  /**
+    * Iterates over the provided map. If the value of the map is potentially a SpEL expression (contains #msg()) then
+    * the values are evaluated, otherwise they're left as they were
+    * @param items the map
+    * @param variables the scope
+    * @return the evaluated map
+    */
+  def evaluateStringIfNeeded(items : Map[String,String], variables : Map[String,Any]) : Map[String,String] = {
+    return items.map(kv => {
+      (kv._1,evaluateStringIfNeeded(kv._2, variables))
+    })
+  }
 }
