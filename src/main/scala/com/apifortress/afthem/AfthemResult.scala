@@ -15,10 +15,10 @@
  *
  */
 
-package com.apifortress.afthem.messages.beans
+package com.apifortress.afthem
 
+import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
-import com.apifortress.afthem.{Metric, ReqResUtil, ResponseEntityUtil}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult

@@ -17,12 +17,11 @@
 package com.apifortress.afthem.controllers
 
 
-import com.apifortress.afthem.{Main, Metric, ReqResUtil}
+import com.apifortress.afthem.{AfthemResult, Main, Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{Backends, Flows}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
 import com.apifortress.afthem.messages.WebRawRequestMessage
-import com.apifortress.afthem.messages.beans.AfthemResult
 import javax.servlet.Filter
 import javax.servlet.http.HttpServletRequest
 import org.slf4j.{Logger, LoggerFactory}

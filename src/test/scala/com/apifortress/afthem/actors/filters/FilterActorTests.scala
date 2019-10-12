@@ -18,9 +18,8 @@ package com.apifortress.afthem.actors.filters
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
-import com.apifortress.afthem.TestData
+import com.apifortress.afthem.{AfthemResult, TestData}
 import com.apifortress.afthem.config.Phase
-import com.apifortress.afthem.messages.beans.AfthemResult
 import com.apifortress.afthem.messages.{BaseMessage, ExceptionMessage, WebParsedRequestMessage}
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -18,8 +18,9 @@ package com.apifortress.afthem.messages
 
 import java.util.Date
 
+import com.apifortress.afthem.AfthemResult
 import com.apifortress.afthem.config.{Backend, Flow}
-import com.apifortress.afthem.messages.beans.{AfthemResult, HttpWrapper}
+import com.apifortress.afthem.messages.beans.HttpWrapper
 
 import scala.collection.mutable
 
