@@ -16,12 +16,16 @@
   */
 package com.apifortress.afthem.actors
 
+import java.io.{File, FileReader}
+
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.apifortress.afthem.AfthemHttpClient
 import com.apifortress.afthem.actors.probing.ProbeHttpActor
 import com.apifortress.afthem.config.Implementers
+import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
+import org.apache.commons.io.IOUtils
 import org.springframework.context.ApplicationContext
 
 import scala.concurrent.duration._
@@ -49,6 +53,12 @@ object AppContext {
       cfg.append(s"\t\tparallelism-factor=${pool._2.factor}\n")
       cfg.append("\t}\n")
       cfg.append("}\n")
+  }
+  private val extraAkkaConfig = new File(YamlConfigLoader.SUBPATH+File.separator+"akka.conf")
+  if(extraAkkaConfig.exists()){
+    val reader = new FileReader(extraAkkaConfig)
+    cfg.append(IOUtils.toString(reader))
+    reader.close()
   }
 
   /**
