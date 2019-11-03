@@ -35,12 +35,14 @@ class HttpWrapper(private var url: String = null,
                   var headers: List[Header] = List.empty[Header],
                   var payload: Array[Byte] = null,
                   val remoteIP: String = null,
-                  val characterEncoding: String = null) {
+                  val characterEncoding: String = null) extends Serializable {
 
   /**
     * an UriComponents instance based on "url"
     */
   var uriComponents : UriComponents = UriUtil.toUriComponents(url)
+
+  var callId : String = "_"
 
 
   /**
