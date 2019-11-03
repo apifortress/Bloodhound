@@ -6,7 +6,7 @@
 
     <groupId>com.apifortress</groupId>
     <artifactId>afthem</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0-RC0</version>
 
 
     <parent>
@@ -44,6 +44,12 @@
             <artifactId>akka-actor_2.12</artifactId>
             <version>2.5.20</version>
         </dependency>
+       <!-- <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-remote_2.12</artifactId>
+            <version>2.5.20</version>
+        </dependency>-->
+
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-testkit_2.12</artifactId>
