@@ -16,7 +16,7 @@
  */
 package com.apifortress.afthem.messages.beans
 
-import com.apifortress.afthem.UriUtil
+import com.apifortress.afthem.{ReqResUtil, UriUtil}
 import org.springframework.web.util.UriComponents
 
 /**
@@ -114,5 +114,9 @@ class HttpWrapper(private var url: String = null,
     if (payload == null)
       return 0
     return payload.size
+  }
+
+  def getPayloadAsText() : String = {
+    return ReqResUtil.byteArrayToString(this)
   }
 }
