@@ -187,3 +187,6 @@ Filters out any request not matching a certain set of criteria.
       evaluated: true
   ```
 
+
+---
+[Documentation for more exotic actors >>>](07_extra_actors.md) 
