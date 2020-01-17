@@ -1,5 +1,21 @@
 # AFtheM - extra actors
 
+## Type: Transformers
+
+### ReplaceUpstreamActor
+
+Replaces the upstream base URL if a certain condition is verified.
+
+**class:** `com.apifortress.afthem.actors.transformers.ReplaceUpstreamActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `expression`: a SpEL expression returning a boolean. The condition to be matched
+* `upstream`: the new upstream base URL
+
+
 ## Type: Filters
 
 ### ApiKeyFilterActor
