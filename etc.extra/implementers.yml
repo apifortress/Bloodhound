@@ -19,6 +19,11 @@ implementers:
     type: transformer
     instances: 2
     thread_pool: computational
+  - id: replace_upstream
+    class: com.apifortress.afthem.actors.transformers.ReplaceUpstreamActor
+    type: transformer
+    instances: 2
+    thread_pool: computational
 
 # FILTERS
   - id: header_filter

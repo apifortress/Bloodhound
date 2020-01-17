@@ -3,3 +3,7 @@ backends:
 - prefix: '[^/]*/apikeys'
   upstream: 'https://httpbin.org/anything'
   flow_id: apikeys
+
+- prefix: '[^/]*/replace'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: replace_upstream

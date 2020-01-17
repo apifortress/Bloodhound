@@ -1,0 +1,26 @@
+proxy/request:
+  next: transformer/replace_upstream
+  sidecars:
+    - sidecar/access_logger
+
+
+transformer/replace_upstream:
+  next: proxy/upstream_http
+  config:
+    expression: "#msg.request().getHeader('replace-me')=='true'"
+    upstream: 'https://mastiff.apifortress.com/app/api/rest/relay'
+
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+    - sidecar/network_metrics_logger
+
+sidecar/access_logger:
+  config: {}
+
+sidecar/network_metrics_logger:
+  config: {}
