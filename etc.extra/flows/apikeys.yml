@@ -1,0 +1,27 @@
+proxy/request:
+  next: filter/apikeys_filter
+  sidecars:
+    - sidecar/access_logger
+
+
+filter/apikeys_filter:
+  next: proxy/upstream_http
+  config:
+    in: query
+    name: key
+    filename: etc/apikeys.yml
+
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+    - sidecar/network_metrics_logger
+
+sidecar/access_logger:
+  config: {}
+
+sidecar/network_metrics_logger:
+  config: {}

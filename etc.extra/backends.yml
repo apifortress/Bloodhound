@@ -1,0 +1,5 @@
+backends:
+
+- prefix: '[^/]*/apikeys'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: apikeys

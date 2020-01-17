@@ -1,0 +1,7 @@
+api_keys:
+  - api_key: ABC123
+    app_id: John Doe
+    enabled: true
+  - api_key: DEF456
+    app_id: Jane Doe
+    enabled: true
