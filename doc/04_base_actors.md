@@ -200,17 +200,3 @@ Filters out any request not matching a certain set of criteria.
       evaluated: true
   ```
 
-### ApiKeyFilterActor
-
-Filters out any request that does not carry a valid API key in the headers or in the query string.
-This base actor loads the API keys from a YAML file.
-
-**class:** com.apifortress.afthem.actors.filters.ApiKeyFilterActor
-
-**sidecars**: yes
-
-**config:**
-
-* `filename`: path to a file containing the API keys
-* `in`: either `query` (expecting the key in the query string) or `header` (expecting the key in the headers)
-* `name`: key of the field carrying the API key
