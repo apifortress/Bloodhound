@@ -23,6 +23,8 @@ Replaces the upstream base URL if a certain condition is verified.
 Filters out any request that does not carry a valid API key in the headers or in the query string.
 This base actor loads the API keys from a YAML file.
 
+When the API key is recognized, the ApiKey object is stored in the `key` meta of the request.
+
 **class:** com.apifortress.afthem.actors.filters.ApiKeyFilterActor
 
 **sidecars**: yes
@@ -44,3 +46,18 @@ api_keys:
     app_id: Jane Doe
     enabled: true
 ```
+
+### BasicAuthFilterActor
+
+Filters out any request that does not carry a valid basic authentication header. The valid users are stored
+in an htpasswd (md5, apr1) compatible file.
+
+When the authentication succeeds, the username is stored in the `user` meta of the request.
+
+**class:** `com.apifortress.afthem.actors.filters. BasicAuthFilterActor`
+
+**sidecars:**: yes
+
+**config:**
+
+* `filename`: path to a htpasswd-compatible file

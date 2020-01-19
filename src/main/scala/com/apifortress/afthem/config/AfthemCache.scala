@@ -56,6 +56,8 @@ object AfthemCache {
     */
   val apiKeysCache : Cache[String,ApiKeys] = cacheManager.getCache("api_keys",classOf[String],classOf[ApiKeys])
 
+  val htpasswdsCache : Cache[String,String] = cacheManager.getCache("htpasswds",classOf[String],classOf[String])
+
   /**
     * Cache dedicated to parsed expressions
     */

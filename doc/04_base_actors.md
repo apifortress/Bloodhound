@@ -202,4 +202,4 @@ Limits the number of requests/second the gateway will accept and pass through. M
 * `ip_address`: (int) maximum number of requests per second per requesting IP address
 
 ---
-[Documentation for more exotic actors >>>](07_extra_actors.md) 
+[Documentation for more advanced actors >>>](07_extra_actors.md) 
