@@ -9,5 +9,5 @@ jar_location=`dirname ${script_directory}`
 cd ${jar_location}
 echo "Starting AFthem..."
 echo "Memory settings ${JAVA_OPTS}"
-java -Dspring.config.location=etc/application.properties ${JAVA_OPTS} -Dloader.path=modules/ -jar afthem.jar > /dev/null &
+java -Dspring.config.location=etc/application.properties ${JAVA_OPTS} -Dloader.path=modules -jar afthem.jar > /dev/null &
 cd ${current_location}
