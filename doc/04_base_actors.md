@@ -186,7 +186,20 @@ Filters out any request not matching a certain set of criteria.
     - value: "#msg.request().method()!='GET'"
       evaluated: true
   ```
+  
+### ThrottlingActor
 
+Limits the number of requests/second the gateway will accept and pass through. Multiple counting buckets are present.
+
+**class:** `com.apifortress.afthem.actors.filters.ThrottlingActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `global`: (int) the maximum number of requests per second globally for this flow
+* `app_id`: (int) maximum number of requests per second per App ID (as defined by API keys)
+* `ip_address`: (int) maximum number of requests per second per requesting IP address
 
 ---
 [Documentation for more exotic actors >>>](07_extra_actors.md) 
