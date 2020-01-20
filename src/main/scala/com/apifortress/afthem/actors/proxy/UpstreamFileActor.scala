@@ -25,7 +25,7 @@ import com.apifortress.afthem.exceptions.AfthemFlowException
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedResponseMessage}
 import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
-import org.apache.commons.io.IOUtils
+import org.apache.commons.io.{FilenameUtils, IOUtils}
 import org.springframework.web.util.UriComponents
 
 /**
@@ -49,6 +49,14 @@ object UpstreamFileActor {
       fis.close()
     }
   }
+
+  def fileExtensionToContentType(extension : String) : String = {
+    extension match {
+      case "json" => return "application/json"
+      case "xml" => return "text/xml"
+      case _ => return "text/plain"
+    }
+  }
 }
 
 /**
@@ -67,13 +75,10 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
         metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
         val data = UpstreamFileActor.loadFile(getPhase(msg).getConfigString("basepath"),
                                               msg.request.uriComponents,msg.backend)
-        val wrapper = new HttpWrapper("http://origin",
-                                200,
-                              "GET",
-                                      List.empty[Header],
-                                      data,
-                            null,
-                                       ReqResUtil.CHARSET_UTF8)
+        val headers = List(new Header("Content-Type",
+                              UpstreamFileActor.fileExtensionToContentType(FilenameUtils.getExtension(msg.request.uriComponents.getPath))))
+        val wrapper = new HttpWrapper("http://origin", 200, "GET",
+                                      headers, data, null, ReqResUtil.CHARSET_UTF8)
         forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
         metricsLog.debug(m.toString())
       }catch {
