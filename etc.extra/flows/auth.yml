@@ -1,0 +1,25 @@
+proxy/request:
+  next: filter/basic_auth_filter
+  sidecars:
+    - sidecar/access_logger
+
+
+filter/basic_auth_filter:
+  next: proxy/upstream_http
+  config:
+    filename: etc/htpasswd.txt
+
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+    - sidecar/network_metrics_logger
+
+sidecar/access_logger:
+  config: {}
+
+sidecar/network_metrics_logger:
+  config: {}

@@ -4,6 +4,10 @@ backends:
   upstream: 'https://httpbin.org/anything'
   flow_id: apikeys
 
+- prefix: '[^/]*/auth'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: auth
+
 - prefix: '[^/]*/replace'
   upstream: 'https://httpbin.org/anything'
   flow_id: replace_upstream

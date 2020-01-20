@@ -36,6 +36,11 @@ implementers:
     type: filter
     instances: 1
     thread_pool: computational
+  - id: basic_auth_filter
+    class: com.apifortress.afthem.actors.filters.BasicAuthFilterActor
+    type: filter
+    instances: 1
+    thread_pool: computational
 
 # SIDECARS
   - id: access_logger

@@ -48,6 +48,15 @@
         <heap>10</heap>
     </cache>
 
+    <cache alias="htpasswds">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <expiry>
+            <ttl>200</ttl>
+        </expiry>
+        <heap>10</heap>
+    </cache>
+
     <cache alias="http_routers">
         <key-type>java.lang.Integer</key-type>
         <value-type>com.apifortress.afthem.routing.TUpstreamHttpRouter</value-type>
