@@ -1,0 +1,9 @@
+proxy/request:
+  next: proxy/upstream_file
+
+proxy/upstream_file:
+  next: proxy/send_back
+  config:
+    basepath: etc/mocks
+
+proxy/send_back: {}
