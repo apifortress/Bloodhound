@@ -27,7 +27,13 @@ object Implementers {
   /**
     * The Implementers singletoon
     */
-  val instance: Implementers = ConfigLoader.loadImplementers()
+  var instance: Implementers = null
+
+  load()
+
+  def load(): Unit = {
+    instance = ConfigLoader.loadImplementers()
+  }
 
 }
 

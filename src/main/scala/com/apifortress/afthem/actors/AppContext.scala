@@ -19,15 +19,17 @@ package com.apifortress.afthem.actors
 import java.io.{File, FileReader}
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import com.apifortress.afthem.AfthemHttpClient
+import com.apifortress.afthem.{AfthemHttpClient, Metric}
 import com.apifortress.afthem.actors.probing.ProbeHttpActor
-import com.apifortress.afthem.config.Implementers
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
+import com.apifortress.afthem.config.{AfthemCache, Implementers}
 import com.apifortress.afthem.messages.StartActorsCommand
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.io.IOUtils
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 /**
@@ -35,15 +37,28 @@ import scala.concurrent.duration._
   */
 object AppContext {
 
+  val log = LoggerFactory.getLogger(AppContext.getClass)
 
   val DISPATCHER_DEFAULT = "default"
   val DISPATCHER_PROBE = "probe"
 
+  var actorSystem : ActorSystem = null
+  var probeHttpActor : ActorRef = null
+
+
   /**
-    * Akka textual configuration
+    * Spring application context
     */
-  private val cfg : StringBuffer = new StringBuffer()
-  Implementers.instance.threadPools.foreach { pool =>
+  var springApplicationContext : ApplicationContext = null
+
+  def init() = {
+
+    AfthemCache.clearAll()
+    /**
+      * Akka textual configuration
+      */
+    val cfg : StringBuffer = new StringBuffer()
+    Implementers.instance.threadPools.foreach { pool =>
       cfg.append(s"${pool._1} {\n")
       cfg.append("\ttype = \"Dispatcher\"\n")
       cfg.append("\texecutor = \"fork-join-executor\"\n")
@@ -53,60 +68,70 @@ object AppContext {
       cfg.append(s"\t\tparallelism-factor=${pool._2.factor}\n")
       cfg.append("\t}\n")
       cfg.append("}\n")
+    }
+    val extraAkkaConfig = new File(YamlConfigLoader.SUBPATH+File.separator+"akka.conf")
+    if(extraAkkaConfig.exists()){
+      val reader = new FileReader(extraAkkaConfig)
+      cfg.append(IOUtils.toString(reader))
+      reader.close()
+    }
+
+    /**
+      *
+      * The Akka configuration
+      */
+    val config = ConfigFactory.parseString(cfg.toString)
+    /**
+      * The actor system
+      */
+    actorSystem = ActorSystem.create("afthem",config)
+
+    implicit val executor = actorSystem.dispatchers.lookup(DISPATCHER_DEFAULT)
+
+    /*
+     * For each implementer, we create an actor.
+     */
+    val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
+    types.foreach { actorType =>
+      val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
+      supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
+    }
+
+    /* Stale connections are a problem with the Upstream HTTP Client. This is why we need a recurring task that will
+     * check if connections need to be evicted.
+     */
+    actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
+      AfthemHttpClient.closeStaleConnections()
+    })
+
+    val probeExecutorId = if (actorSystem.dispatchers.hasDispatcher(DISPATCHER_PROBE)) DISPATCHER_PROBE
+    else DISPATCHER_DEFAULT
+
+    /**
+      * The actor that runs the probes for multiple upstreams
+      */
+    probeHttpActor = actorSystem.actorOf(Props[ProbeHttpActor].withDispatcher(probeExecutorId),"probeHttpActor")
+
   }
-  private val extraAkkaConfig = new File(YamlConfigLoader.SUBPATH+File.separator+"akka.conf")
-  if(extraAkkaConfig.exists()){
-    val reader = new FileReader(extraAkkaConfig)
-    cfg.append(IOUtils.toString(reader))
-    reader.close()
-  }
 
-  /**
-    *
-    * The Akka configuration
-    */
-  private val config = ConfigFactory.parseString(cfg.toString)
-  /**
-    * The actor system
-    */
-  val actorSystem : ActorSystem = ActorSystem.create("afthem",config)
-
-  implicit val executor = actorSystem.dispatchers.lookup(DISPATCHER_DEFAULT)
-
-   /*
-    * For each implementer, we create an actor.
-    */
-  private val types : List[String] = Implementers.instance.implementers.map(item=> item.actorType).distinct
-  types.foreach { actorType =>
-    val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],actorType),actorType)
-    supervisor ! StartActorsCommand(Implementers.instance.implementers.filter(item => item.actorType == actorType),config)
-  }
-
-  /* Stale connections are a problem with the Upstream HTTP Client. This is why we need a recurring task that will
-   * check if connections need to be evicted.
-   */
-  actorSystem.scheduler.schedule(1 minute, 15 seconds, () => {
-    AfthemHttpClient.closeStaleConnections()
-  })
-
-  val probeExecutorId = if (actorSystem.dispatchers.hasDispatcher(DISPATCHER_PROBE)) DISPATCHER_PROBE
-                        else DISPATCHER_DEFAULT
-
-  /**
-    * The actor that runs the probes for multiple upstreams
-    */
-  val probeHttpActor : ActorRef = actorSystem.actorOf(Props[ProbeHttpActor].withDispatcher(probeExecutorId),"probeHttpActor")
-
-  /**
-    * Spring application context
-    */
-  var springApplicationContext : ApplicationContext = null
 
   /**
     * Inits the AppContext with the Spring application context
     * @param springApplicationContext a Spring application context
     */
-  def init(springApplicationContext : ApplicationContext) : Unit = this.springApplicationContext = springApplicationContext
+  def init(springApplicationContext : ApplicationContext) : Unit = {
+    this.springApplicationContext = springApplicationContext
+    init()
+  }
+
+  def reinit() : Unit = {
+    log.info("Re-initializing system")
+    val m = new Metric()
+    val future = actorSystem.terminate()
+    Await.result(future,1.minute)
+    init()
+    log.info("Re-initialization took: "+ m.toString())
+  }
 
 
 

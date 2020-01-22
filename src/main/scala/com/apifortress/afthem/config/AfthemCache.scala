@@ -74,6 +74,14 @@ object AfthemCache {
 
   val rateLimiterCache : Cache[String,RateLimiter] = cacheManager.getCache("rate_limiter",classOf[String],classOf[RateLimiter])
 
+  def clearAll() : Unit = {
+    configCache.clear()
+    apiKeysCache.clear()
+    htpasswdsCache.clear()
+    expressionsCache.clear()
+    routersCache.clear()
+  }
+
 }
 
 /**

@@ -53,6 +53,10 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     setResult(ResponseEntityUtil.createEntity(data))
   }
 
+  def setData(data : String, status : Int, contentType : String) : Unit = {
+    setResult(ResponseEntityUtil.createEntity(data,status,contentType))
+  }
+
   /**
     * Sets the data to be sent back, when an exception happens
     * @param exception the exception

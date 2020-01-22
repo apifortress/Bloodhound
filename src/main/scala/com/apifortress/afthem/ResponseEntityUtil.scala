@@ -48,6 +48,12 @@ object ResponseEntityUtil {
     return envelopeBuilder.body(response.payload)
   }
 
+  def createEntity(data : String, status : Int, contentType : String) : ResponseEntity[Array[Byte]] = {
+    var envelopeBuilder = ResponseEntity.status(status)
+    envelopeBuilder = envelopeBuilder.header("Content-Type",contentType)
+    return envelopeBuilder.body(data.getBytes("UTF-8"))
+  }
+
   /**
     * Given an exception to be used as a response body and a status code, it produces a ResponseEntity off it
     * @param exception an exception
