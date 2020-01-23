@@ -19,8 +19,9 @@ package com.apifortress.afthem.actors.filters
 import java.io.{File, FileInputStream}
 import java.util.Base64
 
-import com.apifortress.afthem.ReqResUtil
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
+import com.apifortress.afthem.actors.filters.BasicAuthFilterActor.sendUnauthenticated
 import com.apifortress.afthem.config.AfthemCache
 import com.apifortress.afthem.exceptions.UnauthenticatedException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
@@ -40,16 +41,11 @@ object BasicAuthFilterActor {
     */
   def extractCredentials(msg: WebParsedRequestMessage): Array[String] = {
     val authorization = msg.request.getHeader("authorization")
-    if (authorization == null || !authorization.startsWith("Basic")) {
-      sendUnauthenticated(msg)
+    if (authorization == null || !authorization.startsWith("Basic"))
       return null
-    }
-
     val auth64 = new String(Base64.getDecoder.decode(authorization.substring(5).trim))
-    if (!auth64.contains(":")) {
-      sendUnauthenticated(msg)
+    if (!auth64.contains(":"))
       return null
-    }
     return auth64.split(":")
   }
 
@@ -63,10 +59,14 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
 
   override def receive: Receive = {
     case msg: WebParsedRequestMessage =>
-      if (authenticate(msg))
-        forward(msg)
-      else
-        throw new UnauthenticatedException(msg)
+      val m = new Metric()
+      if(authenticate(msg))
+        tellNextActor(msg)
+      else {
+        tellSidecars(msg)
+        sendUnauthenticated(msg)
+      }
+      metricsLog.debug(m.toString())
   }
 
   def authenticate(msg: WebParsedRequestMessage): Boolean = {
