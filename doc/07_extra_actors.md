@@ -54,9 +54,9 @@ in an htpasswd (md5, apr1) compatible file.
 
 When the authentication succeeds, the username is stored in the `user` meta of the request.
 
-**class:** `com.apifortress.afthem.actors.filters. BasicAuthFilterActor`
+**class:** `com.apifortress.afthem.actors.filters.BasicAuthFilterActor`
 
-**sidecars:**: yes
+**sidecars:** yes
 
 **config:**
 
