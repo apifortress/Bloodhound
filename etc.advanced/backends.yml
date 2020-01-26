@@ -8,7 +8,7 @@ backends:
   upstream: 'https://httpbin.org/anything'
   flow_id: auth
 
-- prefix: '[^/]*/replace'
+- prefix: '[^/]*/replace-upstream'
   upstream: 'https://httpbin.org/anything'
   flow_id: replace_upstream
 
