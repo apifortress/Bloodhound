@@ -5,6 +5,9 @@ backends:
   upstream: 'https://httpbin.org/anything'
   flow_id: default
 
+- prefix: '[^/]*/file'
+  flow_id: upstream_file
+
 # This will respond only to 127.0.0.1
 - prefix: '127.0.0.1/transform/headers'
   upstream: 'https://httpbin.org/anything'

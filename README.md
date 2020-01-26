@@ -37,7 +37,7 @@ bin/
 ```
 
 **Note:** we provide multiple *etc* configurations to test, named after the pattern `etc.something`. Copy (or link `ln -s`)
-that directory as `etc` and you're set to go. The `etc.simplest` directory contains some very basic examples, while
+that directory as `etc` and you're set to go. The `etc.base` directory contains some very basic examples, while
 `etc.test` is used by unit tests.
 
 ## Run!

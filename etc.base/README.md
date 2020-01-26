@@ -36,3 +36,13 @@ Serializes an API conversation to a file.
 ```text
 curl -v 127.0.0.1:8080/serialize
 ```
+
+## Route 127.0.0.1:8080/file
+
+Uses a directory of files as backend.
+
+```text
+curl -v 127.0.0.1:8080/file/file1.json
+curl -v 127.0.0.1:8080/file/file2.xml
+curl -v 127.0.0.1:8080/file/file3
+```
