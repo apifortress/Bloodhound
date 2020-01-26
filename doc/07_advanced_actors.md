@@ -16,6 +16,27 @@ Replaces the upstream base URL if a certain condition is verified.
 * `upstream`: the new upstream base URL
 
 
+### TransformPayloadHeader
+
+Alters a textual payload in a message. If the transformer is placed before an Upstream actor, it modifies the request
+payload. If after, it modifies the response payload.
+
+**class:** `com.apifortress.afthem.actors.transformers.TransformPayloadActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `set`: sets the payload with the given value
+* `replace`: replaces all the substrings matching a certain regular expression with the provided string. Example:
+  ```yaml
+    replace:
+      regex: foo
+      value: bar
+  ```
+
+***
+
 ## Type: Filters
 
 ### ApiKeyFilterActor
@@ -61,3 +82,17 @@ When the authentication succeeds, the username is stored in the `user` meta of t
 **config:**
 
 * `filename`: path to a htpasswd-compatible file
+
+### ThrottlingActor
+
+Limits the number of requests/second the gateway will accept and pass through. Multiple counting buckets are present.
+
+**class:** `com.apifortress.afthem.actors.filters.ThrottlingActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `global`: (int) the maximum number of requests per second globally for this flow
+* `app_id`: (int) maximum number of requests per second per App ID (as defined by API keys)
+* `ip_address`: (int) maximum number of requests per second per requesting IP address

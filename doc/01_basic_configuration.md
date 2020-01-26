@@ -138,6 +138,22 @@ Optionally, a `headers` filter can also be applied. For example:
 If the `x-my-header` header is present and is equal to `anything`, the first configuration will be chosen.
 If the given header is equal to `mastiff`, the second configuration will be chosen.
 
+It is also possible to pass extra meta-variables to the flow when a specific flow is picked up. For example:
+
+```yaml
+- prefix: '[^/]*/with/meta'
+  meta:
+    special_var: my_meta
+  upstream: 'https://httpbin.org/anything'
+  flow_id: default
+```
+
+The meta variables can be retrieved in `evaluated` fields by using the following syntax:
+
+```
+#msg.meta().get('special_var').get()
+```
+
 Furthermore, a load balancing functionality is available. Please refer to the [load balancing guide](05_load_balancing.md). 
 
 ## Flows

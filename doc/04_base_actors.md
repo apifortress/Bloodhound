@@ -135,25 +135,6 @@ If after, it modifies the response headers.
        evaluated: false
      
    ```
- 
-### TransformPayloadHeader
-
-Alters a textual payload in a message. If the transformer is placed before an Upstream actor, it modifies the request
-payload. If after, it modifies the response payload.
-
-**class:** `com.apifortress.afthem.actors.transformers.TransformPayloadActor`
-
-**sidecars:** yes
-
-**config:**
-
-* `set`: sets the payload with the given value
-* `replace`: replaces all the substrings matching a certain regular expression with the provided string. Example:
-  ```yaml
-    replace:
-      regex: foo
-      value: bar
-  ```
   
 ***
 
@@ -187,19 +168,6 @@ Filters out any request not matching a certain set of criteria.
       evaluated: true
   ```
   
-### ThrottlingActor
-
-Limits the number of requests/second the gateway will accept and pass through. Multiple counting buckets are present.
-
-**class:** `com.apifortress.afthem.actors.filters.ThrottlingActor`
-
-**sidecars:** yes
-
-**config:**
-
-* `global`: (int) the maximum number of requests per second globally for this flow
-* `app_id`: (int) maximum number of requests per second per App ID (as defined by API keys)
-* `ip_address`: (int) maximum number of requests per second per requesting IP address
-
 ---
-[Documentation for more advanced actors >>>](07_extra_actors.md) 
+
+[Documentation for more advanced actors >>>](07_advanced_actors.md) 
