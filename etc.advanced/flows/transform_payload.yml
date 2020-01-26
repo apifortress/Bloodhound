@@ -1,0 +1,22 @@
+proxy/request:
+  next: proxy/upstream_http
+  sidecars:
+    - sidecar/access_logger
+
+
+proxy/upstream_http:
+  next: transformer/transform_payload
+
+transformer/transform_payload:
+  next: proxy/send_back
+  config:
+    replace:
+      regex: headers
+      value: sent-headers
+
+proxy/send_back:
+  sidecars:
+    - sidecar/access_logger
+
+sidecar/access_logger:
+  config: {}

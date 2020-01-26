@@ -11,3 +11,8 @@ backends:
 - prefix: '[^/]*/replace'
   upstream: 'https://httpbin.org/anything'
   flow_id: replace_upstream
+
+
+- prefix: '[^/]*/transform-payload'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: transform_payload

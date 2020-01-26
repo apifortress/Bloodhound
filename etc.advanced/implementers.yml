@@ -24,6 +24,11 @@ implementers:
     type: transformer
     instances: 2
     thread_pool: computational
+  - id: transform_payload
+    class: com.apifortress.afthem.actors.transformers.TransformPayloadActor
+    type: transformer
+    instances: 2
+    thread_pool: computational
 
 # FILTERS
   - id: header_filter
