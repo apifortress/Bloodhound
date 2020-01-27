@@ -17,7 +17,7 @@
 package com.apifortress.afthem.actors.sidecars
 
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.exceptions.{RejectedRequestException, UnauthorizedException}
+import com.apifortress.afthem.exceptions.{RejectedRequestException, UnauthenticatedException, UnauthorizedException}
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.slf4j.LoggerFactory
 
@@ -43,14 +43,18 @@ class AccessLoggerActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
       val exception = msg.exception.asInstanceOf[RejectedRequestException]
       accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [REJECTED]")
     case msg: ExceptionMessage if(msg.exception.isInstanceOf[UnauthorizedException]) =>
-      // If the exception is the result of a request rejection
+      // If the exception is the result of an unauthorized request rejection
       val exception = msg.exception.asInstanceOf[UnauthorizedException]
       accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [UNAUTHORIZED]")
-    // Logging a request to the gateway
+    case msg: ExceptionMessage if(msg.exception.isInstanceOf[UnauthenticatedException]) =>
+      // If the exception is the result of an unauthenticated request rejection
+      val exception = msg.exception.asInstanceOf[UnauthenticatedException]
+      accessInboundLog.info(exception.message.request.remoteIP + " - " + exception.message.request.method + " " + exception.message.request.getURL() + " [UNAUTHENTICATED]")
     case msg: WebParsedRequestMessage =>
+      // Logging a request to the gateway
       accessInboundLog.info(msg.request.remoteIP+" - "+msg.request.method+" "+msg.request.getURL())
-    // Logging a response from the upstream SPI
     case msg: WebParsedResponseMessage =>
+      // Logging a response from the upstream SPI
       upstreamLog.info("["+msg.response.status+"] - "+msg.response.method+" "+msg.response.getURL())
   }
 
