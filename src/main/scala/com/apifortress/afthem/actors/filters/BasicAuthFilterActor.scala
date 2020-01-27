@@ -19,12 +19,11 @@ package com.apifortress.afthem.actors.filters
 import java.io.{File, FileInputStream}
 import java.util.Base64
 
-import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.actors.filters.BasicAuthFilterActor.sendUnauthenticated
 import com.apifortress.afthem.config.AfthemCache
 import com.apifortress.afthem.exceptions.UnauthenticatedException
 import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessage}
+import com.apifortress.afthem.{Metric, ReqResUtil}
 import org.apache.commons.codec.digest.Md5Crypt
 import org.apache.commons.io.IOUtils
 
@@ -49,10 +48,6 @@ object BasicAuthFilterActor {
     return auth64.split(":")
   }
 
-  def sendUnauthenticated(msg: WebParsedRequestMessage): Unit = {
-    val exceptionMessage = new ExceptionMessage(new UnauthenticatedException(msg), 401, msg)
-    exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
-  }
 }
 
 class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
@@ -63,7 +58,6 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
       if(authenticate(msg))
         tellNextActor(msg)
       else {
-        tellSidecars(msg)
         sendUnauthenticated(msg)
       }
       metricsLog.debug(m.toString())
@@ -104,4 +98,11 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
     val hash2 = Md5Crypt.apr1Crypt(password, salt)
     return hash == hash2
   }
+
+  def sendUnauthenticated(msg: WebParsedRequestMessage): Unit = {
+    val exceptionMessage = new ExceptionMessage(new UnauthenticatedException(msg), 401, msg)
+    tellSidecars(exceptionMessage)
+    exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
+  }
+
 }
