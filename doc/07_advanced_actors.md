@@ -74,6 +74,20 @@ operation is then stored into a `meta`.
 * `contentType`: the expected content type of the inbound data
 * `meta`: the key of the meta that will store the result of the deserialization
 
+### AddMetaActor
+
+Adds a piece of meta information in the message.
+
+**class:** `com.apifortress.afthem.actors.transformers.AddMetaActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `name`: the key of the meta
+* `value`: the value of the meta. If `evaluated` is set to `true`, it can be a dynamic expression
+* `evaluated`: true if you need the value to be evaluated
+
 ***
 
 ## Type: Filters
