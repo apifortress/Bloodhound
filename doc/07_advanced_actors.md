@@ -15,6 +15,29 @@ Replaces the upstream base URL if a certain condition is verified.
 * `expression`: a SpEL expression returning a boolean. The condition to be matched
 * `upstream`: the new upstream base URL
 
+### EndpointIdentifierActor
+Labels the current request based on certain factors. The label is then stored within the request in a variable
+named callId. The use of this actor is to identify calls and take subsequent actions based on the findings.
+
+**class:** `com.apifortress.afthem.actors.transformers.EndpointIdentifierActor`
+
+**config:**
+
+The configuration looks like the following.
+```
+regex:
+    [label1]:
+        url: [pattern]
+        method: [method] 
+    [label2]:
+        url: [pattern]
+        method: [method]
+    
+```
+* `label`: the label to assign
+* `url`: the regex to identify the URL
+* `method` (optional): the method of the call
+
 
 ### TransformPayloadHeader
 
