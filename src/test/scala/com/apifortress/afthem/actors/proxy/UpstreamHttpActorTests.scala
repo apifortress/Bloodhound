@@ -22,7 +22,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.TestProbe
 import com.apifortress.afthem.{Metric, ReqResUtil}
 import com.apifortress.afthem.config.{Backend, Phase}
-import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.beans.{ExpMap, HttpWrapper}
 import com.apifortress.afthem.messages.{BaseMessage, WebParsedRequestMessage, WebParsedResponseMessage}
 import org.apache.commons.io.IOUtils
 import org.apache.http.client.entity.GzipDecompressingEntity
@@ -42,7 +42,7 @@ class UpstreamHttpActorTests {
     val backend = mock(classOf[Backend])
     when(backend.upstream).thenReturn("http://foo.com/bar")
     val message = new WebParsedRequestMessage(null,backend,null,null,null,
-                                                mutable.HashMap.empty[String,Any])
+                                              new ExpMap())
     val upstream = UpstreamHttpActor.extractUpstream(message)
     assertEquals("http://foo.com/bar",upstream)
   }
@@ -51,7 +51,7 @@ class UpstreamHttpActorTests {
   def testExtractUpstreamWithReplaceUpstream() : Unit = {
     val backend = new Backend(null,null,null,"http://foo.com/bar")
     val message = new WebParsedRequestMessage(null,backend,null,null,null,
-                                                mutable.HashMap("__replace_upstream"->"http://bar.com/foo"))
+                                                ExpMap("__replace_upstream"->"http://bar.com/foo"))
     val upstream = UpstreamHttpActor.extractUpstream(message)
     assertEquals("http://bar.com/foo",upstream)
   }

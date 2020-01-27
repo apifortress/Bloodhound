@@ -19,6 +19,7 @@ import java.util.Date
 
 import com.apifortress.afthem.AfthemResult
 import com.apifortress.afthem.config.{Backend, Flow}
+import com.apifortress.afthem.messages.beans.ExpMap
 import javax.servlet.http.HttpServletRequest
 
 import scala.collection.mutable
@@ -38,5 +39,5 @@ case class WebRawRequestMessage(val request: HttpServletRequest,
                                 override val  flow: Flow,
                                 override val deferredResult: AfthemResult,
                                 override val date: Date = new Date(),
-                                override val meta: mutable.HashMap[String,Any] = mutable.HashMap.empty[String,Any])
+                                override val meta: ExpMap = new ExpMap())
       extends BaseMessage(backend, flow, deferredResult, date, meta)

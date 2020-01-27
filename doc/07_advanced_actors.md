@@ -58,6 +58,22 @@ payload. If after, it modifies the response payload.
       value: bar
   ```
 
+### DeserializerActor
+
+Deserialize data coming in form of string or array of bytes, to data structures (maps, arrays). The output of this
+operation is then stored into a `meta`.
+
+**class:** `com.apifortress.afthem.actors.transformers.DeserializerActor`
+
+**sidecars:** yes
+
+**config:**
+
+* `expression`: a path to the piece of data you wish to deserialize. For example `#msg.request().payload()` is the path
+  to the request payload
+* `contentType`: the expected content type of the inbound data
+* `meta`: the key of the meta that will store the result of the deserialization
+
 ***
 
 ## Type: Filters

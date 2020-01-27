@@ -20,6 +20,7 @@ import java.util.Date
 
 import com.apifortress.afthem.AfthemResult
 import com.apifortress.afthem.config.{Backend, Flow}
+import com.apifortress.afthem.messages.beans.ExpMap
 
 import scala.collection.mutable
 
@@ -35,7 +36,7 @@ abstract class BaseMessage(val backend : Backend,
                   val flow: Flow,
                   val deferredResult: AfthemResult,
                   val date : Date = new Date(),
-                  val meta : mutable.HashMap[String,Any] = new mutable.HashMap[String,Any]()) {
+                  val meta : ExpMap = new ExpMap()) {
 
   /**
     * Shallow-clone the message
