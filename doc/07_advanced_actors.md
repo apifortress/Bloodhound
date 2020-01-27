@@ -1,4 +1,4 @@
-# AFtheM - extra actors
+# AFtheM - Advanced actors
 
 ## Type: Transformers
 
@@ -119,3 +119,7 @@ Limits the number of requests/second the gateway will accept and pass through. M
 * `global`: (int) the maximum number of requests per second globally for this flow
 * `app_id`: (int) maximum number of requests per second per App ID (as defined by API keys)
 * `ip_address`: (int) maximum number of requests per second per requesting IP address
+
+---
+
+Read more about [AFtheM Modules](08_modules_actors.md)
