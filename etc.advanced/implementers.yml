@@ -29,6 +29,11 @@ implementers:
     type: transformer
     instances: 2
     thread_pool: computational
+  - id: endpoint_identifier
+    class: com.apifortress.afthem.actors.transformers.EndpointIdentifierActor
+    type: transformer
+    instances: 1
+    thread_pool: computational
 
 # FILTERS
   - id: header_filter
@@ -60,6 +65,9 @@ implementers:
     class: com.apifortress.afthem.actors.sidecars.NetworkMetricsLoggerActor
     type: sidecar
     thread_pool: secondary
+  - id: generic_logger
+    class: com.apifortress.afthem.actors.sidecars.GenericLoggerActor
+    type: sidecar
 
 
 thread_pools:

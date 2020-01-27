@@ -12,7 +12,10 @@ backends:
   upstream: 'https://httpbin.org/anything'
   flow_id: replace_upstream
 
-
 - prefix: '[^/]*/transform-payload'
   upstream: 'https://httpbin.org/anything'
   flow_id: transform_payload
+
+- prefix: '[^/]*/endpoint-identifier'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: endpoint_identifier

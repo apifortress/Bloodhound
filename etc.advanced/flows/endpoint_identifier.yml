@@ -1,0 +1,35 @@
+proxy/request:
+  next: transformer/endpoint_identifier
+  sidecars:
+    - sidecar/access_logger
+
+transformer/endpoint_identifier:
+  next: proxy/upstream_http
+  config:
+    regex:
+      product_list:
+        url: .*/endpoint-identifier/products
+        method: GET
+      product_details:
+        url: .*/endpoint-identifier/products/[0-9]*
+        method: GET
+
+proxy/upstream_http:
+  next: transformer/transform_headers
+  sidecars:
+    - sidecar/generic_logger
+
+transformer/transform_headers:
+  next: proxy/send_back
+  config:
+    add:
+      - name: x-endpoint
+        value: "#msg.request().callId()"
+        evaluated: true
+
+proxy/send_back: {}
+
+sidecar/generic_logger:
+  config:
+    value: "#msg.request().callId()"
+    evaluated: true
