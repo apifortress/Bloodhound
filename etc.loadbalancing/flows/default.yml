@@ -1,0 +1,7 @@
+proxy/request:
+  next: proxy/upstream_http
+
+proxy/upstream_http:
+  next: proxy/send_back
+
+proxy/send_back: {}

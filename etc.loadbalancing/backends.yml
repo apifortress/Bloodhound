@@ -1,0 +1,15 @@
+backends:
+- prefix: '[^/]*/any'
+  upstreams:
+    urls:
+    - 'https://httpbin.org/anything/1'
+    - 'https://httpbin.org/anything/2'
+    probe:
+      count_up: 2
+      count_down: 2
+      method: GET
+      timeout: 2 seconds
+      path: '/test'
+      status: 200
+      interval: 10 seconds
+  flow_id: default
