@@ -56,6 +56,9 @@ object AfthemCache {
     */
   val apiKeysCache : Cache[String,ApiKeys] = cacheManager.getCache("api_keys",classOf[String],classOf[ApiKeys])
 
+  /**
+    * Cache for httpasswd files
+    */
   val htpasswdsCache : Cache[String,String] = cacheManager.getCache("htpasswds",classOf[String],classOf[String])
 
   /**
@@ -72,8 +75,14 @@ object AfthemCache {
   routersCache.getRuntimeConfiguration.registerCacheEventListener(new RoutersCacheListener(),EventOrdering.ORDERED, EventFiring.SYNCHRONOUS, EventType.EXPIRED)
 
 
+  /**
+    * Cache for rate limiters
+    */
   val rateLimiterCache : Cache[String,RateLimiter] = cacheManager.getCache("rate_limiter",classOf[String],classOf[RateLimiter])
 
+  /**
+    * Clears all caches
+    */
   def clearAll() : Unit = {
     configCache.clear()
     apiKeysCache.clear()

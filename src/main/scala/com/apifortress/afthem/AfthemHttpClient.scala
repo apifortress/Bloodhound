@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit
 
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.ApplicationConf
-import javax.net.ssl.SSLContext
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._

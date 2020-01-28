@@ -31,6 +31,9 @@ object Implementers {
 
   load()
 
+  /**
+    * Loads implementers
+    */
   def load(): Unit = {
     instance = ConfigLoader.loadImplementers()
   }

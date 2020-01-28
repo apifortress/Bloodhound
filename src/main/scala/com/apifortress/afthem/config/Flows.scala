@@ -125,13 +125,22 @@ class Phase(var id: String, val next: String, val sidecars: List[String] = List.
 
   /**
     * Retrieves an untyped configuration item
-    * @param key th ekey of the configuration item
+    * @param key the key of the configuration item
     * @return the configuration item or null
     */
   def getConfigAny(key : String) : Any = {
     return getConfig.getOrElse(key,null)
   }
 
+  /**
+    * Retrieves a configuration item meant to represent a duration. If the value is an integer, then 'timeUnit' is used
+    * to convert it into a Duration. If the value is a String, the function expects it to be shaped as a Scala duration,
+    * as in "10 seconds" and parses it into a Duration.
+    * @param key the key of the configuration item
+    * @param default the default value
+    * @param timeUnit a TimeUnit, in case the retrieved key is an integer
+    * @return a Duration object
+    */
   def getConfigDuration(key : String, default : Any, timeUnit : TimeUnit = TimeUnit.MILLISECONDS) : Duration = {
     val value = if(getConfigAny(key) != null) getConfigAny(key) else default
     value match {
@@ -140,6 +149,15 @@ class Phase(var id: String, val next: String, val sidecars: List[String] = List.
     }
   }
 
+  /**
+    * Retrieves a configuration item meant to represent a duration. If the value is an integer, then 'timeUnit' is used
+    * to convert it into milliseconds. If the value is a String, the function expects it to be shaped as a Scala duration,
+    * as in "10 seconds" and parses it into milliseconds.
+    * @param key the key of the configuration item
+    * @param default the default value
+    * @param timeUnit a TimeUnit, in case the retrieved key is an integer
+    * @return the duration in milliseconds
+    */
   def getConfigDurationAsMillis(key : String, default : Any, timeUnit: TimeUnit = TimeUnit.MILLISECONDS) : Int = {
     return getConfigDuration(key, default, timeUnit).toMillis.toInt
   }

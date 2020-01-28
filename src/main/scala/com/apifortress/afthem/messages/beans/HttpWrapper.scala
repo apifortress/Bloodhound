@@ -42,6 +42,9 @@ class HttpWrapper(private var url: String = null,
     */
   var uriComponents : UriComponents = UriUtil.toUriComponents(url)
 
+  /**
+    * Identifier of the endpoint being called. Populated by EndpointIdentifierActor
+    */
   var callId : String = "_"
 
 
@@ -74,6 +77,11 @@ class HttpWrapper(private var url: String = null,
       return null
   }
 
+  /**
+    * Verifies if a header exists
+    * @param name the name of the header
+    * @return true if the header exists
+    */
   def containsHeader(name : String) : Boolean = {
     return headers.count(item => item.key.toLowerCase == name.toLowerCase()) > 0
   }
@@ -110,12 +118,20 @@ class HttpWrapper(private var url: String = null,
     headers = headers:+new Header(key,value)
   }
 
+  /**
+    * Returns the size of the payload in bytes
+    * @return the size of the payload
+    */
   def getPayloadSize() : Long = {
     if (payload == null)
       return 0
     return payload.size
   }
 
+  /**
+    * Converts the payload to text, and returns it
+    * @return the payload as text
+    */
   def getPayloadAsText() : String = {
     return ReqResUtil.byteArrayToString(this)
   }

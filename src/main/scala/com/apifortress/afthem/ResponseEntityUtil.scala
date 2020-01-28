@@ -48,6 +48,13 @@ object ResponseEntityUtil {
     return envelopeBuilder.body(response.payload)
   }
 
+  /**
+    * * Given a response in the form of a string, it produces a ResponseEntity off it
+    * @param data the data in string format
+    * @param status a status code
+    * @param contentType a content-type
+    * @return a response entity
+    */
   def createEntity(data : String, status : Int, contentType : String) : ResponseEntity[Array[Byte]] = {
     var envelopeBuilder = ResponseEntity.status(status)
     envelopeBuilder = envelopeBuilder.header("Content-Type",contentType)

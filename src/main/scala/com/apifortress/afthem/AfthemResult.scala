@@ -23,7 +23,9 @@ import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.async.DeferredResult
 
-
+/**
+  * Companion object for AfthemResult
+  */
 object AfthemResult {
   val metricsLog : Logger = LoggerFactory.getLogger("_metrics.AfthemResult")
 }

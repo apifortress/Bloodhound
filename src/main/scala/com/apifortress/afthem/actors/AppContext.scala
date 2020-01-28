@@ -51,6 +51,9 @@ object AppContext {
     */
   var springApplicationContext : ApplicationContext = null
 
+  /**
+    * Initializes the AppContext
+    */
   def init() = {
 
     AfthemCache.clearAll()
@@ -124,6 +127,9 @@ object AppContext {
     init()
   }
 
+  /**
+    * Reinitializes the AppContext
+    */
   def reinit() : Unit = {
     log.info("Re-initializing system")
     val m = new Metric()
