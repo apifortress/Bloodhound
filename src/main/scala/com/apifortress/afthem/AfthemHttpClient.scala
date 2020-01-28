@@ -16,17 +16,24 @@
   */
 package com.apifortress.afthem
 
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 
 import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.ApplicationConf
+import javax.net.ssl.SSLContext
 import org.apache.http.HttpResponse
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods._
 import org.apache.http.concurrent.FutureCallback
+import org.apache.http.config.RegistryBuilder
+import org.apache.http.conn.ssl.NoopHostnameVerifier
 import org.apache.http.impl.nio.client.{CloseableHttpAsyncClient, HttpAsyncClients}
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
 import org.apache.http.impl.nio.reactor.{DefaultConnectingIOReactor, IOReactorConfig}
+import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
+import org.apache.http.nio.conn.{NoopIOSessionStrategy, SchemeIOSessionStrategy}
+import org.apache.http.ssl.{SSLContextBuilder, TrustStrategy}
 
 /**
   * A shared asynchronous HTTP client for all Afthem needs
@@ -64,7 +71,13 @@ object AfthemHttpClient {
 
   private val reactorConfig = IOReactorConfig.custom().setIoThreadCount(maxThreads).build()
   private val ioReactor = new DefaultConnectingIOReactor(reactorConfig)
-  private val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor)
+  private val sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy {
+                                override def isTrusted(x509Certificates: Array[X509Certificate], s: String): Boolean = true
+                            }).build()
+
+  private val connectionManager = new PoolingNHttpClientConnectionManager(ioReactor,
+                                    RegistryBuilder.create[SchemeIOSessionStrategy]().register("http",NoopIOSessionStrategy.INSTANCE)
+                                    .register("https",new SSLIOSessionStrategy(sslContext, NoopHostnameVerifier.INSTANCE)).build())
 
   connectionManager.setMaxTotal(maxConnections)
 
