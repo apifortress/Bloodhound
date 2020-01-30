@@ -1,0 +1,29 @@
+proxy/request:
+  next: proxy/upstream_http
+
+proxy/upstream_http:
+  next: transformer/deserializer
+
+transformer/deserializer:
+  next: transformer/add_meta
+  config:
+    expression: "#msg.response().payload()"
+    contentType: application/json
+    meta: deserialized
+
+transformer/add_meta:
+  next: transformer/transform_headers
+  config:
+    name: detected_origin
+    value: "#msg.meta().get('deserialized').get().get('origin').get()"
+    evaluated: true
+
+transformer/transform_headers:
+  next: proxy/send_back
+  config:
+    add:
+      - name: x-detected-origin
+        value: "#msg.meta().get('detected_origin').get()"
+        evaluated: true
+
+proxy/send_back: {}

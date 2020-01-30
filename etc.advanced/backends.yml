@@ -19,3 +19,7 @@ backends:
 - prefix: '[^/]*/endpoint-identifier'
   upstream: 'https://httpbin.org/anything'
   flow_id: endpoint_identifier
+
+- prefix: '[^/]*/deserialize/addmeta'
+  upstream: 'https://httpbin.org/anything'
+  flow_id: deserialize_addmeta

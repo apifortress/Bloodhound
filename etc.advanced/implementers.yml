@@ -34,6 +34,16 @@ implementers:
     type: transformer
     instances: 1
     thread_pool: computational
+  - id: add_meta
+    class: com.apifortress.afthem.actors.transformers.AddMetaActor
+    type: transformer
+    instances: 1
+    thread_pool: computational
+  - id: deserializer
+    class: com.apifortress.afthem.actors.transformers.DeserializerActor
+    type: transformer
+    instances: 1
+    thread_pool: computational
 
 # FILTERS
   - id: header_filter
