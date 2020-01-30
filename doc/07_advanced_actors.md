@@ -39,7 +39,7 @@ regex:
 * `method` (optional): the method of the call
 
 
-### TransformPayloadHeader
+### TransformPayloadActor
 
 Alters a textual payload in a message. If the transformer is placed before an Upstream actor, it modifies the request
 payload. If after, it modifies the response payload.
