@@ -1,7 +1,7 @@
 version: '2'
 services:
    afthem:
-      image: apifortress/afthem:1.2.0-RC1
+      image: apifortress/afthem:1.2.0
       volumes:
       - ./etc:/opt/afthem/etc
       - ./docker_log:/opt/afthem/log
