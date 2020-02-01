@@ -68,13 +68,13 @@ class AfthemController {
         AppContext.actorSystem.actorSelection("/user/proxy/request") ! message
       } else {
         // If none are found, we return an exception
-        deferredResult.setData(new BackendConfigurationMissingException, 404, ReqResUtil.extractAccept(request))
+        deferredResult.setData(new BackendConfigurationMissingException, ReqResUtil.STATUS_NOT_FOUND, ReqResUtil.extractAccept(request))
       }
     }catch {
       // Generic exception. Something went wrong
       case e: Exception =>
         AfthemController.log.error("Error in controller",e)
-        deferredResult.setData(new GenericException("controller"),500, ReqResUtil.extractAccept(request))
+        deferredResult.setData(new GenericException("controller"),ReqResUtil.STATUS_INTERNAL, ReqResUtil.extractAccept(request))
 
     }
     AfthemController.metricsLog.debug(m.toString())
