@@ -48,9 +48,9 @@ class ThrottlingActor(phaseId : String) extends AbstractAfthemActor(phaseId : St
          shouldProceed(msg.request.remoteIP,phase.getConfigInt("ip_address",-1)))
         forward(msg)
       else {
-        val exceptionMessage = new ExceptionMessage(new TooManyRequestsException(msg),422, msg)
+        val exceptionMessage = new ExceptionMessage(new TooManyRequestsException(msg),ReqResUtil.STATUS_UNPROCESSABLE, msg)
         // Respond to the controller
-        exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
+        exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, ReqResUtil.MIME_JSON))
         // and let sidecars know about the rejection
         tellSidecars(exceptionMessage)
       }

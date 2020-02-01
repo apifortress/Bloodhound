@@ -16,8 +16,11 @@
   */
 package com.apifortress.afthem.messages
 
+import com.apifortress.afthem.ReqResUtil
+
 /**
   * A message to carry an exception back to the requesting agent
+ *
   * @param exception the exception
   * @param status the status to return
   * @param message the message
@@ -31,7 +34,7 @@ class ExceptionMessage(val exception: Exception,
     * Will respond to the requesting agent with the given content type
     * @param contentType the content type, typically the value of the accept header
     */
-  def respond(contentType : String = "application/json"): Unit = {
+  def respond(contentType : String = ReqResUtil.MIME_JSON): Unit = {
     if(message.deferredResult != null)
       deferredResult.setData(exception,status, contentType, message)
   }

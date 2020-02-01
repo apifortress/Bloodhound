@@ -25,6 +25,17 @@ import com.apifortress.afthem.messages.{ExceptionMessage, WebParsedRequestMessag
 import com.apifortress.afthem.{Metric, Parsers, ReqResUtil}
 import org.apache.commons.io.IOUtils
 
+object ApiKeyFilterActor {
+
+  val ATTR_IN = "in"
+  val ATTR_NAME = "name"
+  val ATTR_KEY = "key"
+  val ATTR_HEADER = "header"
+  val ATTR_FILENAME = "filename"
+  val IN_QUERY = "query"
+  val IN_HEADER = "header"
+}
+
 /**
   * Basic API Key filter loading keys from a YAML file
   * @param phaseId the phaseId the phase ID
@@ -36,16 +47,17 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
       try {
         val m = new Metric()
         val phase = getPhase(msg)
-        val foundKey = determineKey(phase.getConfigString("in"), phase.getConfigString("name"), msg)
+        val foundKey = determineKey(phase.getConfigString(ApiKeyFilterActor.ATTR_IN),
+                                                            phase.getConfigString(ApiKeyFilterActor.ATTR_NAME), msg)
         val key = findKey(foundKey, phase)
         if(key.isDefined && key.get.enabled){
-          msg.meta.put("key",key.get)
+          msg.meta.put(ApiKeyFilterActor.ATTR_KEY, key.get)
           tellNextActor(msg)
         } else {
           log.debug("Message rejected")
-          val exceptionMessage = new ExceptionMessage(new UnauthorizedException(msg), 401, msg)
+          val exceptionMessage = new ExceptionMessage(new UnauthorizedException(msg), ReqResUtil.STATUS_UNAUTHORIZED, msg)
           // Respond to the controller
-          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
+          exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, ReqResUtil.MIME_JSON))
           // and let sidecars know about the rejection
           tellSidecars(exceptionMessage)
         }
@@ -82,7 +94,7 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     * @return an optional ApiKey object
     */
   protected def findKey(key : String, phase : Phase) : Option[ApiKey] = {
-    return loadKeys(phase.getConfigString("filename","apikeys.yml")).getApiKey(key)
+    return loadKeys(phase.getConfigString(ApiKeyFilterActor.ATTR_FILENAME,"apikeys.yml")).getApiKey(key)
   }
 
   /**
@@ -94,8 +106,8 @@ class ApiKeyFilterActor(phaseId : String) extends AbstractAfthemActor(phaseId : 
     */
   protected def determineKey(in : String, name : String, msg : WebParsedRequestMessage) : String = {
     val found = in match {
-      case "header" => msg.request.getHeader(name)
-      case "query" => msg.request.uriComponents.getQueryParams.getFirst(name)
+      case ApiKeyFilterActor.IN_HEADER => msg.request.getHeader(name)
+      case ApiKeyFilterActor.IN_QUERY => msg.request.uriComponents.getQueryParams.getFirst(name)
     }
     return found
   }

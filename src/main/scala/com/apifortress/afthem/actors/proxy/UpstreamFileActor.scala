@@ -52,9 +52,9 @@ object UpstreamFileActor {
 
   def fileExtensionToContentType(extension : String) : String = {
     extension match {
-      case "json" => return "application/json"
-      case "xml" => return "text/xml"
-      case _ => return "text/plain"
+      case "json" => return ReqResUtil.MIME_JSON
+      case "xml" => return ReqResUtil.MIME_XML
+      case _ => return ReqResUtil.MIME_PLAIN_TEXT
     }
   }
 }
@@ -77,7 +77,7 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
                                               msg.request.uriComponents,msg.backend)
         val headers = List(new Header("Content-Type",
                               UpstreamFileActor.fileExtensionToContentType(FilenameUtils.getExtension(msg.request.uriComponents.getPath))))
-        val wrapper = new HttpWrapper("http://origin", 200, "GET",
+        val wrapper = new HttpWrapper("http://origin", ReqResUtil.STATUS_OK, "GET",
                                       headers, data, null, ReqResUtil.CHARSET_UTF8)
         forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
         metricsLog.debug(m.toString())

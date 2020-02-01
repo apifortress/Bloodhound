@@ -100,9 +100,9 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
   }
 
   def sendUnauthenticated(msg: WebParsedRequestMessage): Unit = {
-    val exceptionMessage = new ExceptionMessage(new UnauthenticatedException(msg), 401, msg)
+    val exceptionMessage = new ExceptionMessage(new UnauthenticatedException(msg), ReqResUtil.STATUS_UNAUTHORIZED, msg)
     tellSidecars(exceptionMessage)
-    exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, "application/json"))
+    exceptionMessage.respond(ReqResUtil.extractAcceptFromMessage(msg, ReqResUtil.MIME_JSON))
   }
 
 }

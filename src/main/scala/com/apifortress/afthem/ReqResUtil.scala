@@ -86,6 +86,11 @@ object ReqResUtil {
     */
   val CHARSET_UTF8 = "UTF-8"
 
+  val STATUS_OK = 200
+  val STATUS_UNAUTHORIZED = 401
+  val STATUS_UNPROCESSABLE = 422
+
+
   /**
     * Parses servlet headers into a list of tuples and collects a map of interesting headers
     * @param request an HttpServletRequest to parse the headers from

@@ -30,7 +30,7 @@ import org.springframework.web.util.UriComponents
   * @param remoteIP the remote IP of the requesting agent (typically null when it's a response)
   */
 class HttpWrapper(private var url: String = null,
-                  val status: Int = 200,
+                  val status: Int = ReqResUtil.STATUS_OK,
                   val method: String = null,
                   var headers: List[Header] = List.empty[Header],
                   var payload: Array[Byte] = null,
