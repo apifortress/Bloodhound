@@ -20,7 +20,7 @@ import akka.actor.SupervisorStrategy.{Restart, Resume}
 import akka.actor.{Actor, OneForOneStrategy, Props, SupervisorStrategy}
 import akka.routing.SmallestMailboxPool
 import com.apifortress.afthem.ReqResUtil
-import com.apifortress.afthem.exceptions.AfthemFlowException
+import com.apifortress.afthem.exceptions.{AfthemFlowException, AfthemSevereException}
 import com.apifortress.afthem.messages.{ExceptionMessage, StartActorsCommand}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -47,6 +47,9 @@ class GenericSupervisorActor(val id : String) extends Actor {
       case exception : AfthemFlowException =>
         new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
         Resume
+      case exception : AfthemSevereException =>
+        new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
+        Restart
       case _ => Restart
     }
   override def receive: Receive = {
