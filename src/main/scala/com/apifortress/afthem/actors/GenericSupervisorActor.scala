@@ -44,12 +44,12 @@ class GenericSupervisorActor(val id : String) extends Actor {
     */
   override val supervisorStrategy : SupervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
-      case exception : AfthemFlowException =>
-        new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
-        Resume
       case exception : AfthemSevereException =>
-        new ExceptionMessage(exception,500,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
+        new ExceptionMessage(exception,ReqResUtil.STATUS_INTERNAL,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
         Restart
+      case exception : AfthemFlowException =>
+        new ExceptionMessage(exception,ReqResUtil.STATUS_INTERNAL,exception.message).respond(ReqResUtil.extractAcceptFromMessage(exception.message))
+        Resume
       case _ => Restart
     }
   override def receive: Receive = {
