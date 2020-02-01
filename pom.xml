@@ -6,7 +6,7 @@
 
     <groupId>com.apifortress</groupId>
     <artifactId>afthem</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
 
     <parent>
@@ -140,7 +140,7 @@
             <artifactId>jdbc</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </dependency>
 
     </dependencies>
