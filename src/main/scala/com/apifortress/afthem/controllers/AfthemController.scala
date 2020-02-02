@@ -96,7 +96,8 @@ class AfthemController {
     val map = Map("clusterId" -> ConfigLoader.rootConfig.clusterId,
                   "bootstrapTime" -> Main.bootstrapTime,
                   "version" -> properties.getProperty("Implementation-Version"),
-                  "springBootVersion" -> properties.get("Spring-Boot-Version"))
+                  "springBootVersion" -> properties.get("Spring-Boot-Version"),
+                  "appContextInitTime" -> AppContext.initializationTime)
     deferredResult.setData(Parsers.serializeAsJsonString(map),200,ReqResUtil.MIME_JSON)
     return deferredResult
   }

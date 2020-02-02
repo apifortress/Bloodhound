@@ -17,6 +17,7 @@
 package com.apifortress.afthem.actors
 
 import java.io.{File, FileReader}
+import java.util.Date
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.apifortress.afthem.{AfthemHttpClient, Metric}
@@ -45,6 +46,7 @@ object AppContext {
   var actorSystem : ActorSystem = null
   var probeHttpActor : ActorRef = null
 
+  var initializationTime : Date = _
 
   /**
     * Spring application context
@@ -55,6 +57,8 @@ object AppContext {
     * Initializes the AppContext
     */
   def init() = {
+
+    initializationTime = new Date()
 
     AfthemCache.clearAll()
     /**

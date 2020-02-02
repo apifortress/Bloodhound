@@ -35,6 +35,7 @@ object Main {
   var bootstrapTime : Date = _
 
   def main(args: Array[String]): Unit = {
+    bootstrapTime = new Date()
     log.info("Afthem starting...")
     Runtime.getRuntime.addShutdownHook(new Thread()
     {
@@ -45,7 +46,6 @@ object Main {
       }
     })
     AppContext.init(SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args))
-    bootstrapTime = new Date()
   }
 
 
