@@ -16,6 +16,8 @@
   */
 package com.apifortress.afthem
 
+import java.util.Date
+
 import com.apifortress.afthem.actors.AppContext
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -30,6 +32,8 @@ object Main {
 
   private val log = LoggerFactory.getLogger(classOf[Main])
 
+  var bootstrapTime : Date = _
+
   def main(args: Array[String]): Unit = {
     log.info("Afthem starting...")
     Runtime.getRuntime.addShutdownHook(new Thread()
@@ -41,6 +45,7 @@ object Main {
       }
     })
     AppContext.init(SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args))
+    bootstrapTime = new Date()
   }
 
 

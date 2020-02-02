@@ -17,9 +17,11 @@
 package com.apifortress.afthem.controllers
 
 
-import com.apifortress.afthem.{AfthemResult, Main, Metric, ReqResUtil}
+import java.util.Properties
+
+import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AppContext
-import com.apifortress.afthem.config.{Backends, Flows}
+import com.apifortress.afthem.config.{Backends, ConfigLoader, Flows, RootConfigConf}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
 import com.apifortress.afthem.messages.WebRawRequestMessage
 import javax.servlet.Filter
@@ -30,6 +32,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation._
 import org.springframework.web.filter.HiddenHttpMethodFilter
+
+import scala.tools.nsc.interpreter.InputStream
 
 /**
   * The companion object fo the main controller
@@ -54,6 +58,8 @@ class AfthemController {
   def proxy(request: HttpServletRequest): AfthemResult = {
     val m = new Metric()
     val deferredResult = new AfthemResult
+    if(request.getRequestURI == "/_afthem/status")
+      return handleStatus(deferredResult)
     try {
       // find a suitable backend for the inbound URL
       val backendOption = Backends.instance.findByRequest(request)
@@ -78,6 +84,20 @@ class AfthemController {
 
     }
     AfthemController.metricsLog.debug(m.toString())
+    return deferredResult
+  }
+
+  private def handleStatus(deferredResult : AfthemResult) : AfthemResult = {
+    val inputStream : InputStream = getClass().getClassLoader().getResource("META-INF/MANIFEST.MF").getContent.asInstanceOf[InputStream]
+    val properties = new Properties()
+    properties.load(inputStream)
+    inputStream.close()
+
+    val map = Map("clusterId" -> ConfigLoader.rootConfig.clusterId,
+                  "bootstrapTime" -> Main.bootstrapTime,
+                  "version" -> properties.getProperty("Implementation-Version"),
+                  "springBootVersion" -> properties.get("Spring-Boot-Version"))
+    deferredResult.setData(Parsers.serializeAsJsonString(map),200,ReqResUtil.MIME_JSON)
     return deferredResult
   }
 

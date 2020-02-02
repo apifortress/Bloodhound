@@ -16,13 +16,14 @@
  */
 package com.apifortress.afthem.config
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonInclude, JsonProperty}
 
 /**
   * The root configuration.
   * @param configLoader the configuration loader definition
   */
-case class RootConfigConf(@JsonProperty("config_loader") val configLoader : ConfigLoaderConf, val mime : Mime)
+case class RootConfigConf(@JsonProperty("config_loader") val configLoader : ConfigLoaderConf, val mime : Mime,
+                          @JsonInclude(JsonInclude.Include.NON_NULL) @JsonProperty("cluster_id") val clusterId : String = "default")
 
 /**
   * The configuration loader definition
