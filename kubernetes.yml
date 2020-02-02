@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: afthem
-          image: apifortress/afthem:1.2.0
+          image: apifortress/afthem:1.2.1-RC0
           env:
             - name: memorySettings
               value: "-Xms1024m -Xmx2048m"
