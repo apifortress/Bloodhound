@@ -24,7 +24,7 @@ import com.apifortress.afthem.{AfthemHttpClient, Metric}
 import com.apifortress.afthem.actors.probing.ProbeHttpActor
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import com.apifortress.afthem.config.{AfthemCache, Implementers}
-import com.apifortress.afthem.messages.StartActorsCommand
+import com.apifortress.afthem.messages.{StartActorsCommand, StartIngressesCommand}
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -118,6 +118,11 @@ object AppContext {
       * The actor that runs the probes for multiple upstreams
       */
     probeHttpActor = actorSystem.actorOf(Props[ProbeHttpActor].withDispatcher(probeExecutorId),"probeHttpActor")
+
+    if( Implementers.instance.ingresses !=null ) {
+        val supervisor = actorSystem.actorOf(Props.create(classOf[GenericSupervisorActor],"ingress").withDispatcher(DISPATCHER_DEFAULT),"ingress")
+        supervisor ! new StartIngressesCommand(Implementers.instance.ingresses, config)
+    }
 
   }
 

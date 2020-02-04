@@ -30,6 +30,9 @@ import com.apifortress.afthem.{Metric, ReqResUtil, UriUtil}
 class RequestActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
+    case msg : WebParsedRequestMessage =>
+      msg.meta.put("__process_start",System.nanoTime())
+      forward(msg)
     case msg : WebRawRequestMessage =>
       try {
         val m = new Metric

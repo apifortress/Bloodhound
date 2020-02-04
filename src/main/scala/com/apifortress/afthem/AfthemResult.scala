@@ -44,6 +44,10 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
         AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get("__start").get.asInstanceOf[Long]).toString())
     }
   )
+
+  def onSetResult() : Unit = {
+
+  }
   /**
     * Sets the data to be sent back
     * @param data the data to be sent back
@@ -53,10 +57,12 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     m = new Metric()
     this.message = message
     setResult(ResponseEntityUtil.createEntity(data))
+    onSetResult()
   }
 
   def setData(data : String, status : Int, contentType : String) : Unit = {
     setResult(ResponseEntityUtil.createEntity(data,status,contentType))
+    onSetResult()
   }
 
   /**
@@ -74,6 +80,7 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
      * request header) gets sanitized to become a content type
      */
     setResult(ResponseEntityUtil.createEntity(exception, status, ReqResUtil.determineMimeFromContentType(contentType)))
+    onSetResult()
   }
 
 }

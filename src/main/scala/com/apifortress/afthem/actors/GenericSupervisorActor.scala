@@ -21,7 +21,7 @@ import akka.actor.{Actor, OneForOneStrategy, Props, SupervisorStrategy}
 import akka.routing.SmallestMailboxPool
 import com.apifortress.afthem.ReqResUtil
 import com.apifortress.afthem.exceptions.{AfthemFlowException, AfthemSevereException}
-import com.apifortress.afthem.messages.{ExceptionMessage, StartActorsCommand}
+import com.apifortress.afthem.messages.{ExceptionMessage, StartActorsCommand, StartIngressesCommand}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._
@@ -61,6 +61,16 @@ class GenericSupervisorActor(val id : String) extends Actor {
         if(implementer.instances > 1)
           ref = SmallestMailboxPool(implementer.instances).props(routeeProps = ref).withDispatcher(tp)
         context.actorOf(ref, implementer.id)
+      }
+    case cmd : StartIngressesCommand =>
+      cmd.ingresses.foreach{ ingress =>
+        //val tp = if (ingress.threadPool != null) ingress.threadPool else AppContext.DISPATCHER_DEFAULT
+        val theClass = Class.forName(ingress.className)
+        var prop = Props.create(theClass,id+"/"+ingress.id)//.withDispatcher(tp)
+        /*if(implementer.instances > 1)
+          ref = SmallestMailboxPool(ingress.instances).props(routeeProps = ref).withDispatcher(tp)*/
+        val ref = context.actorOf(prop, ingress.id)
+        ref ! ingress
       }
   }
 }
