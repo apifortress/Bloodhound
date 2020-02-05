@@ -55,4 +55,14 @@ class UriUtilTests {
     assertEquals("http://foo.com/bar?foo=bar",
                   UriUtil.composeUriAndQuery("http://foo.com/bar","foo=bar"))
   }
+
+  @Test
+  def testReplacePort() : Unit = {
+    assertEquals("http://www.google.com", UriUtil.replacePort("http://www.google.com",80))
+    assertEquals("http://www.google.com", UriUtil.replacePort("http://www.google.com:8080",80))
+    assertEquals("http://www.google.com:8090", UriUtil.replacePort("http://www.google.com:8080",8090))
+    assertEquals("http://www.google.com:8090/foo", UriUtil.replacePort("http://www.google.com:8080/foo",8090))
+    assertEquals("http://www.google.com:8090/foo?foo=bar", UriUtil.replacePort("http://www.google.com:8080/foo?foo=bar",8090))
+    assertEquals("https://www.google.com/foo?foo=bar", UriUtil.replacePort("https://www.google.com/foo?foo=bar",443))
+  }
 }

@@ -94,4 +94,16 @@ object UriUtil {
   def toUriComponents(uri : String): UriComponents = {
     return UriComponentsBuilder.fromUriString(uri).build()
   }
+
+  def replacePort(uri : String, port : Int) : String = {
+    val components = toUriComponents(uri)
+    val builder = new StringBuilder
+    builder.append(components.getScheme+"://").append(components.getHost)
+    if(port != 80 && port != 443 && port != -1)
+      builder.append(":").append(port)
+    builder.append(components.getPath)
+    if(components.getQuery != null && components.getQuery.length>0)
+      builder.append("?").append(components.getQuery)
+    return builder.toString()
+  }
 }
