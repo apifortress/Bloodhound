@@ -95,6 +95,13 @@ object UriUtil {
     return UriComponentsBuilder.fromUriString(uri).build()
   }
 
+  /**
+    * Given a certain URI, it replaces the port with the given one and returns it.
+    * If the ports are 80, 443 or -1, no port will be explicitly introduced in the returned URI
+    * @param uri a URI
+    * @param port the port
+    * @return the transformed URI
+    */
   def replacePort(uri : String, port : Int) : String = {
     val components = toUriComponents(uri)
     val builder = new StringBuilder
@@ -107,6 +114,11 @@ object UriUtil {
     return builder.toString()
   }
 
+  /**
+    * Replaces http:// with https:// in a string
+    * @param uri a URI
+    * @return the transformed URI
+    */
   def secure(uri : String) : String = uri.replace("http://","https://")
 
 }

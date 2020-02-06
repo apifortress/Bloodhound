@@ -35,7 +35,14 @@ object AfthemResult {
   */
 class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
 
+  /**
+    * Metrics collector
+    */
   var m : Metric = null
+
+  /**
+    * The message that was being processed when the value was set
+    */
   var message: BaseMessage = null
 
   onCompletion(() => {
@@ -45,6 +52,9 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     }
   )
 
+  /**
+    * Placeholder method that gets triggered every time a message is set
+    */
   def onSetResult() : Unit = {
 
   }
@@ -60,9 +70,15 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     onSetResult()
   }
 
+  /**
+    * Sets the data to send back. This method is generally used by controllers and ingress to report issues, before
+    * a message is composed
+    * @param data the data
+    * @param status the status to be returned
+    * @param contentType the content type to be used
+    */
   def setData(data : String, status : Int, contentType : String) : Unit = {
     setResult(ResponseEntityUtil.createEntity(data,status,contentType))
-    onSetResult()
   }
 
   /**
@@ -80,7 +96,6 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
      * request header) gets sanitized to become a content type
      */
     setResult(ResponseEntityUtil.createEntity(exception, status, ReqResUtil.determineMimeFromContentType(contentType)))
-    onSetResult()
   }
 
 }
