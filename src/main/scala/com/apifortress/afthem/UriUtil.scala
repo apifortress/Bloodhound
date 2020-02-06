@@ -106,4 +106,7 @@ object UriUtil {
       builder.append("?").append(components.getQuery)
     return builder.toString()
   }
+
+  def secure(uri : String) : String = uri.replace("http://","https://")
+
 }
