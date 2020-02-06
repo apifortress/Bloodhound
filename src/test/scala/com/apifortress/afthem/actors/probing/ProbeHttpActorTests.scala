@@ -1,6 +1,7 @@
 package com.apifortress.afthem.actors.probing
 
 import akka.actor.{ActorSystem, Props}
+import com.apifortress.afthem.actors.AppContext
 import com.apifortress.afthem.config.{AfthemCache, Backends, Probe}
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
 import com.apifortress.afthem.routing.{RoutedUrl, UpstreamsHttpRouters}
@@ -12,6 +13,7 @@ class ProbeHttpActorTests {
   @Test
   def testProbe() : Unit = {
     YamlConfigLoader.SUBPATH = "etc.test"
+    AppContext.init()
     AfthemCache.routersCache.clear()
     AfthemCache.configCache.clear()
     val backends = Backends.instance()
@@ -23,7 +25,7 @@ class ProbeHttpActorTests {
     actor ! router
     actor ! router
     actor ! router
-    Thread.sleep(5000)
+    Thread.sleep(10000)
     router.urls.foreach(p => assertFalse(p.upStatus))
 
   }

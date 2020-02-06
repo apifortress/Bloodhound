@@ -22,7 +22,7 @@ import org.junit.Assert._
 object YamlConfigLoaderTests {
   @BeforeClass
   def before(): Unit ={
-    YamlConfigLoader.SUBPATH = "etc.simplest"
+    YamlConfigLoader.SUBPATH = "etc.test"
   }
 }
 class YamlConfigLoaderTests {
