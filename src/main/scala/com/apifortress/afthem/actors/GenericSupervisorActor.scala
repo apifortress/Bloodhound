@@ -64,11 +64,9 @@ class GenericSupervisorActor(val id : String) extends Actor {
       }
     case cmd : StartIngressesCommand =>
       cmd.ingresses.foreach{ ingress =>
-        //val tp = if (ingress.threadPool != null) ingress.threadPool else AppContext.DISPATCHER_DEFAULT
+        val tp = if (ingress.threadPool != null) ingress.threadPool else AppContext.DISPATCHER_DEFAULT
         val theClass = Class.forName(ingress.className)
-        var prop = Props.create(theClass,id+"/"+ingress.id)//.withDispatcher(tp)
-        /*if(implementer.instances > 1)
-          ref = SmallestMailboxPool(ingress.instances).props(routeeProps = ref).withDispatcher(tp)*/
+        var prop = Props.create(theClass,id+"/"+ingress.id).withDispatcher(tp)
         val ref = context.actorOf(prop, ingress.id)
         ref ! ingress
       }

@@ -71,4 +71,5 @@ case class ThreadPool(val min: Int, val max: Int, val factor: Int)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Ingress(@JsonProperty("class") val className : String, id: String, sidecars: List[String] = List.empty[String],
-              config: Map[String,Any] = Map.empty[String,Any]) extends Phase (id, "proxy/request", sidecars, config)
+              config: Map[String,Any] = Map.empty[String,Any], @JsonProperty("thread_pool") val threadPool : String)
+              extends Phase (id, "proxy/request", sidecars, config)
