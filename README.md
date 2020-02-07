@@ -1,45 +1,59 @@
-# AFtheM
+# AFtheM - The API Fortress Microgateway
 
 ## Preamble
 
-AFtheM is an Open Source, Scala / Akka based, asynchronous API Micro-Gateway.
+AFtheM is an Open Source, Scala / Akka based, asynchronous, highly modular **API Micro-Gateway**.
 
-The purpose of this project is to provide a highly modular gateway to help developers, QAs and data scientists to:
+Among the capabilities common to most microgateways, AFtheM has been designed to help developers, QA and data analysts to:
 
-* Capture
-* Measure
-* Transform
-* Filter
-* Simulate
+* capture, forward, measure, transform, filter and simulate API calls
 
-...API Calls.
+Moreover, thanks to the secondary AFtheM modules, more tasks can be performed, such as:
 
-The processing engine can also be fine tuned to the extreme to have it perform the way you need.
+* allowing access to databases using APIs
 
+* tunnel API calls across datacenters
+
+and more.
+
+Finally, the processing engine can also be fine tuned in great detail to have it perform the way you need.
+
+## Running
+
+We suggest you run AFtheM using Docker containers. The repository comes with a sample `docker-compose.yml` file and some sample configuration packs.
+
+To get started:
+
+* Download the [docker-compose.yml file](https://github.com/apifortress/afthem/blob/master/docker-compose.yml)
+
+* Download one of the etc.* configuration directories, such as [etc.base](https://github.com/apifortress/afthem/tree/master/etc.base) and rename it to `etc`. Configuration packs come with a `README.md` file describing what each demo endpoint does
+
+* Run the microgateway by issuing `docker-compose up`
 
 ## Building
 
-just use Maven to package the software. One big fat JAR will be created:
+The requirements are:
+
+* Java JDK 8
+
+* Maven 3
+
+Just use Maven to package the software. One big fat JAR will be created:
 
 ```text
 mvn compile package
 ```
 
-## Runtime setup
-It's very easy really.
-directory structure should look as follows:
+## Documentation
 
-```text
-etc/
-modules/
-afthem.jar
-bin/
-```
+The documentation of AFtheM is located in the [doc directory of the repository](https://github.com/apifortress/afthem/tree/master/doc).
 
-**Note:** we provide multiple *etc* configurations to test, named after the pattern `etc.something`. Copy (or link `ln -s`)
-that directory as `etc` and you're set to go. The `etc.base` directory contains some very basic examples, while
-`etc.test` is used by unit tests.
+## Related projects
 
-## Run!
+* **[AFtheM Modules](https://github.com/apifortress/afthem-modules)** : official advanced modules
 
-simply invoke `bin/start.sh` from the root directory of the runtime setup.
+* **[AFtheM Templates](https://github.com/apifortress/afthem-templates)** : purpose-specific sample configurations
+
+---
+
+AFtheM is a community project supported by **[API Fortress Inc.](https://apifortress.com)**
