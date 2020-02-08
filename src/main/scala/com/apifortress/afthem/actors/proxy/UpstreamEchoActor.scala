@@ -36,7 +36,7 @@ class UpstreamEchoActor(phaseId : String) extends AbstractAfthemActor(phaseId) {
 
         val wrapper = new HttpWrapper(msg.request.getURL(), ReqResUtil.STATUS_OK, "GET",
           List(new Header("Content-Type","application/json")), data, msg.request.remoteIP, ReqResUtil.CHARSET_UTF8)
-        forward(new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta))
+        forward(new WebParsedResponseMessage(wrapper, msg))
       }catch {
         case e : Exception =>
           throw new AfthemFlowException(msg,e.getMessage)

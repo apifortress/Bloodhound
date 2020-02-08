@@ -79,7 +79,7 @@ class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
                               UpstreamFileActor.fileExtensionToContentType(FilenameUtils.getExtension(msg.request.uriComponents.getPath))))
         val wrapper = new HttpWrapper("http://origin", ReqResUtil.STATUS_OK, "GET",
                                       headers, data, null, ReqResUtil.CHARSET_UTF8)
-        forward(new WebParsedResponseMessage(wrapper,msg.request,msg.backend,msg.flow,msg.deferredResult,msg.date,msg.meta))
+        forward(new WebParsedResponseMessage(wrapper,msg))
         metricsLog.debug(m.toString())
       }catch {
         case e : Exception =>
