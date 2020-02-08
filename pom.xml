@@ -151,6 +151,14 @@
             <version>1.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.apifortress.afthem.modules</groupId>
+            <artifactId>redis</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
