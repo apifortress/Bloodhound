@@ -48,7 +48,7 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
   onCompletion(() => {
        AfthemResult.metricsLog.debug("Upload time: "+m)
        if(message != null)
-        AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get("__start").get.asInstanceOf[Long]).toString())
+        AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get(Metric.METRIC_START).get.asInstanceOf[Long]).toString())
     }
   )
 

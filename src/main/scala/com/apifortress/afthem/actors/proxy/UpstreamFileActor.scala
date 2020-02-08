@@ -64,15 +64,14 @@ object UpstreamFileActor {
   *
   * @param phaseId the phase ID
   */
-class UpstreamFileActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+class UpstreamFileActor(phaseId: String) extends AbstractUpstreamActor(phaseId: String) {
 
 
   override def receive: Receive = {
     case msg: WebParsedRequestMessage =>
       try {
         val m = new Metric
-        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
-        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        logUpstreamMetrics(msg)
         val data = UpstreamFileActor.loadFile(getPhase(msg).getConfigString("basepath"),
                                               msg.request.uriComponents,msg.backend)
         val headers = List(new Header("Content-Type",

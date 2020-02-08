@@ -17,6 +17,13 @@
 
 package com.apifortress.afthem
 
+
+object Metric {
+  val METRIC_PROCESS_START = "__process_start"
+  val METRIC_START = "__start"
+  val METRIC_DOWNLOAD_TIME = "__download_time"
+}
+
 /**
   * Utility class to calculate the execution time of a procedure
   * @param start time in nanoseconds. Use the argument if you already have a time measurement, otherwise

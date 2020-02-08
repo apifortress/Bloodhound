@@ -92,7 +92,7 @@ class SendBackActor(phaseId: String) extends AbstractAfthemActor(phaseId: String
     * @param msg a WebParsedResponseMessage
     */
   private def logProcessingTime(msg: WebParsedResponseMessage): Unit = {
-    metricsLog.info(s"Time to Upload: ${new Metric(msg.meta.get("__start").get.asInstanceOf[Long]).toString()}")
+    metricsLog.info(s"Time to Upload: ${new Metric(msg.meta.get(Metric.METRIC_START).get.asInstanceOf[Long]).toString()}")
   }
 
 }

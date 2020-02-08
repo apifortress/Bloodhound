@@ -26,16 +26,17 @@ import com.apifortress.afthem.messages.{WebParsedRequestMessage, WebParsedRespon
   * Upstream echo that serializes the request to JSON and returns it
   * @param phaseId the phaseId the phase ID
   */
-class UpstreamEchoActor(phaseId : String) extends AbstractAfthemActor(phaseId) {
+class UpstreamEchoActor(phaseId : String) extends AbstractUpstreamActor(phaseId) {
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
       try {
+        logUpstreamMetrics(msg)
         val data = Parsers.serializeAsJsonByteArray(
                     AfthemResponseSerializer.toExportableObject(msg.request, List.empty[String], true), pretty = true)
 
-        val wrapper = new HttpWrapper(msg.request.getURL(), ReqResUtil.STATUS_OK, "GET",
-          List(new Header("Content-Type","application/json")), data, msg.request.remoteIP, ReqResUtil.CHARSET_UTF8)
+        val wrapper = new HttpWrapper(msg.request.getURL(), ReqResUtil.STATUS_OK, msg.request.method,
+          List(new Header(ReqResUtil.HEADER_CONTENT_TYPE,ReqResUtil.MIME_JSON)), data, msg.request.remoteIP, ReqResUtil.CHARSET_UTF8)
         forward(new WebParsedResponseMessage(wrapper, msg))
       }catch {
         case e : Exception =>

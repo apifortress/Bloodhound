@@ -70,7 +70,7 @@ class AfthemController {
         val message = WebRawRequestMessage(request, backend, flow, deferredResult)
         if(backend.meta != null)
           message.meta ++= backend.meta
-        message.meta.put("__start",System.nanoTime())
+        message.meta.put(Metric.METRIC_START,System.nanoTime())
         AppContext.actorSystem.actorSelection("/user/proxy/request") ! message
       } else {
         // If none are found, we return an exception

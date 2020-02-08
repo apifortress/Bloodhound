@@ -43,7 +43,7 @@ object AfthemResponseSerializer {
     val obj = mutable.HashMap.empty[String,Any]
     obj.put("client_ip",message.request.remoteIP)
     obj.put("started_at",message.date.getTime)
-    obj.put("download_time",message.meta.get("__download_time"))
+    obj.put("download_time",message.meta.get(Metric.METRIC_DOWNLOAD_TIME))
 
     obj.put("request",toExportableObject(message.request,discardRequestHeaders, true))
     obj.put("response",toExportableObject(message.response,discardResponseHeaders, false))
