@@ -21,7 +21,7 @@ import java.util.{Properties, UUID}
 
 import com.apifortress.afthem._
 import com.apifortress.afthem.actors.AppContext
-import com.apifortress.afthem.config.{Backends, ConfigLoader, Flows, RootConfigConf}
+import com.apifortress.afthem.config.{Backends, ConfigLoader, Flows}
 import com.apifortress.afthem.exceptions.{BackendConfigurationMissingException, GenericException}
 import com.apifortress.afthem.messages.WebRawRequestMessage
 import javax.servlet.Filter
@@ -87,6 +87,11 @@ class AfthemController {
     return deferredResult
   }
 
+  /**
+    * Handles the call to the status endpoint
+    * @param deferredResult the deferred result
+    * @return the deferred result
+    */
   private def handleStatus(deferredResult : AfthemResult) : AfthemResult = {
     val inputStream : InputStream = getClass().getClassLoader().getResource("META-INF/MANIFEST.MF").getContent.asInstanceOf[InputStream]
     val properties = new Properties()
