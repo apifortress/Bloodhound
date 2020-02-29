@@ -45,6 +45,9 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     */
   var message: BaseMessage = null
 
+  var success : Boolean = true
+
+
   onCompletion(() => {
        AfthemResult.metricsLog.debug("Upload time: "+m)
        if(message != null)
@@ -91,11 +94,15 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
   def setData(exception : Exception, status : Int, contentType : String, message : BaseMessage = null) : Unit = {
     m = new Metric()
     this.message = message
+    success = false
     /*
      * Setting the result. Notice how the content type (which could be potentially anything coming from the
      * request header) gets sanitized to become a content type
      */
     setResult(ResponseEntityUtil.createEntity(exception, status, ReqResUtil.determineMimeFromContentType(contentType)))
+    onSetResult()
   }
+
+  override def getResult: ResponseEntity[Array[Byte]] = super.getResult.asInstanceOf[ResponseEntity[Array[Byte]]]
 
 }

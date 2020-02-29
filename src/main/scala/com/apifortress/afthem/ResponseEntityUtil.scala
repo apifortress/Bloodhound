@@ -19,10 +19,12 @@ package com.apifortress.afthem
 
 import java.nio.charset.StandardCharsets
 
-import com.apifortress.afthem.messages.beans.HttpWrapper
+import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.http.ResponseEntity
+
+import collection.JavaConverters._
 
 /**
   * Util to manipulate Spring response entities
@@ -106,6 +108,10 @@ object ResponseEntityUtil {
     */
   def exceptionToText(e : Exception): String = {
     return "status: error\nexception: "+ExceptionUtils.getMessage(e)
+  }
+
+  def toAfthemHeaders(entity : ResponseEntity[Array[Byte]]) = {
+    entity.getHeaders.toSingleValueMap.asScala.map( it => new Header(it._1,it._2)).toList
   }
 
 }
