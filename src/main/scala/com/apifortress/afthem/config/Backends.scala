@@ -19,6 +19,7 @@ package com.apifortress.afthem.config
 import java.util.Objects
 
 import com.apifortress.afthem.UriUtil
+import com.apifortress.afthem.messages.beans.HttpWrapper
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
 import javax.servlet.http.HttpServletRequest
 import org.slf4j.{Logger, LoggerFactory}
@@ -64,6 +65,23 @@ class Backends(val backends: List[Backend]) extends ICacheableConfig {
                 if(backend.headers != null)
                     for ((k, v) <- backend.headers)
                         if (v != request.getHeader(k))
+                            found = false
+            }
+            else
+                found = false
+            found
+        }
+        return backend
+    }
+
+    def findByWrapper(requestWrapper : HttpWrapper) : Option[Backend] = {
+        val signature = UriUtil.getSignature(requestWrapper.getURL())
+        val backend = backends.find { backend =>
+            var found = true
+            if(signature.matches(backend.prefix+".*")) {
+                if(backend.headers != null)
+                    for ((k, v) <- backend.headers)
+                        if (v != requestWrapper.getHeader(k))
                             found = false
             }
             else

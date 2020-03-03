@@ -51,9 +51,14 @@ object ReqResUtil {
     */
   val HEADER_CONTENT_ENCODING : String = "content-encoding"
 
-
+  /**
+    * The name of the transfer-encoding header
+    */
   val HEADER_TRANSFER_ENCODING : String = "transfer-encoding"
 
+  /**
+    * The name of the connection header
+    */
   val HEADER_CONNECTION : String = "connection"
 
   /**
@@ -86,11 +91,29 @@ object ReqResUtil {
     */
   val CHARSET_UTF8 = "UTF-8"
 
+  /**
+    * Status OK, 200
+    */
   val STATUS_OK = 200
+  /**
+    * Status Bad Request, 400
+    */
   val STATUS_BAD_REQUEST = 400
+  /**
+    * Status Unauthorized, 401
+    */
   val STATUS_UNAUTHORIZED = 401
+  /**
+    * Status Not Found, 404
+    */
   val STATUS_NOT_FOUND = 404
+  /**
+    * Status Unprocessable, 422
+    */
   val STATUS_UNPROCESSABLE = 422
+  /**
+    * Status Internal Server Error, 500
+    */
   val STATUS_INTERNAL = 500
 
 

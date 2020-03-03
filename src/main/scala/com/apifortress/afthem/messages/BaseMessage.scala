@@ -22,8 +22,6 @@ import com.apifortress.afthem.AfthemResult
 import com.apifortress.afthem.config.{Backend, Flow}
 import com.apifortress.afthem.messages.beans.ExpMap
 
-import scala.collection.mutable
-
 /**
   * The base of all messages
   * @param backend the backend configuration for this transaction

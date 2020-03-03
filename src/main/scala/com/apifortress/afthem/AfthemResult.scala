@@ -35,15 +35,32 @@ object AfthemResult {
   */
 class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
 
+  /**
+    * Metrics collector
+    */
   var m : Metric = null
+
+  /**
+    * The message that was being processed when the value was set
+    */
   var message: BaseMessage = null
+
+  var success : Boolean = true
+
 
   onCompletion(() => {
        AfthemResult.metricsLog.debug("Upload time: "+m)
        if(message != null)
-        AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get("__start").get.asInstanceOf[Long]).toString())
+        AfthemResult.metricsLog.info("Roundtrip: "+new Metric(message.meta.get(Metric.METRIC_START).get.asInstanceOf[Long]).toString())
     }
   )
+
+  /**
+    * Placeholder method that gets triggered every time a message is set
+    */
+  def onSetResult() : Unit = {
+
+  }
   /**
     * Sets the data to be sent back
     * @param data the data to be sent back
@@ -53,8 +70,16 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
     m = new Metric()
     this.message = message
     setResult(ResponseEntityUtil.createEntity(data))
+    onSetResult()
   }
 
+  /**
+    * Sets the data to send back. This method is generally used by controllers and ingress to report issues, before
+    * a message is composed
+    * @param data the data
+    * @param status the status to be returned
+    * @param contentType the content type to be used
+    */
   def setData(data : String, status : Int, contentType : String) : Unit = {
     setResult(ResponseEntityUtil.createEntity(data,status,contentType))
   }
@@ -69,11 +94,15 @@ class AfthemResult extends DeferredResult[ResponseEntity[Array[Byte]]] {
   def setData(exception : Exception, status : Int, contentType : String, message : BaseMessage = null) : Unit = {
     m = new Metric()
     this.message = message
+    success = false
     /*
      * Setting the result. Notice how the content type (which could be potentially anything coming from the
      * request header) gets sanitized to become a content type
      */
     setResult(ResponseEntityUtil.createEntity(exception, status, ReqResUtil.determineMimeFromContentType(contentType)))
+    onSetResult()
   }
+
+  override def getResult: ResponseEntity[Array[Byte]] = super.getResult.asInstanceOf[ResponseEntity[Array[Byte]]]
 
 }

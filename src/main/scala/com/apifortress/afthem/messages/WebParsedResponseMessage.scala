@@ -42,6 +42,10 @@ class WebParsedResponseMessage(val response: HttpWrapper, val request: HttpWrapp
                                     override val meta: ExpMap = new ExpMap())
       extends BaseMessage(backend, flow, deferredResult, date, meta) {
 
+  def this(response : HttpWrapper, requestMessage: WebParsedRequestMessage) {
+    this(response,requestMessage.request,requestMessage.backend, requestMessage.flow,requestMessage.deferredResult, requestMessage.date, requestMessage.meta)
+  }
+
   override def shallowClone(dropDeferredResult : Boolean = false): WebParsedResponseMessage = {
     return new WebParsedResponseMessage(response.clone(), request, backend, flow,
                                           if(dropDeferredResult) null else deferredResult,

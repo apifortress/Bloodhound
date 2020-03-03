@@ -17,7 +17,7 @@
 
 package com.apifortress.afthem.config
 
-import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonInclude, JsonProperty}
 
 /**
   * Companion class to obtain singleton Implementers instance
@@ -46,7 +46,8 @@ object Implementers {
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class Implementers(val implementers: List[Implementer],
-                        @JsonProperty("thread_pools") val threadPools : Map[String,ThreadPool])
+                        @JsonProperty("thread_pools") val threadPools : Map[String,ThreadPool],
+                        @JsonInclude(JsonInclude.Include.NON_NULL) val ingresses : List[Ingress] = List.empty[Ingress])
 
 /**
   * The single implementer class
@@ -67,3 +68,8 @@ case class Implementer(val id : String, @JsonProperty("class") val className : S
   */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class ThreadPool(val min: Int, val max: Int, val factor: Int)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Ingress(@JsonProperty("class") val className : String, id: String, sidecars: List[String] = List.empty[String],
+              config: Map[String,Any] = Map.empty[String,Any], @JsonProperty("thread_pool") val threadPool : String)
+              extends Phase (id, "proxy/request", sidecars, config)

@@ -50,6 +50,10 @@ object BasicAuthFilterActor {
 
 }
 
+/**
+  * An actor that filters using the basic authentication scheme. Uses a file using the htpasswd format
+  * @param phaseId the phaseId
+  */
 class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
 
   override def receive: Receive = {
@@ -63,6 +67,11 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
       metricsLog.debug(m.toString())
   }
 
+  /**
+    * Authenticates the request
+    * @param msg the request message
+    * @return true if the request has been authenticated
+    */
   def authenticate(msg: WebParsedRequestMessage): Boolean = {
     val credentials = BasicAuthFilterActor.extractCredentials(msg)
     if (credentials == null)
@@ -79,6 +88,11 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
     return false
   }
 
+  /**
+    * Loads the password file
+    * @param msg the request message
+    * @return the content of the password file, in the form of a string
+    */
   def loadHtpasswd(msg: WebParsedRequestMessage): String = {
     val filename = getPhase(msg).getConfigString("filename", "htpasswd")
     val cachedData = AfthemCache.htpasswdsCache.get(filename)
@@ -93,12 +107,22 @@ class BasicAuthFilterActor(phaseId: String) extends AbstractAfthemActor(phaseId:
     return data
   }
 
+  /**
+    * Compares the password
+    * @param password the plain password
+    * @param hash the stored hash of the password
+    * @return true if the passwords match
+    */
   def comparePassword(password: String, hash: String): Boolean = {
     val salt = hash.split("\\$")(2)
     val hash2 = Md5Crypt.apr1Crypt(password, salt)
     return hash == hash2
   }
 
+  /**
+    * Sends an unauthenticated response
+    * @param msg a request message
+    */
   def sendUnauthenticated(msg: WebParsedRequestMessage): Unit = {
     val exceptionMessage = new ExceptionMessage(new UnauthenticatedException(msg), ReqResUtil.STATUS_UNAUTHORIZED, msg)
     tellSidecars(exceptionMessage)

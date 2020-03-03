@@ -133,7 +133,7 @@ object UpstreamHttpActor {
   * The actor taking care of retrieving the resource from the origin
   * @param phaseId the phase ID
   */
-class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: String) {
+class UpstreamHttpActor(phaseId: String) extends AbstractUpstreamActor(phaseId: String) {
 
   override def receive: Receive = {
     case msg : WebParsedRequestMessage =>
@@ -150,9 +150,7 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
           msg.request.setHeader("host", msg.request.uriComponents.getHost)
         }
         val httpReq: HttpUriRequest = UpstreamHttpActor.createRequest(msg,getPhase(msg))
-
-        metricsLog.info("Processing time: "+new Metric(msg.meta.get("__process_start").get.asInstanceOf[Long]))
-        metricsLog.debug("Time to Upstream: "+new Metric(msg.meta.get("__start").get.asInstanceOf[Long]))
+        logUpstreamMetrics(msg)
         AfthemHttpClient.execute(httpReq, new AfthemHttpCallback(msg,m))
         metricsLog.debug(m.toString())
       }catch {
@@ -193,9 +191,9 @@ class UpstreamHttpActor(phaseId: String) extends AbstractAfthemActor(phaseId: St
           */
           UpstreamHttpActor.createResponseWrapper(msg.request, response, new ByteArrayInputStream(Array[Byte]()))
 
-        val message = new WebParsedResponseMessage(wrapper, msg.request, msg.backend, msg.flow, msg.deferredResult, msg.date, msg.meta)
+        val message = new WebParsedResponseMessage(wrapper, msg)
         metricsLog.info("Download time: " + m.toString())
-        message.meta.put("__download_time", m.time())
+        message.meta.put(Metric.METRIC_DOWNLOAD_TIME, m.time())
         forward(message)
       }catch {
         case e: Exception =>

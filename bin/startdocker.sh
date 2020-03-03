@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 current_location=`pwd`
 script_location=`realpath $0`
 script_directory=`dirname ${script_location}`

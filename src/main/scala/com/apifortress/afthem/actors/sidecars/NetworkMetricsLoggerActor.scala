@@ -16,8 +16,9 @@
   */
 package com.apifortress.afthem.actors.sidecars
 
+import com.apifortress.afthem.Metric
 import com.apifortress.afthem.actors.AbstractAfthemActor
-import com.apifortress.afthem.messages.{BaseMessage, WebParsedResponseMessage}
+import com.apifortress.afthem.messages.WebParsedResponseMessage
 import org.slf4j.LoggerFactory
 
 /**
@@ -43,7 +44,7 @@ class NetworkMetricsLoggerActor(phaseId : String) extends AbstractAfthemActor(ph
 
   override def receive: Receive = {
     case msg : WebParsedResponseMessage =>
-      val downloadTime = msg.meta.get("__download_time")
+      val downloadTime = msg.meta.get(Metric.METRIC_DOWNLOAD_TIME)
       if(downloadTime.isDefined)
         NetworkMetricsLoggerActor.logEntry(NetworkMetricsLoggerActor.TYPE_DOWNLOAD,
                                             msg.response.getURL(),

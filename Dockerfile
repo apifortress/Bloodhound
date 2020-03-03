@@ -1,4 +1,4 @@
-FROM apifortress/oracle_jdk
+FROM openjdk:8-alpine
 RUN mkdir /opt/afthem
 RUN mkdir /opt/afthem/modules
 WORKDIR /opt/afthem

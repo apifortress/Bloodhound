@@ -16,6 +16,8 @@
   */
 package com.apifortress.afthem.messages.beans
 
+import java.util.UUID
+
 import scala.collection.mutable
 
 /**
@@ -37,6 +39,8 @@ object ExpMap{
   * A mutable map that exposes extra methods to simplify the integration with SpEL
   */
 class ExpMap extends mutable.HashMap[String,Any] {
+
+  put("__id",UUID.randomUUID().toString)
 
   /**
     * Retrieves a value based on key. If the key is absent in the map, defaultValue is returned

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 if [ -z "${memorySettings}" ]; then
         echo "Memory settings not provided. Defaulting to -Xms256m -Xmx512m";
         export memorySettings="-Xms256m -Xmx512m";

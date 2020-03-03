@@ -102,8 +102,8 @@ class UpstreamHttpActorTests {
     val request = new HttpWrapper("https://foo.com",-1,"GET")
     val backend = new Backend(null,"foo.com",Map.empty[String,String],"https://www.google.com")
     val message = new WebParsedRequestMessage(request,backend,null,null)
-    message.meta.put("__process_start",new Metric().time().toLong)
-    message.meta.put("__start",new Metric().time().toLong)
+    message.meta.put(Metric.METRIC_PROCESS_START, new Metric().time().toLong)
+    message.meta.put(Metric.METRIC_START, new Metric().time().toLong)
     actor ! message
     val response = probe.expectMsgClass(classOf[WebParsedResponseMessage])
     assertTrue(response.response.getHeader("content-type").contains("html"))
