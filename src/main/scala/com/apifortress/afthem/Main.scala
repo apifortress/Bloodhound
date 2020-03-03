@@ -19,14 +19,14 @@ package com.apifortress.afthem
 import java.util.Date
 
 import com.apifortress.afthem.actors.AppContext
+\import org.apache.catalina.connector.Connector
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.web.server.{WebServerFactory, WebServerFactoryCustomizer}
-import org.springframework.context.annotation.{Bean, ComponentScan}
-import org.apache.catalina.connector.Connector
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
+import org.springframework.boot.web.server.WebServerFactoryCustomizer
+import org.springframework.context.annotation.{Bean, ComponentScan}
 
 /**
   * The Main class
