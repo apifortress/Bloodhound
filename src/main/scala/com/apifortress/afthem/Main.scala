@@ -19,7 +19,7 @@ package com.apifortress.afthem
 import java.util.Date
 
 import com.apifortress.afthem.actors.AppContext
-\import org.apache.catalina.connector.Connector
+import org.apache.catalina.connector.Connector
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
