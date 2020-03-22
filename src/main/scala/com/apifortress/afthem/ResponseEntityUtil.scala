@@ -89,7 +89,8 @@ object ResponseEntityUtil {
     * @return a JSON message
     */
   def exceptionToJSON(e : Exception): String = {
-    return "{ \"status\": \"error\", \"message\": \""+StringEscapeUtils.escapeJavaScript(ExceptionUtils.getMessage(e))+"\"}\n"
+    val msg = Map("status" -> "error","message"->ExceptionUtils.getMessage(e))
+    return Parsers.serializeAsJsonString(msg,true)
   }
 
   /**
