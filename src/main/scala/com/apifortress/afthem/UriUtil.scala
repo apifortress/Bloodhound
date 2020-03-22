@@ -51,6 +51,13 @@ object UriUtil {
     return sanitizedUrl.replaceFirst(backend.prefix,"")
   }
 
+  def stripQueryString(url: String): String = {
+    if(url.contains("?"))
+      return url.substring(0,url.indexOf("?"))
+    else
+      return url
+  }
+
   /**
     * Given the URL of an incoming request, and a matching backend configuration,
     * it obtains the upstream URL to hit
