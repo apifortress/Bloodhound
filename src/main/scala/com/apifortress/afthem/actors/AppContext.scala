@@ -23,7 +23,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import com.apifortress.afthem.{AfthemHttpClient, Metric}
 import com.apifortress.afthem.actors.probing.ProbeHttpActor
 import com.apifortress.afthem.config.loaders.YamlConfigLoader
-import com.apifortress.afthem.config.{AfthemCache, Implementers}
+import com.apifortress.afthem.config.{AfthemCache, Implementers, RestartFlag}
 import com.apifortress.afthem.messages.{StartActorsCommand, StartIngressesCommand}
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.io.IOUtils
@@ -52,6 +52,8 @@ object AppContext {
     * Spring application context
     */
   var springApplicationContext : ApplicationContext = null
+
+  var restartFlag : RestartFlag = new RestartFlag(-1l,new Date())
 
   /**
     * Initializes the AppContext
@@ -111,6 +113,10 @@ object AppContext {
       AfthemHttpClient.closeStaleConnections()
     })
 
+    actorSystem.scheduler.schedule(1 minute, 1 minute, () =>{
+      checkForRestartTags()
+    })
+
     val probeExecutorId = if (actorSystem.dispatchers.hasDispatcher(DISPATCHER_PROBE)) DISPATCHER_PROBE
     else DISPATCHER_DEFAULT
 
@@ -146,6 +152,16 @@ object AppContext {
     Await.result(future,1.minute)
     init()
     log.info("Re-initialization took: "+ m.toString())
+  }
+
+  private def checkForRestartTags(): Unit = {
+    log.debug("Checking for context restart")
+    val restartFlag = new YamlConfigLoader().loadRestarterFlag()
+    if(this.restartFlag.version < restartFlag.version) {
+      log.info("Commencing context restart")
+      this.restartFlag = restartFlag
+      reinit()
+    }
   }
 
 

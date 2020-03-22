@@ -17,6 +17,7 @@
 package com.apifortress.afthem.config.loaders
 
 import java.io.File
+import java.util.Date
 
 import com.apifortress.afthem.Parsers
 import com.apifortress.afthem.config.Backends.log
@@ -45,6 +46,13 @@ class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
     return parse[RootConfigConf]("afthem.yml", classOf[RootConfigConf])
   }
 
+  def loadRestarterFlag() : RestartFlag = {
+    if(fileExists("restarter_flag.yml"))
+      return parse[RestartFlag]("restarter_flag.yml", classOf[RestartFlag])
+    else
+      new RestartFlag(-1l,new Date())
+  }
+
   override def loadBackends(): Backends = {
     var instance : Backends = AfthemCache.configCache.get("backends").asInstanceOf[Backends]
     if (instance != null){
@@ -64,6 +72,9 @@ class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
   override def loadImplementers(): Implementers = {
     return parse[Implementers]("implementers.yml",classOf[Implementers])
   }
+
+  private def fileExists(filename : String) : Boolean =
+    new File(YamlConfigLoader.SUBPATH+File.separator+filename).exists()
 
   /**
     * Parses a configuration file in the etc/ directory
