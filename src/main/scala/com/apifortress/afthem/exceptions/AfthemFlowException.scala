@@ -16,6 +16,7 @@
  */
 package com.apifortress.afthem.exceptions
 
+import com.apifortress.afthem.Parsers
 import com.apifortress.afthem.messages.BaseMessage
 
 /**
@@ -24,4 +25,13 @@ import com.apifortress.afthem.messages.BaseMessage
   * @param message the message that was being processed
   * @param comment an optional comment
   */
-class AfthemFlowException(val message : BaseMessage, val comment : String) extends Exception(comment)
+class AfthemFlowException(val message : BaseMessage, val comment : String) extends Exception(comment) {
+
+  def toJSON() : String = {
+    Parsers.serializeExceptionAsJSONString(this)
+  }
+
+  def toXML() : String = {
+    Parsers.serializeExceptionAsXMLString(this)
+  }
+}
