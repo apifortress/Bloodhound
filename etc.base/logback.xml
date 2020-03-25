@@ -84,6 +84,15 @@
         </encoder>
     </appender>
 
+    <appender name="SWAGGER_LOGGER" class="ch.qos.logback.core.FileAppender">
+        <file>log/swagger.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%date{ISO8601}	%msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
@@ -111,5 +120,9 @@
     </logger>
     <logger name="network" level="DEBUG" additivity="false">
         <appender-ref ref="NETWORK_LOGGER" />
+    </logger>
+
+    <logger name="Swagger-Validator" level="INFO" additivity="false">
+        <appender-ref ref="SWAGGER_LOGGER"/>
     </logger>
 </configuration>
