@@ -19,12 +19,12 @@ package com.apifortress.afthem
 
 import java.nio.charset.StandardCharsets
 
+import com.apifortress.afthem.exceptions.{AfthemFlowException, InvalidContentException}
 import com.apifortress.afthem.messages.beans.{Header, HttpWrapper}
-import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.http.ResponseEntity
 
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 
 /**
   * Util to manipulate Spring response entities
@@ -89,8 +89,12 @@ object ResponseEntityUtil {
     * @return a JSON message
     */
   def exceptionToJSON(e : Exception): String = {
-    return "{ \"status\": \"error\", \"message\": \""+StringEscapeUtils.escapeJavaScript(ExceptionUtils.getMessage(e))+"\"}\n"
+    return e match {
+      case ex : AfthemFlowException => ex.toJSON()
+      case _ => Parsers.serializeExceptionAsJSONString(e)
+    }
   }
+
 
   /**
     * Converts an exception to an XML message
@@ -98,8 +102,13 @@ object ResponseEntityUtil {
     * @return an XML message
     */
   def exceptionToXML(e : Exception): String = {
-    return "<exception><status>error</status><message>"+StringEscapeUtils.escapeXml(ExceptionUtils.getMessage(e))+"</message></exception>"
+    return e match {
+            case ex : AfthemFlowException => ex.toXML()
+            case _  => Parsers.serializeExceptionAsXMLString(e)
+          }
+
   }
+
 
   /**
     * Converts an exception to plain text message

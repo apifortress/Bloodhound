@@ -30,6 +30,8 @@ object AbstractAfthemActor {
     */
   def selectNextActor(message : BaseMessage, phaseId : String): ActorSelection = {
     val nextId = message.flow.getNextPhase(phaseId).id
+    if(nextId == null)
+      return null
     if(nextId.startsWith("akka://"))
       return AppContext.actorSystem.actorSelection(nextId)
     else
@@ -106,7 +108,8 @@ abstract class AbstractAfthemActor(val phaseId: String) extends Actor {
     */
   protected def tellNextActor(message: BaseMessage) : Unit = {
     val selector = AbstractAfthemActor.selectNextActor(message,getPhaseId())
-    selector ! message
+    if(selector != null)
+      selector ! message
   }
 
   def getLog : Logger = return log

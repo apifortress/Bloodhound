@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import org.apache.commons.lang.exception.ExceptionUtils
 
 import scala.xml.{PrettyPrinter, XML}
 
@@ -140,6 +141,21 @@ object Parsers {
   def serializeAsJsonString(data : Any, pretty : Boolean = true) : String = {
     if (pretty) prettyJsonMapper.writeValueAsString(data)
     else jsonMapper.writeValueAsString(data)
+  }
+
+  def serializeAsXmlString(data : Any, rootValue : String) : String = {
+    val writer = xmlMapper.writer().withRootName(rootValue)
+    return writer.writeValueAsString(data)
+  }
+
+  def serializeExceptionAsJSONString(exception : Exception, pretty: Boolean = true) : String = {
+    val msg = Map("status" -> "error","message"->ExceptionUtils.getMessage(exception))
+    return Parsers.serializeAsJsonString(msg,true)
+  }
+
+  def serializeExceptionAsXMLString(exception : Exception) : String = {
+    val msg = Map("status" -> "error","message"->ExceptionUtils.getMessage(exception))
+    return Parsers.serializeAsXmlString(msg,"exception")
   }
 
   /**
