@@ -30,6 +30,15 @@
         <heap>10</heap>
     </cache>
 
+    <cache alias="configExtra">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti>200</tti>
+        </expiry>
+        <heap>100</heap>
+    </cache>
+
     <cache alias="expressions">
         <key-type>java.lang.String</key-type>
         <value-type>org.springframework.expression.Expression</value-type>
@@ -73,6 +82,15 @@
             <tti>60</tti>
         </expiry>
         <heap>1000</heap>
+    </cache>
+
+    <cache alias="hazelcast">
+        <key-type>java.lang.String</key-type>
+        <value-type>com.apifortress.afthem.messages.WebParsedRequestMessage</value-type>
+        <expiry>
+            <tti>200</tti>
+        </expiry>
+        <heap>100</heap>
     </cache>
 
 </config>
