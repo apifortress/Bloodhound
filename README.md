@@ -1,14 +1,14 @@
-# AFtheM - The API Fortress Microgateway
+# Bloodhound - The API Fortress Microgateway
 
 ## Preamble
 
-AFtheM is an Open Source, Scala / Akka based, asynchronous, highly modular **API Micro-Gateway**.
+Bloodhound is an Open Source, Scala / Akka based, asynchronous, highly modular **API Micro-Gateway**.
 
-Among the capabilities common to most microgateways, AFtheM has been designed to help developers, QA and data analysts to:
+Among the capabilities common to most microgateways, Bloodhound has been designed to help developers, QA and data analysts to:
 
 * capture, forward, measure, transform, filter and simulate API calls
 
-Moreover, thanks to the secondary AFtheM modules, more tasks can be performed, such as:
+Moreover, thanks to the secondary Bloodhound modules, more tasks can be performed, such as:
 
 * allowing access to databases using APIs
 
@@ -20,13 +20,13 @@ Finally, the processing engine can also be fine tuned in great detail to have it
 
 ## Running
 
-We suggest you run AFtheM using Docker containers. The repository comes with a sample `docker-compose.yml` file and some sample configuration packs.
+We suggest you run Bloodhound using Docker containers. The repository comes with a sample `docker-compose.yml` file and some sample configuration packs.
 
 To get started:
 
-* Download the [docker-compose.yml file](https://github.com/apifortress/afthem/blob/master/docker-compose.yml)
+* Download the [docker-compose.yml file](https://github.com/apifortress/Bloodhound/blob/master/docker-compose.yml)
 
-* Download one of the etc.* configuration directories, such as [etc.base](https://github.com/apifortress/afthem/tree/master/etc.base) and rename it to `etc`. Configuration packs come with a `README.md` file describing what each demo endpoint does
+* Download one of the etc.* configuration directories, such as [etc.base](https://github.com/apifortress/Bloodhound/tree/master/etc.base) and rename it to `etc`. Configuration packs come with a `README.md` file describing what each demo endpoint does
 
 * Run the microgateway by issuing `docker-compose up`
 
@@ -46,14 +46,14 @@ mvn compile package
 
 ## Documentation
 
-The documentation of AFtheM is located in the [doc directory of the repository](https://github.com/apifortress/afthem/tree/master/doc).
+The documentation of Bloodhound is located in the [doc directory of the repository](https://github.com/apifortress/Bloodhound/tree/master/doc).
 
 ## Related projects
 
-* **[AFtheM Modules](https://github.com/apifortress/afthem-modules)** : official advanced modules
+* **[Bloodhound Modules](https://github.com/apifortress/afthem-modules)** : official advanced modules
 
-* **[AFtheM Templates](https://github.com/apifortress/afthem-templates)** : purpose-specific sample configurations
+* **[Bloodhound Templates](https://github.com/apifortress/afthem-templates)** : purpose-specific sample configurations
 
 ---
 
-AFtheM is a community project supported by **[API Fortress Inc.](https://apifortress.com)**
+Bloodhound is a community project supported by **[API Fortress Inc.](https://apifortress.com)**

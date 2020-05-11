@@ -1,13 +1,13 @@
-# AFtheM - Expressions
+# Bloodhound - Expressions
 
-In AFtheM actors configuration, you may find fields allowing dynamic expressions.
+In Bloodhound actors configuration, you may find fields allowing dynamic expressions.
 These expressions get evaluated to generate a dynamic value.
 
 ## SpEL - Spring Expression Language
 
-The language used by AFtheM is the [**Spring Expression Language**](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html).
+The language used by Bloodhound is the [**Spring Expression Language**](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html).
 
-## Uses in AFtheM
+## Uses in Bloodhound
 
 All of expressions will make use of the current message being processed.
 The message is accessible using the `#msg` keyword.

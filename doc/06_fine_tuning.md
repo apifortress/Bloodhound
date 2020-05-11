@@ -1,6 +1,6 @@
-# AFtheM - Fine Tuning
+# Bloodhound - Fine Tuning
 
-AFtheM can be fine tuned for your needs. This ability comes with the price of complexity, so it is important to
+Bloodhound can be fine tuned for your needs. This ability comes with the price of complexity, so it is important to
 understand the inner mechanisms before modifying the configuration files.
 
 ## Actors
@@ -51,7 +51,7 @@ Notice the `instances` keyword.
 ## Thread pools
 Actors, as previously said, **could** allow you to work in parallel, but actors need tools to do so. The tools are the
 threads. Threads are expensive both in terms of memory and CPU so you don't want to spawn too many.
-AFtheM gives you the option to decide how the system resources need to be utilized with great detail.
+Bloodhound gives you the option to decide how the system resources need to be utilized with great detail.
 
 In the `implementers.yml` file, the `thread_pools` section allows you to create pools of threads that can be assigned
 to actors.
@@ -72,7 +72,7 @@ thread_pools:
 `max` is the maximum number of threads created for this thread pool (the threads exceeding `min` get decommissioned when
 not in use)
 
-`factor` is a multiplier that depends on the server AFtheM is operating on and it works like this
+`factor` is a multiplier that depends on the server Bloodhound is operating on and it works like this
 `factor*cpu=n_of_threads`. A way to make the system more adaptive to the context. 
  
  The `default` thread pool is used when no pool is assigned to an implementer. To assign a specific thread pool, update
@@ -93,7 +93,7 @@ instances of `transform_headers` share a single pool with 2 threads max. This me
 
 ## HTTP Client configuration
 
-The HTTP Client is the component that will perform the call from AFtheM to the upstreams. The client, one for the whole
+The HTTP Client is the component that will perform the call from Bloodhound to the upstreams. The client, one for the whole
 application, can be fine tuned based on your knowledge of your use case. The configuration of these aspects happen
 in the `application.properties` file.
 

@@ -1,4 +1,4 @@
-# AFtheM - base actors
+# Bloodhound - base actors
 
 ## Type: Proxy
 
@@ -26,7 +26,7 @@ The default upstream actor.
 
 * `connect_timeout`: timeout for the connection process in milliseconds
 * `socket_timeout`: timeout for silent socket in milliseconds
-* `redirects_enabled`: set to true if you want AFtheM to resolve redirects instead of forwarding to the client
+* `redirects_enabled`: set to true if you want Bloodhound to resolve redirects instead of forwarding to the client
 * `max_redirects`: if redirects are enabled, maximum number of redirects before giving up 
 * `discard_headers`: a list of response header names that need to be discarded immediately
 

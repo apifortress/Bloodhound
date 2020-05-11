@@ -1,6 +1,6 @@
-# AFtheM - Basic configuration
+# Bloodhound - Basic configuration
 
-The default AFtheM configuration module is file driven. All configuration files are located in the `etc` directory.
+The default Bloodhound configuration module is file driven. All configuration files are located in the `etc` directory.
 
 ## System configuration
 
@@ -16,7 +16,7 @@ content types are meant to represent textual content.
 
 `logging.config=etc/logback.xml` describes where the logging configuration file is located.
 
-`server.port` tells the AFtheM web server which port it should bind to (default is 8080)
+`server.port` tells the Bloodhound web server which port it should bind to (default is 8080)
 
 `server.compression.enabled` true if the web server needs to compress its output (default is false)
 
@@ -61,7 +61,7 @@ needs to appear here.
 A typical implementer is configured like this:
 ```yaml
   - id: request
-    class: com.apifortress.afthem.actors.proxy.RequestActor
+    class: com.apifortress.Bloodhound.actors.proxy.RequestActor
     type: proxy
     instances: 2
 ```
@@ -93,7 +93,7 @@ pool is always required.
 `max` is the maximum number of threads created for this thread pool (the threads exceeding `min` get decommissioned when
 not in use)
 
-`factor` is a multiplier that depends on the server AFtheM is operating on and it works like this
+`factor` is a multiplier that depends on the server Bloodhound is operating on and it works like this
 `factor*cpu=n_of_threads`. A way to make the system more adaptive to the context.
 
 Check out the [Fine Tuning Guide](06_fine_tuning.md) for further readings on this topic.

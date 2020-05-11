@@ -1,4 +1,4 @@
-# AFtheM - flows
+# Bloodhound - flows
 
 In the default configuration module, flows are files located in the `etc/flows` directory.
 

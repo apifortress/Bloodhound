@@ -1,6 +1,6 @@
-# AFtheM - Backends - Load balancing
+# Bloodhound - Backends - Load balancing
 
-AFtheM has a simple load balancing capability we are going to discuss now. Before moving forward, make sure you have
+Bloodhound has a simple load balancing capability we are going to discuss now. Before moving forward, make sure you have
 read the [basic configuration guide](01_basic_configuration.md).
 
 The backends in the `backends.yml` can alternatively be expressed as follows:
@@ -26,7 +26,7 @@ In this configuration, `upstream` is replaced by the `upstreams` object.
 `urls`: a list of URLs that will be used as upstreams
 
 `probe`: the system will probe each URL periodically to make sure they are available. The probe is optional and, if
-omitted, AFtheM will always considers URLs as functional.
+omitted, Bloodhound will always considers URLs as functional.
 * `path`: an extra path segment to be appeneded to the URL when probing
 * `count_up`: how many times a probe should be successful before the URL can be considered as working
 * `count_down`: how many times a probe should fail before the URL can be considered as non working

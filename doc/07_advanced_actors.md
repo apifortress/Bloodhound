@@ -1,4 +1,4 @@
-# AFtheM - Advanced actors
+# Bloodhound - Advanced actors
 
 ## Type: Transformers
 
@@ -152,4 +152,4 @@ Limits the number of requests/second the gateway will accept and pass through. M
 
 ---
 
-Read more about [AFtheM Modules](08_modules_actors.md)
+Read more about [Bloodhound Modules](08_modules_actors.md)

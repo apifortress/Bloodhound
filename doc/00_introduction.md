@@ -1,6 +1,6 @@
-# AFtheM
+# Bloodhound
 
-AFtheM is an HTTP API Microgateway that acts are a reverse proxy.
+Bloodhound is an HTTP API Microgateway that acts are a reverse proxy.
 
 The pillars of the project are:
 
@@ -21,7 +21,7 @@ The pillars of the project are:
   
 ## The Stack
 
-The AFtheM Microgateway is entirely written in **Scala/Akka**, and requires **Java JRE 8**. The technology serving the
+The Bloodhound Microgateway is entirely written in **Scala/Akka**, and requires **Java JRE 8**. The technology serving the
 inbound requests is **Apache Tomcat** via **Spring Boot**. The outbound requests are performed by the
 **Apache Async Http Client**. 
 

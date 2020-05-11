@@ -1,4 +1,4 @@
-# AFtheM
+# Bloodhound
 ## Modules directory
 
-Copy any AFtheM module and dependency in this directory.
+Copy any Bloodhound module and dependency in this directory.
