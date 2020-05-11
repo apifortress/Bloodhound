@@ -50,9 +50,9 @@ The documentation of Bloodhound is located in the [doc directory of the reposito
 
 ## Related projects
 
-* **[Bloodhound Modules](https://github.com/apifortress/afthem-modules)** : official advanced modules
+* **[Bloodhound Modules](https://github.com/apifortress/bloodhound-modules)** : official advanced modules
 
-* **[Bloodhound Templates](https://github.com/apifortress/afthem-templates)** : purpose-specific sample configurations
+* **[Bloodhound Templates](https://github.com/apifortress/bloodhound-templates)** : purpose-specific sample configurations
 
 ---
 
