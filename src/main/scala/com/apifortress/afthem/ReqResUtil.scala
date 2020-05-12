@@ -252,10 +252,10 @@ object ReqResUtil {
 
 
   /**
-    * Given a content-type string, it will search whether there's a match in the afthem.yml configuration. If found
+    * Given a content-type string, it will search whether there's a match in the bloodhound.yml configuration. If found
     * it means that the content type represents text. If the provided content-type is null, the return value is true
     * @param contentType the content-type to be evaluated
-    * @return true, if afthem.yml says that the content type represents text
+    * @return true, if bloodhound.yml says that the content type represents text
     */
   def isText(contentType : String) : Boolean = {
     if(contentType==null)

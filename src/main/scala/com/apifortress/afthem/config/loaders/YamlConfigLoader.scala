@@ -43,7 +43,7 @@ object YamlConfigLoader {
 class YamlConfigLoader(params: Map[String,Any] = null) extends TConfigLoader {
 
   def loadAfthemRootConf() : RootConfigConf = {
-    return parse[RootConfigConf]("afthem.yml", classOf[RootConfigConf])
+    return parse[RootConfigConf]("bloodhound.yml", classOf[RootConfigConf])
   }
 
   def loadRestarterFlag() : RestartFlag = {
