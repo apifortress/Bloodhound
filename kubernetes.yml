@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: afthem
+  name: bloodhound
   labels:
-    app: afthem
+    app: bloodhound
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: afthem
+      app: bloodhound
   template:
     metadata:
       labels:
-        app: afthem
+        app: bloodhound
     spec:
       containers:
         - name: afthem
-          image: apifortress/afthem:latest
+          image: apifortress/bloodhound:latest
           env:
             - name: memorySettings
               value: "-Xms1024m -Xmx2048m"
@@ -28,26 +28,26 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: afthem
-              mountPath: /opt/afthem/etc
+              mountPath: /opt/bloodhound/etc
             - name: afthem-flows
-              mountPath: /opt/afthem/etc/flows
+              mountPath: /opt/bloodhound/etc/flows
       volumes:
-        - name: afthem
+        - name: bloodhound
           configMap:
-            name: afthem
-        - name: afthem-flows
+            name: bloodhound
+        - name: bloodhound-flows
           configMap:
-            name: afthem-flows
+            name: bloodhound-flows
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: afthem
+  name: bloodhound
 spec:
   type: LoadBalancer
   selector:
-    app: afthem
+    app: bloodhound
   ports:
     - port: 8080
   loadBalancerIP: '[balancer_ip]'

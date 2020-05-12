@@ -1,7 +1,7 @@
 FROM openjdk:8-alpine
-RUN mkdir /opt/afthem
-RUN mkdir /opt/afthem/modules
-WORKDIR /opt/afthem
-COPY target/afthem.jar /opt/afthem/
-COPY bin /opt/afthem/bin
-CMD ["/opt/afthem/bin/startdocker.sh"]
+RUN mkdir /opt/bloodhound
+RUN mkdir /opt/bloodhound/modules
+WORKDIR /opt/bloodhound
+COPY target/bloodhound.jar /opt/bloodhound/
+COPY bin /opt/bloodhound/bin
+CMD ["/opt/bloodhound/bin/startdocker.sh"]

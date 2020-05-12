@@ -1,11 +1,11 @@
 version: '2'
 services:
    afthem:
-      image: apifortress/afthem:latest
+      image: apifortress/bloodhound:latest
       volumes:
-      - ./etc:/opt/afthem/etc
-      - ./docker_log:/opt/afthem/log
-      - ./modules:/opt/afthem/modules
+      - ./etc:/opt/bloodhound/etc
+      - ./docker_log:/opt/bloodhound/log
+      - ./modules:/opt/bloodhound/modules
       ports:
       - 8080:8080/tcp
       environment:
