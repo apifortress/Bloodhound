@@ -4,7 +4,7 @@ The default Bloodhound configuration module is file driven. All configuration fi
 
 ## System configuration
 
-### afthem.yml
+### bloodhound.yml
 
 The `config_loader` section describes which configuration loading mechanism needs to be used. Modules can be created to
 store and load configuration in other locations and systems, such as databases.
