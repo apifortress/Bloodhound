@@ -36,7 +36,8 @@ class ResponseEntityUtilTests {
   def testCreateEntityForException() : Unit = {
     var entity = ResponseEntityUtil.createEntity(new IOException("foobar"),500)
     assertTrue(entity.getStatusCode.is5xxServerError())
-    assertEquals("{ \"status\": \"error\", \"message\": \"IOException: foobar\"}\n",new String(entity.getBody))
+    println(new String(entity.getBody))
+    assertEquals("{\n  \"status\" : \"error\",\n  \"message\" : \"IOException: foobar\"\n}",new String(entity.getBody))
 
     entity = ResponseEntityUtil.createEntity(new IOException("foobar"),500,"text/xml")
     assertEquals("<exception><status>error</status><message>IOException: foobar</message></exception>",
