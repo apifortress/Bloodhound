@@ -12,7 +12,7 @@ Reference: [Bloodhound JDBC Module](https://github.com/apifortress/bloodhound-mo
 ## Module: MongoDB
 Reference: [Bloodhound MongoDB Module](https://github.com/apifortress/bloodhound-modules/tree/master/mongodb)
 
-## Mdoule: RabbitMQ
+## Module: RabbitMQ
 Reference: [Bloodhound RabbitMQ Module](https://github.com/apifortress/bloodhound-modules/tree/master/rabbitmq)
 
 ## Module: Fortress-Forwarder
