@@ -16,7 +16,7 @@
   */
 package com.apifortress.afthem
 
-import java.util.Date
+import java.util.{Date, Properties}
 
 import com.apifortress.afthem.actors.AppContext
 import org.apache.catalina.connector.Connector
@@ -81,6 +81,7 @@ object Main {
   var bootstrapTime : Date = _
 
   def main(args: Array[String]): Unit = {
+
     bootstrapTime = new Date()
     log.info("Afthem starting...")
     Runtime.getRuntime.addShutdownHook(new Thread()
@@ -91,7 +92,11 @@ object Main {
           AppContext.actorSystem.terminate()
       }
     })
-    AppContext.init(SpringApplication.run(Array(classOf[Main]).asInstanceOf[Array[Class[_]]],args))
+    val application = new SpringApplication(classOf[Main])
+    val properties = new Properties()
+    properties.put("spring.mvc.hiddenmethod.filter","false")
+    application.setDefaultProperties(properties)
+    AppContext.init(application.run(args:_*))
   }
 
 
