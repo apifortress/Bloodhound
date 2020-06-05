@@ -2,7 +2,7 @@
 
 ## Preamble
 
-Bloodhound is an Open Source, Scala / Akka based, asynchronous, highly modular **API Micro-Gateway**.
+Bloodhound is an Open Source, Scala / Akka based, asynchronous, highly modular **API Microgateway**.
 
 Among the capabilities common to most microgateways, Bloodhound has been designed to help developers, QA and data analysts to:
 
