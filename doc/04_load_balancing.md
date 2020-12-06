@@ -40,4 +40,4 @@ omitted, Bloodhound will always considers URLs as functional.
 ## Notes
 
 The system will look for a `probe` thread pool in the `implementers.yml` file. If no `probe` thread pool is defined,
-default will be used. Please refer to the [fine tuning guide](06_fine_tuning.md) to learn more.
+default will be used. Please refer to the [fine tuning guide](05_fine_tuning.md) to learn more.

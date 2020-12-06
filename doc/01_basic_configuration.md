@@ -30,7 +30,7 @@ content types are meant to represent textual content.
 
 `server.ssl.key-store-password` the password of the key-store 
 
-See [Fine tuning](06_fine_tuning.md) for more settings.
+See [Fine tuning](05_fine_tuning.md) for more settings.
 
 ### ehcache.xml
 
@@ -61,7 +61,7 @@ needs to appear here.
 A typical implementer is configured like this:
 ```yaml
   - id: request
-    class: com.apifortress.Bloodhound.actors.proxy.RequestActor
+    class: com.apifortress.afthem.actors.proxy.RequestActor
     type: proxy
     instances: 2
 ```
@@ -96,7 +96,7 @@ not in use)
 `factor` is a multiplier that depends on the server Bloodhound is operating on and it works like this
 `factor*cpu=n_of_threads`. A way to make the system more adaptive to the context.
 
-Check out the [Fine Tuning Guide](06_fine_tuning.md) for further readings on this topic.
+Check out the [Fine Tuning Guide](05_fine_tuning.md) for further readings on this topic.
 
 ### backends.yml
 
@@ -158,4 +158,4 @@ Furthermore, a load balancing functionality is available. Please refer to the [l
 
 ## Flows
 
-Flows are discussed in the [Flows guide](03_flows.md)
+Flows are discussed in the [Flows guide](02_flows.md)

@@ -170,4 +170,4 @@ Filters out any request not matching a certain set of criteria.
   
 ---
 
-[Documentation for more advanced actors >>>](07_advanced_actors.md) 
+[Documentation for more advanced actors >>>](06_advanced_actors.md) 
